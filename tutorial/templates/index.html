@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animaid Tutorial</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Animaid Tutorial</h1>
+        <p>Interactive explorer for HTML-renderable Python types</p>
+    </header>
+
+    <nav class="tabs">
+        <button class="tab-btn active" data-tab="string">HTMLString</button>
+        <button class="tab-btn" data-tab="int">HTMLInt</button>
+        <button class="tab-btn" data-tab="float">HTMLFloat</button>
+        <button class="tab-btn" data-tab="tuple">HTMLTuple</button>
+        <button class="tab-btn" data-tab="set">HTMLSet</button>
+        <button class="tab-btn" data-tab="list">HTMLList</button>
+        <button class="tab-btn" data-tab="dict">HTMLDict</button>
+        <button class="tab-btn" data-tab="dict-of-lists">Dict of Lists</button>
+        <button class="tab-btn" data-tab="list-of-dicts">List of Dicts</button>
+    </nav>
+
+    <main>
+        <!-- HTMLString Tab -->
+        <div class="tab-content active" id="tab-string">
+            <aside class="sidebar">
+                <h2>HTMLString Properties</h2>
+
+                <div class="control-group">
+                    <label>Quick Presets</label>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-preset="string-highlight">Highlight</button>
+                        <button class="preset-btn" data-preset="string-code">Code</button>
+                        <button class="preset-btn" data-preset="string-badge">Badge</button>
+                        <button class="preset-btn" data-preset="string-success">Success</button>
+                        <button class="preset-btn" data-preset="string-warning">Warning</button>
+                        <button class="preset-btn" data-preset="string-error">Error</button>
+                        <button class="preset-btn" data-preset="string-reset">Reset</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="string-content">Content</label>
+                    <input type="text" id="string-content" value="Hello, World!" class="string-control">
+                </div>
+
+                <div class="control-group">
+                    <label>Text Styles</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="string-bold" class="string-control"> Bold</label>
+                        <label><input type="checkbox" id="string-italic" class="string-control"> Italic</label>
+                        <label><input type="checkbox" id="string-underline" class="string-control"> Underline</label>
+                        <label><input type="checkbox" id="string-strikethrough" class="string-control"> Strikethrough</label>
+                        <label><input type="checkbox" id="string-monospace" class="string-control"> Monospace</label>
+                        <label><input type="checkbox" id="string-uppercase" class="string-control"> Uppercase</label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="string-color">Text Color</label>
+                    <div class="color-input">
+                        <input type="color" id="string-color-picker" value="#000000">
+                        <input type="text" id="string-color" placeholder="#000000 or red" class="string-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="string-background">Background Color</label>
+                    <div class="color-input">
+                        <input type="color" id="string-background-picker" value="#ffffff">
+                        <input type="text" id="string-background" placeholder="#ffffff or yellow" class="string-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="string-font-size">Font Size</label>
+                    <input type="text" id="string-font-size" placeholder="16px, 1.5em, larger" class="string-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="string-padding">Padding</label>
+                    <input type="text" id="string-padding" placeholder="10px, 5px 10px" class="string-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="string-border">Border</label>
+                    <input type="text" id="string-border" placeholder="1px solid black" class="string-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="string-border-radius">Border Radius</label>
+                    <input type="text" id="string-border-radius" placeholder="5px, 50%" class="string-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="string-tag">HTML Tag</label>
+                    <select id="string-tag" class="string-control">
+                        <option value="span">span</option>
+                        <option value="div">div</option>
+                        <option value="p">p</option>
+                        <option value="strong">strong</option>
+                        <option value="em">em</option>
+                        <option value="code">code</option>
+                        <option value="h1">h1</option>
+                        <option value="h2">h2</option>
+                        <option value="h3">h3</option>
+                    </select>
+                </div>
+            </aside>
+
+            <section class="display-area">
+                <div class="preview-section">
+                    <h3>Preview</h3>
+                    <div class="preview-box" id="string-preview">
+                        <span>Hello, World!</span>
+                    </div>
+                </div>
+
+                <div class="code-section">
+                    <h3>Python Code</h3>
+                    <pre class="code-box" id="string-code">from animaid import HTMLString
+
+s = HTMLString("Hello, World!")
+
+html = s.render()</pre>
+                </div>
+
+                <div class="html-section">
+                    <h3>Generated HTML</h3>
+                    <pre class="code-box html-output" id="string-html">&lt;span&gt;Hello, World!&lt;/span&gt;</pre>
+                </div>
+            </section>
+        </div>
+
+        <!-- HTMLInt Tab -->
+        <div class="tab-content" id="tab-int">
+            <aside class="sidebar">
+                <h2>HTMLInt Properties</h2>
+
+                <div class="control-group">
+                    <label>Quick Presets</label>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-preset="int-currency">Currency</button>
+                        <button class="preset-btn" data-preset="int-comma">Comma</button>
+                        <button class="preset-btn" data-preset="int-percent">Percent</button>
+                        <button class="preset-btn" data-preset="int-ordinal">Ordinal</button>
+                        <button class="preset-btn" data-preset="int-badge">Badge</button>
+                        <button class="preset-btn" data-preset="int-reset">Reset</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="int-value">Value</label>
+                    <input type="number" id="int-value" value="1234567" class="int-control">
+                </div>
+
+                <h3 class="section-title">Formatting</h3>
+
+                <div class="control-group">
+                    <label for="int-format">Number Format</label>
+                    <select id="int-format" class="int-control">
+                        <option value="default">Default</option>
+                        <option value="comma">Comma (1,234,567)</option>
+                        <option value="currency">Currency ($1,234,567)</option>
+                        <option value="percent">Percent (85%)</option>
+                        <option value="ordinal">Ordinal (1st, 2nd)</option>
+                        <option value="padded">Zero-padded</option>
+                    </select>
+                </div>
+
+                <div class="control-group" id="int-currency-symbol-group" style="display: none;">
+                    <label for="int-currency-symbol">Currency Symbol</label>
+                    <input type="text" id="int-currency-symbol" value="$" class="int-control">
+                </div>
+
+                <div class="control-group" id="int-padded-width-group" style="display: none;">
+                    <label for="int-padded-width">Padded Width</label>
+                    <input type="number" id="int-padded-width" value="6" min="1" max="20" class="int-control">
+                </div>
+
+                <h3 class="section-title">Text Styles</h3>
+
+                <div class="control-group">
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="int-bold" class="int-control"> Bold</label>
+                        <label><input type="checkbox" id="int-italic" class="int-control"> Italic</label>
+                        <label><input type="checkbox" id="int-underline" class="int-control"> Underline</label>
+                        <label><input type="checkbox" id="int-monospace" class="int-control"> Monospace</label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="int-color">Text Color</label>
+                    <div class="color-input">
+                        <input type="color" id="int-color-picker" value="#000000">
+                        <input type="text" id="int-color" placeholder="#000000 or red" class="int-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="int-background">Background Color</label>
+                    <div class="color-input">
+                        <input type="color" id="int-background-picker" value="#ffffff">
+                        <input type="text" id="int-background" placeholder="#ffffff or yellow" class="int-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="int-font-size">Font Size</label>
+                    <input type="text" id="int-font-size" placeholder="16px, 1.5em" class="int-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="int-padding">Padding</label>
+                    <input type="text" id="int-padding" placeholder="10px" class="int-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="int-border">Border</label>
+                    <input type="text" id="int-border" placeholder="1px solid black" class="int-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="int-border-radius">Border Radius</label>
+                    <input type="text" id="int-border-radius" placeholder="5px" class="int-control">
+                </div>
+            </aside>
+
+            <section class="display-area">
+                <div class="preview-section">
+                    <h3>Preview</h3>
+                    <div class="preview-box" id="int-preview">
+                        <span>1234567</span>
+                    </div>
+                </div>
+
+                <div class="code-section">
+                    <h3>Python Code</h3>
+                    <pre class="code-box" id="int-code">from animaid import HTMLInt
+
+n = HTMLInt(1234567)
+
+html = n.render()</pre>
+                </div>
+
+                <div class="html-section">
+                    <h3>Generated HTML</h3>
+                    <pre class="code-box html-output" id="int-html">&lt;span&gt;1234567&lt;/span&gt;</pre>
+                </div>
+            </section>
+        </div>
+
+        <!-- HTMLFloat Tab -->
+        <div class="tab-content" id="tab-float">
+            <aside class="sidebar">
+                <h2>HTMLFloat Properties</h2>
+
+                <div class="control-group">
+                    <label>Quick Presets</label>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-preset="float-currency">Currency</button>
+                        <button class="preset-btn" data-preset="float-percent">Percent</button>
+                        <button class="preset-btn" data-preset="float-decimal">Decimal</button>
+                        <button class="preset-btn" data-preset="float-scientific">Scientific</button>
+                        <button class="preset-btn" data-preset="float-badge">Badge</button>
+                        <button class="preset-btn" data-preset="float-reset">Reset</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="float-value">Value</label>
+                    <input type="number" id="float-value" value="3.14159" step="any" class="float-control">
+                </div>
+
+                <h3 class="section-title">Formatting</h3>
+
+                <div class="control-group">
+                    <label for="float-format">Number Format</label>
+                    <select id="float-format" class="float-control">
+                        <option value="default">Default</option>
+                        <option value="comma">Comma (1,234.56)</option>
+                        <option value="currency">Currency ($1,234.56)</option>
+                        <option value="percent">Percent (85.60%)</option>
+                        <option value="decimal">Fixed Decimal</option>
+                        <option value="scientific">Scientific (1.23e+06)</option>
+                        <option value="significant">Significant Figures</option>
+                    </select>
+                </div>
+
+                <div class="control-group" id="float-currency-symbol-group" style="display: none;">
+                    <label for="float-currency-symbol">Currency Symbol</label>
+                    <input type="text" id="float-currency-symbol" value="$" class="float-control">
+                </div>
+
+                <div class="control-group" id="float-decimals-group" style="display: none;">
+                    <label for="float-decimals">Decimal Places</label>
+                    <input type="number" id="float-decimals" value="2" min="0" max="10" class="float-control">
+                </div>
+
+                <div class="control-group" id="float-precision-group" style="display: none;">
+                    <label for="float-precision">Precision</label>
+                    <input type="number" id="float-precision" value="2" min="0" max="10" class="float-control">
+                </div>
+
+                <div class="control-group" id="float-figures-group" style="display: none;">
+                    <label for="float-figures">Significant Figures</label>
+                    <input type="number" id="float-figures" value="3" min="1" max="10" class="float-control">
+                </div>
+
+                <h3 class="section-title">Text Styles</h3>
+
+                <div class="control-group">
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="float-bold" class="float-control"> Bold</label>
+                        <label><input type="checkbox" id="float-italic" class="float-control"> Italic</label>
+                        <label><input type="checkbox" id="float-underline" class="float-control"> Underline</label>
+                        <label><input type="checkbox" id="float-monospace" class="float-control"> Monospace</label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="float-color">Text Color</label>
+                    <div class="color-input">
+                        <input type="color" id="float-color-picker" value="#000000">
+                        <input type="text" id="float-color" placeholder="#000000 or red" class="float-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="float-background">Background Color</label>
+                    <div class="color-input">
+                        <input type="color" id="float-background-picker" value="#ffffff">
+                        <input type="text" id="float-background" placeholder="#ffffff or yellow" class="float-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="float-font-size">Font Size</label>
+                    <input type="text" id="float-font-size" placeholder="16px, 1.5em" class="float-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="float-padding">Padding</label>
+                    <input type="text" id="float-padding" placeholder="10px" class="float-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="float-border">Border</label>
+                    <input type="text" id="float-border" placeholder="1px solid black" class="float-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="float-border-radius">Border Radius</label>
+                    <input type="text" id="float-border-radius" placeholder="5px" class="float-control">
+                </div>
+            </aside>
+
+            <section class="display-area">
+                <div class="preview-section">
+                    <h3>Preview</h3>
+                    <div class="preview-box" id="float-preview">
+                        <span>3.14159</span>
+                    </div>
+                </div>
+
+                <div class="code-section">
+                    <h3>Python Code</h3>
+                    <pre class="code-box" id="float-code">from animaid import HTMLFloat
+
+n = HTMLFloat(3.14159)
+
+html = n.render()</pre>
+                </div>
+
+                <div class="html-section">
+                    <h3>Generated HTML</h3>
+                    <pre class="code-box html-output" id="float-html">&lt;span&gt;3.14159&lt;/span&gt;</pre>
+                </div>
+            </section>
+        </div>
+
+        <!-- HTMLTuple Tab -->
+        <div class="tab-content" id="tab-tuple">
+            <aside class="sidebar">
+                <h2>HTMLTuple Properties</h2>
+
+                <div class="control-group">
+                    <label>Quick Presets</label>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-preset="tuple-parentheses">Parentheses</button>
+                        <button class="preset-btn" data-preset="tuple-pills">Pills</button>
+                        <button class="preset-btn" data-preset="tuple-tags">Tags</button>
+                        <button class="preset-btn" data-preset="tuple-labeled">Labeled</button>
+                        <button class="preset-btn" data-preset="tuple-card">Card</button>
+                        <button class="preset-btn" data-preset="tuple-reset">Reset</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="tuple-items">Items (comma-separated)</label>
+                    <textarea id="tuple-items" class="tuple-control" rows="2">Apple, Banana, Cherry</textarea>
+                </div>
+
+                <div class="control-group">
+                    <label><input type="checkbox" id="tuple-namedtuple" class="tuple-control"> Named Tuple (x, y, z fields)</label>
+                </div>
+
+                <h3 class="section-title">Format</h3>
+
+                <div class="control-group">
+                    <label for="tuple-format">Display Format</label>
+                    <select id="tuple-format" class="tuple-control">
+                        <option value="parentheses">Parentheses (a, b, c)</option>
+                        <option value="plain">Plain (no parens)</option>
+                        <option value="labeled">Labeled (field: value)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="tuple-direction">Direction</label>
+                    <select id="tuple-direction" class="tuple-control">
+                        <option value="horizontal">Horizontal</option>
+                        <option value="vertical">Vertical</option>
+                        <option value="grid">Grid</option>
+                    </select>
+                </div>
+
+                <div class="control-group" id="tuple-grid-columns-group" style="display: none;">
+                    <label for="tuple-grid-columns">Grid Columns</label>
+                    <input type="number" id="tuple-grid-columns" value="3" min="1" max="12" class="tuple-control">
+                </div>
+
+                <h3 class="section-title">Spacing</h3>
+
+                <div class="control-group">
+                    <label for="tuple-gap">Gap</label>
+                    <input type="text" id="tuple-gap" placeholder="10px" class="tuple-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="tuple-padding">Padding</label>
+                    <input type="text" id="tuple-padding" placeholder="10px" class="tuple-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="tuple-item-padding">Item Padding</label>
+                    <input type="text" id="tuple-item-padding" placeholder="5px" class="tuple-control">
+                </div>
+
+                <h3 class="section-title">Borders</h3>
+
+                <div class="control-group">
+                    <label for="tuple-border">Container Border</label>
+                    <input type="text" id="tuple-border" placeholder="1px solid black" class="tuple-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="tuple-border-radius">Border Radius</label>
+                    <input type="text" id="tuple-border-radius" placeholder="5px" class="tuple-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="tuple-item-border">Item Border</label>
+                    <input type="text" id="tuple-item-border" placeholder="1px solid gray" class="tuple-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="tuple-item-border-radius">Item Border Radius</label>
+                    <input type="text" id="tuple-item-border-radius" placeholder="4px" class="tuple-control">
+                </div>
+
+                <h3 class="section-title">Colors</h3>
+
+                <div class="control-group">
+                    <label for="tuple-background">Background</label>
+                    <div class="color-input">
+                        <input type="color" id="tuple-background-picker" value="#ffffff">
+                        <input type="text" id="tuple-background" placeholder="white" class="tuple-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="tuple-item-background">Item Background</label>
+                    <div class="color-input">
+                        <input type="color" id="tuple-item-background-picker" value="#ffffff">
+                        <input type="text" id="tuple-item-background" placeholder="#f0f0f0" class="tuple-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="tuple-color">Text Color</label>
+                    <div class="color-input">
+                        <input type="color" id="tuple-color-picker" value="#000000">
+                        <input type="text" id="tuple-color" placeholder="black" class="tuple-control">
+                    </div>
+                </div>
+            </aside>
+
+            <section class="display-area">
+                <div class="preview-section">
+                    <h3>Preview</h3>
+                    <div class="preview-box" id="tuple-preview">
+                        <span>(Apple, Banana, Cherry)</span>
+                    </div>
+                </div>
+
+                <div class="code-section">
+                    <h3>Python Code</h3>
+                    <pre class="code-box" id="tuple-code">from animaid import HTMLTuple
+
+t = HTMLTuple(("Apple", "Banana", "Cherry"))
+
+html = t.render()</pre>
+                </div>
+
+                <div class="html-section">
+                    <h3>Generated HTML</h3>
+                    <pre class="code-box html-output" id="tuple-html">&lt;span&gt;(Apple, Banana, Cherry)&lt;/span&gt;</pre>
+                </div>
+            </section>
+        </div>
+
+        <!-- HTMLSet Tab -->
+        <div class="tab-content" id="tab-set">
+            <aside class="sidebar">
+                <h2>HTMLSet Properties</h2>
+
+                <div class="control-group">
+                    <label>Quick Presets</label>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-preset="set-braces">Braces</button>
+                        <button class="preset-btn" data-preset="set-pills">Pills</button>
+                        <button class="preset-btn" data-preset="set-tags">Tags</button>
+                        <button class="preset-btn" data-preset="set-inline">Inline</button>
+                        <button class="preset-btn" data-preset="set-reset">Reset</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="set-items">Items (comma-separated, duplicates removed)</label>
+                    <textarea id="set-items" class="set-control" rows="2">Apple, Banana, Cherry, Apple</textarea>
+                </div>
+
+                <div class="control-group">
+                    <label><input type="checkbox" id="set-sorted" class="set-control"> Sort Items</label>
+                </div>
+
+                <h3 class="section-title">Format</h3>
+
+                <div class="control-group">
+                    <label for="set-format">Display Format</label>
+                    <select id="set-format" class="set-control">
+                        <option value="braces">Braces {a, b, c}</option>
+                        <option value="plain">Plain (no braces)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="set-direction">Direction</label>
+                    <select id="set-direction" class="set-control">
+                        <option value="horizontal">Horizontal</option>
+                        <option value="vertical">Vertical</option>
+                        <option value="grid">Grid</option>
+                    </select>
+                </div>
+
+                <div class="control-group" id="set-grid-columns-group" style="display: none;">
+                    <label for="set-grid-columns">Grid Columns</label>
+                    <input type="number" id="set-grid-columns" value="3" min="1" max="12" class="set-control">
+                </div>
+
+                <h3 class="section-title">Spacing</h3>
+
+                <div class="control-group">
+                    <label for="set-gap">Gap</label>
+                    <input type="text" id="set-gap" placeholder="10px" class="set-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="set-padding">Padding</label>
+                    <input type="text" id="set-padding" placeholder="10px" class="set-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="set-item-padding">Item Padding</label>
+                    <input type="text" id="set-item-padding" placeholder="5px" class="set-control">
+                </div>
+
+                <h3 class="section-title">Borders</h3>
+
+                <div class="control-group">
+                    <label for="set-border">Container Border</label>
+                    <input type="text" id="set-border" placeholder="1px solid black" class="set-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="set-border-radius">Border Radius</label>
+                    <input type="text" id="set-border-radius" placeholder="5px" class="set-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="set-item-border">Item Border</label>
+                    <input type="text" id="set-item-border" placeholder="1px solid gray" class="set-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="set-item-border-radius">Item Border Radius</label>
+                    <input type="text" id="set-item-border-radius" placeholder="4px" class="set-control">
+                </div>
+
+                <h3 class="section-title">Colors</h3>
+
+                <div class="control-group">
+                    <label for="set-background">Background</label>
+                    <div class="color-input">
+                        <input type="color" id="set-background-picker" value="#ffffff">
+                        <input type="text" id="set-background" placeholder="white" class="set-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="set-item-background">Item Background</label>
+                    <div class="color-input">
+                        <input type="color" id="set-item-background-picker" value="#ffffff">
+                        <input type="text" id="set-item-background" placeholder="#f0f0f0" class="set-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="set-color">Text Color</label>
+                    <div class="color-input">
+                        <input type="color" id="set-color-picker" value="#000000">
+                        <input type="text" id="set-color" placeholder="black" class="set-control">
+                    </div>
+                </div>
+            </aside>
+
+            <section class="display-area">
+                <div class="preview-section">
+                    <h3>Preview</h3>
+                    <div class="preview-box" id="set-preview">
+                        <span>{Apple, Banana, Cherry}</span>
+                    </div>
+                </div>
+
+                <div class="code-section">
+                    <h3>Python Code</h3>
+                    <pre class="code-box" id="set-code">from animaid import HTMLSet
+
+s = HTMLSet({"Apple", "Banana", "Cherry"})
+
+html = s.render()</pre>
+                </div>
+
+                <div class="html-section">
+                    <h3>Generated HTML</h3>
+                    <pre class="code-box html-output" id="set-html">&lt;span&gt;{Apple, Banana, Cherry}&lt;/span&gt;</pre>
+                </div>
+            </section>
+        </div>
+
+        <!-- HTMLList Tab -->
+        <div class="tab-content" id="tab-list">
+            <aside class="sidebar">
+                <h2>HTMLList Properties</h2>
+
+                <div class="control-group">
+                    <label>Quick Presets</label>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-preset="list-pills">Pills</button>
+                        <button class="preset-btn" data-preset="list-cards">Cards</button>
+                        <button class="preset-btn" data-preset="list-tags">Tags</button>
+                        <button class="preset-btn" data-preset="list-menu">Menu</button>
+                        <button class="preset-btn" data-preset="list-numbered">Numbered</button>
+                        <button class="preset-btn" data-preset="list-reset">Reset</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="list-items">Items (comma-separated)</label>
+                    <textarea id="list-items" class="list-control" rows="3">Apple, Banana, Cherry, Date</textarea>
+                </div>
+
+                <div class="control-group">
+                    <label for="list-direction">Direction</label>
+                    <select id="list-direction" class="list-control">
+                        <option value="vertical">Vertical</option>
+                        <option value="horizontal">Horizontal</option>
+                        <option value="vertical_reverse">Vertical Reverse</option>
+                        <option value="horizontal_reverse">Horizontal Reverse</option>
+                        <option value="grid">Grid</option>
+                    </select>
+                </div>
+
+                <div class="control-group" id="grid-columns-group" style="display: none;">
+                    <label for="list-grid-columns">Grid Columns</label>
+                    <input type="number" id="list-grid-columns" value="3" min="1" max="12" class="list-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="list-type">List Type</label>
+                    <select id="list-type" class="list-control">
+                        <option value="unordered">Unordered (ul)</option>
+                        <option value="ordered">Ordered (ol)</option>
+                        <option value="plain">Plain (div)</option>
+                    </select>
+                </div>
+
+                <h3 class="section-title">Spacing</h3>
+
+                <div class="control-group">
+                    <label for="list-gap">Gap (between items)</label>
+                    <input type="text" id="list-gap" placeholder="10px, 1rem" class="list-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="list-padding">Container Padding</label>
+                    <input type="text" id="list-padding" placeholder="10px" class="list-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="list-margin">Container Margin</label>
+                    <input type="text" id="list-margin" placeholder="10px" class="list-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="list-item-padding">Item Padding</label>
+                    <input type="text" id="list-item-padding" placeholder="8px" class="list-control">
+                </div>
+
+                <h3 class="section-title">Borders</h3>
+
+                <div class="control-group">
+                    <label for="list-border">Container Border</label>
+                    <input type="text" id="list-border" placeholder="1px solid black" class="list-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="list-border-radius">Container Border Radius</label>
+                    <input type="text" id="list-border-radius" placeholder="5px" class="list-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="list-item-border">Item Border</label>
+                    <input type="text" id="list-item-border" placeholder="1px solid gray" class="list-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="list-item-border-radius">Item Border Radius</label>
+                    <input type="text" id="list-item-border-radius" placeholder="3px" class="list-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="list-separator">Separator (between items)</label>
+                    <input type="text" id="list-separator" placeholder="1px solid #ddd" class="list-control">
+                </div>
+
+                <h3 class="section-title">Colors</h3>
+
+                <div class="control-group">
+                    <label for="list-background">Container Background</label>
+                    <div class="color-input">
+                        <input type="color" id="list-background-picker" value="#ffffff">
+                        <input type="text" id="list-background" placeholder="#f5f5f5" class="list-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="list-item-background">Item Background</label>
+                    <div class="color-input">
+                        <input type="color" id="list-item-background-picker" value="#ffffff">
+                        <input type="text" id="list-item-background" placeholder="white" class="list-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="list-color">Text Color</label>
+                    <div class="color-input">
+                        <input type="color" id="list-color-picker" value="#000000">
+                        <input type="text" id="list-color" placeholder="#333" class="list-control">
+                    </div>
+                </div>
+
+                <h3 class="section-title">Alignment</h3>
+
+                <div class="control-group">
+                    <label for="list-align-items">Align Items</label>
+                    <select id="list-align-items" class="list-control">
+                        <option value="">Default</option>
+                        <option value="start">Start</option>
+                        <option value="center">Center</option>
+                        <option value="end">End</option>
+                        <option value="stretch">Stretch</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="list-justify-content">Justify Content</label>
+                    <select id="list-justify-content" class="list-control">
+                        <option value="">Default</option>
+                        <option value="start">Start</option>
+                        <option value="center">Center</option>
+                        <option value="end">End</option>
+                        <option value="space-between">Space Between</option>
+                        <option value="space-around">Space Around</option>
+                        <option value="space-evenly">Space Evenly</option>
+                    </select>
+                </div>
+            </aside>
+
+            <section class="display-area">
+                <div class="preview-section">
+                    <h3>Preview</h3>
+                    <div class="preview-box" id="list-preview">
+                        <ul><li>Apple</li><li>Banana</li><li>Cherry</li><li>Date</li></ul>
+                    </div>
+                </div>
+
+                <div class="code-section">
+                    <h3>Python Code</h3>
+                    <pre class="code-box" id="list-code">from animaid import HTMLList
+
+lst = HTMLList(["Apple", "Banana", "Cherry", "Date"])
+
+html = lst.render()</pre>
+                </div>
+
+                <div class="html-section">
+                    <h3>Generated HTML</h3>
+                    <pre class="code-box html-output" id="list-html">&lt;ul&gt;&lt;li&gt;Apple&lt;/li&gt;&lt;li&gt;Banana&lt;/li&gt;&lt;li&gt;Cherry&lt;/li&gt;&lt;li&gt;Date&lt;/li&gt;&lt;/ul&gt;</pre>
+                </div>
+            </section>
+        </div>
+
+        <!-- HTMLDict Tab -->
+        <div class="tab-content" id="tab-dict">
+            <aside class="sidebar">
+                <h2>HTMLDict Properties</h2>
+
+                <div class="control-group">
+                    <label>Quick Presets</label>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-preset="dict-card">Card</button>
+                        <button class="preset-btn" data-preset="dict-simple">Simple</button>
+                        <button class="preset-btn" data-preset="dict-striped">Striped</button>
+                        <button class="preset-btn" data-preset="dict-labeled">Labeled</button>
+                        <button class="preset-btn" data-preset="dict-bordered">Bordered</button>
+                        <button class="preset-btn" data-preset="dict-reset">Reset</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-items">Items (key=value, comma-separated)</label>
+                    <textarea id="dict-items" class="dict-control" rows="3">name=Alice, role=Developer, status=Active</textarea>
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-format">Format</label>
+                    <select id="dict-format" class="dict-control">
+                        <option value="definition_list">Definition List (dl)</option>
+                        <option value="table">Table</option>
+                        <option value="divs">Divs</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-layout">Layout</label>
+                    <select id="dict-layout" class="dict-control">
+                        <option value="vertical">Vertical</option>
+                        <option value="horizontal">Horizontal</option>
+                        <option value="grid">Grid</option>
+                    </select>
+                </div>
+
+                <div class="control-group" id="dict-grid-columns-group" style="display: none;">
+                    <label for="dict-grid-columns">Grid Columns</label>
+                    <input type="number" id="dict-grid-columns" value="2" min="1" max="12" class="dict-control">
+                </div>
+
+                <h3 class="section-title">Key Styles</h3>
+
+                <div class="control-group">
+                    <label>Key Text Styles</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="dict-key-bold" class="dict-control"> Bold</label>
+                        <label><input type="checkbox" id="dict-key-italic" class="dict-control"> Italic</label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-key-color">Key Color</label>
+                    <div class="color-input">
+                        <input type="color" id="dict-key-color-picker" value="#333333">
+                        <input type="text" id="dict-key-color" placeholder="#333" class="dict-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-key-background">Key Background</label>
+                    <div class="color-input">
+                        <input type="color" id="dict-key-background-picker" value="#f5f5f5">
+                        <input type="text" id="dict-key-background" placeholder="#f5f5f5" class="dict-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-key-width">Key Width</label>
+                    <input type="text" id="dict-key-width" placeholder="100px, 30%" class="dict-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-key-padding">Key Padding</label>
+                    <input type="text" id="dict-key-padding" placeholder="8px" class="dict-control">
+                </div>
+
+                <h3 class="section-title">Value Styles</h3>
+
+                <div class="control-group">
+                    <label>Value Text Styles</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="dict-value-bold" class="dict-control"> Bold</label>
+                        <label><input type="checkbox" id="dict-value-italic" class="dict-control"> Italic</label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-value-color">Value Color</label>
+                    <div class="color-input">
+                        <input type="color" id="dict-value-color-picker" value="#666666">
+                        <input type="text" id="dict-value-color" placeholder="#666" class="dict-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-value-background">Value Background</label>
+                    <div class="color-input">
+                        <input type="color" id="dict-value-background-picker" value="#ffffff">
+                        <input type="text" id="dict-value-background" placeholder="white" class="dict-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-value-padding">Value Padding</label>
+                    <input type="text" id="dict-value-padding" placeholder="8px" class="dict-control">
+                </div>
+
+                <h3 class="section-title">Separators</h3>
+
+                <div class="control-group">
+                    <label for="dict-separator">Key-Value Separator</label>
+                    <input type="text" id="dict-separator" placeholder=": " class="dict-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-entry-separator">Entry Separator (border)</label>
+                    <input type="text" id="dict-entry-separator" placeholder="1px solid #ddd" class="dict-control">
+                </div>
+
+                <h3 class="section-title">Container Styles</h3>
+
+                <div class="control-group">
+                    <label for="dict-gap">Gap</label>
+                    <input type="text" id="dict-gap" placeholder="10px" class="dict-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-padding">Padding</label>
+                    <input type="text" id="dict-padding" placeholder="15px" class="dict-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-border">Border</label>
+                    <input type="text" id="dict-border" placeholder="1px solid #ccc" class="dict-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-border-radius">Border Radius</label>
+                    <input type="text" id="dict-border-radius" placeholder="5px" class="dict-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-background">Background</label>
+                    <div class="color-input">
+                        <input type="color" id="dict-background-picker" value="#ffffff">
+                        <input type="text" id="dict-background" placeholder="#fff" class="dict-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="dict-width">Width</label>
+                    <input type="text" id="dict-width" placeholder="300px, 100%" class="dict-control">
+                </div>
+            </aside>
+
+            <section class="display-area">
+                <div class="preview-section">
+                    <h3>Preview</h3>
+                    <div class="preview-box" id="dict-preview">
+                        <dl><dt>name</dt><dd>Alice</dd><dt>role</dt><dd>Developer</dd><dt>status</dt><dd>Active</dd></dl>
+                    </div>
+                </div>
+
+                <div class="code-section">
+                    <h3>Python Code</h3>
+                    <pre class="code-box" id="dict-code">from animaid import HTMLDict
+
+d = HTMLDict({"name": "Alice", "role": "Developer", "status": "Active"})
+
+html = d.render()</pre>
+                </div>
+
+                <div class="html-section">
+                    <h3>Generated HTML</h3>
+                    <pre class="code-box html-output" id="dict-html">&lt;dl&gt;&lt;dt&gt;name&lt;/dt&gt;&lt;dd&gt;Alice&lt;/dd&gt;&lt;dt&gt;role&lt;/dt&gt;&lt;dd&gt;Developer&lt;/dd&gt;&lt;dt&gt;status&lt;/dt&gt;&lt;dd&gt;Active&lt;/dd&gt;&lt;/dl&gt;</pre>
+                </div>
+            </section>
+        </div>
+
+        <!-- Dict of Lists Tab -->
+        <div class="tab-content" id="tab-dict-of-lists">
+            <aside class="sidebar">
+                <h2>Dict of Lists</h2>
+                <p class="sidebar-info">Demonstrates an HTMLDict where values are HTMLLists. Each key maps to a list of items.</p>
+
+                <h3 class="section-title">Data</h3>
+
+                <div class="control-group">
+                    <label for="dol-fruits">Fruits</label>
+                    <input type="text" id="dol-fruits" value="Apple, Banana, Cherry" class="dol-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="dol-vegetables">Vegetables</label>
+                    <input type="text" id="dol-vegetables" value="Carrot, Broccoli, Spinach" class="dol-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="dol-grains">Grains</label>
+                    <input type="text" id="dol-grains" value="Rice, Wheat, Oats" class="dol-control">
+                </div>
+
+                <h3 class="section-title">Dict Styles</h3>
+
+                <div class="control-group">
+                    <label for="dol-dict-format">Dict Format</label>
+                    <select id="dol-dict-format" class="dol-control">
+                        <option value="definition_list">Definition List</option>
+                        <option value="table">Table</option>
+                        <option value="divs">Divs</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label><input type="checkbox" id="dol-key-bold" class="dol-control" checked> Bold Keys</label>
+                </div>
+
+                <div class="control-group">
+                    <label for="dol-key-color">Key Color</label>
+                    <div class="color-input">
+                        <input type="color" id="dol-key-color-picker" value="#2563eb">
+                        <input type="text" id="dol-key-color" value="#2563eb" class="dol-control">
+                    </div>
+                </div>
+
+                <h3 class="section-title">List Styles</h3>
+
+                <div class="control-group">
+                    <label for="dol-list-direction">List Direction</label>
+                    <select id="dol-list-direction" class="dol-control">
+                        <option value="horizontal">Horizontal</option>
+                        <option value="vertical">Vertical</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="dol-list-gap">List Gap</label>
+                    <input type="text" id="dol-list-gap" value="8px" class="dol-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="dol-item-background">Item Background</label>
+                    <div class="color-input">
+                        <input type="color" id="dol-item-background-picker" value="#f0f9ff">
+                        <input type="text" id="dol-item-background" value="#f0f9ff" class="dol-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="dol-item-padding">Item Padding</label>
+                    <input type="text" id="dol-item-padding" value="4px 8px" class="dol-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="dol-item-border-radius">Item Border Radius</label>
+                    <input type="text" id="dol-item-border-radius" value="4px" class="dol-control">
+                </div>
+            </aside>
+
+            <section class="display-area">
+                <div class="preview-section">
+                    <h3>Preview</h3>
+                    <div class="preview-box" id="dol-preview">
+                        <!-- Rendered dict of lists will appear here -->
+                    </div>
+                </div>
+
+                <div class="code-section">
+                    <h3>Python Code</h3>
+                    <pre class="code-box" id="dol-code">from animaid import HTMLDict, HTMLList
+
+d = HTMLDict({
+    "Fruits": HTMLList(["Apple", "Banana", "Cherry"]).horizontal.gap("8px"),
+    "Vegetables": HTMLList(["Carrot", "Broccoli", "Spinach"]).horizontal.gap("8px"),
+    "Grains": HTMLList(["Rice", "Wheat", "Oats"]).horizontal.gap("8px"),
+}).key_bold.key_color("#2563eb")
+
+html = d.render()</pre>
+                </div>
+
+                <div class="html-section">
+                    <h3>Generated HTML</h3>
+                    <pre class="code-box html-output" id="dol-html"></pre>
+                </div>
+            </section>
+        </div>
+
+        <!-- List of Dicts Tab -->
+        <div class="tab-content" id="tab-list-of-dicts">
+            <aside class="sidebar">
+                <h2>List of Dicts</h2>
+                <p class="sidebar-info">Demonstrates an HTMLList containing multiple HTMLDict items. Great for displaying records or card layouts.</p>
+
+                <h3 class="section-title">Records</h3>
+
+                <div class="control-group">
+                    <label for="lod-record1-name">Record 1 - Name</label>
+                    <input type="text" id="lod-record1-name" value="Alice" class="lod-control">
+                </div>
+                <div class="control-group">
+                    <label for="lod-record1-role">Record 1 - Role</label>
+                    <input type="text" id="lod-record1-role" value="Developer" class="lod-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="lod-record2-name">Record 2 - Name</label>
+                    <input type="text" id="lod-record2-name" value="Bob" class="lod-control">
+                </div>
+                <div class="control-group">
+                    <label for="lod-record2-role">Record 2 - Role</label>
+                    <input type="text" id="lod-record2-role" value="Designer" class="lod-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="lod-record3-name">Record 3 - Name</label>
+                    <input type="text" id="lod-record3-name" value="Carol" class="lod-control">
+                </div>
+                <div class="control-group">
+                    <label for="lod-record3-role">Record 3 - Role</label>
+                    <input type="text" id="lod-record3-role" value="Manager" class="lod-control">
+                </div>
+
+                <h3 class="section-title">List Styles</h3>
+
+                <div class="control-group">
+                    <label for="lod-list-direction">Layout</label>
+                    <select id="lod-list-direction" class="lod-control">
+                        <option value="horizontal">Horizontal (Cards)</option>
+                        <option value="vertical">Vertical (Stack)</option>
+                        <option value="grid">Grid</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="lod-list-gap">Gap</label>
+                    <input type="text" id="lod-list-gap" value="16px" class="lod-control">
+                </div>
+
+                <h3 class="section-title">Card Styles</h3>
+
+                <div class="control-group">
+                    <label for="lod-card-format">Card Format</label>
+                    <select id="lod-card-format" class="lod-control">
+                        <option value="definition_list">Definition List</option>
+                        <option value="table">Table</option>
+                        <option value="divs">Divs</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="lod-card-padding">Card Padding</label>
+                    <input type="text" id="lod-card-padding" value="12px" class="lod-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="lod-card-border">Card Border</label>
+                    <input type="text" id="lod-card-border" value="1px solid #e5e7eb" class="lod-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="lod-card-border-radius">Card Border Radius</label>
+                    <input type="text" id="lod-card-border-radius" value="8px" class="lod-control">
+                </div>
+
+                <div class="control-group">
+                    <label for="lod-card-background">Card Background</label>
+                    <div class="color-input">
+                        <input type="color" id="lod-card-background-picker" value="#ffffff">
+                        <input type="text" id="lod-card-background" value="#ffffff" class="lod-control">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label><input type="checkbox" id="lod-key-bold" class="lod-control" checked> Bold Keys</label>
+                </div>
+            </aside>
+
+            <section class="display-area">
+                <div class="preview-section">
+                    <h3>Preview</h3>
+                    <div class="preview-box" id="lod-preview">
+                        <!-- Rendered list of dicts will appear here -->
+                    </div>
+                </div>
+
+                <div class="code-section">
+                    <h3>Python Code</h3>
+                    <pre class="code-box" id="lod-code">from animaid import HTMLDict, HTMLList
+
+cards = [
+    HTMLDict({"Name": "Alice", "Role": "Developer"}).key_bold.padding("12px").border("1px solid #e5e7eb").border_radius("8px"),
+    HTMLDict({"Name": "Bob", "Role": "Designer"}).key_bold.padding("12px").border("1px solid #e5e7eb").border_radius("8px"),
+    HTMLDict({"Name": "Carol", "Role": "Manager"}).key_bold.padding("12px").border("1px solid #e5e7eb").border_radius("8px"),
+]
+
+lst = HTMLList(cards).horizontal.gap("16px")
+
+html = lst.render()</pre>
+                </div>
+
+                <div class="html-section">
+                    <h3>Generated HTML</h3>
+                    <pre class="code-box html-output" id="lod-html"></pre>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="/static/app.js?v=2"></script>
+</body>
+</html>
