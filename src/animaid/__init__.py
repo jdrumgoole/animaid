@@ -61,6 +61,12 @@ from animaid.html_set import HTMLSet
 from animaid.html_string import HTMLString
 from animaid.html_tuple import HTMLTuple
 
+# Conditional import for Animate (requires tutorial dependencies)
+try:
+    from animaid.animate import Animate
+except ImportError:
+    Animate = None  # type: ignore[misc, assignment]
+
 __version__ = "0.1.0"
 
 # Beginner-friendly aliases (shorter names)
@@ -74,6 +80,8 @@ Set = HTMLSet
 
 __all__ = [
     "__version__",
+    # Animation
+    "Animate",
     # HTML types (full names)
     "HTMLDict",
     "HTMLFloat",

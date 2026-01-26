@@ -9,8 +9,11 @@ Animaid provides tools to visualize and render Python data structures as styled 
 - **HTMLString** - A `str` subclass for rendering styled text
 - **HTMLList** - A `list` subclass for rendering lists with layout options
 - **HTMLDict** - A `dict` subclass for rendering key-value pairs
+- **Animate** - A Tkinter-like interactive GUI environment using HTML
 
 All classes support a fluent API for chaining style methods and are compatible with Jinja2 templates via the `__html__()` protocol.
+
+The `Animate` class provides a real-time browser-based display where you can add, update, and remove AnimAID objects programmatically with live updates via WebSocket.
 
 ## Installation
 
@@ -239,6 +242,94 @@ HTMLString("Hello").color(Color.red)    # Using CSS type
 
 HTMLString("Hello").font_size("16px")   # Using string
 HTMLString("Hello").font_size(Size.px(16))  # Using CSS type
+```
+
+## Animate - Interactive Display
+
+The `Animate` class provides a Tkinter-like interactive GUI environment using HTML. The browser becomes the display surface, and AnimAID objects become widgets that can be added, updated, and removed programmatically with real-time visual feedback.
+
+### Basic Usage
+
+```python
+from animaid import Animate, HTMLString, HTMLList
+
+# Create and start the server (opens browser automatically)
+anim = Animate()
+anim.run()
+
+# Add items - browser updates in real-time
+anim.add(HTMLString("Hello World!").bold.xl)
+anim.add(HTMLString("This updates live").italic.blue)
+anim.add(HTMLList(["Apple", "Banana", "Cherry"]).pills)
+
+# Update an existing item
+item_id = anim.add(HTMLString("Loading...").muted)
+anim.update(item_id, HTMLString("Done!").success)
+
+# Remove items
+anim.remove(item_id)
+anim.clear()  # Clear all items
+
+# Stop the server when done
+anim.stop()
+```
+
+### Context Manager
+
+Use the context manager for automatic cleanup:
+
+```python
+from animaid import Animate, HTMLString
+
+with Animate() as anim:
+    anim.add(HTMLString("Temporary display").bold)
+    anim.add(HTMLString("Server stops when context exits").muted)
+    input("Press Enter to exit...")
+# Server stops automatically when context exits
+```
+
+### Configuration Options
+
+```python
+# Custom port and title
+anim = Animate(port=8300, title="My App")
+
+# Disable auto-opening browser
+anim = Animate(auto_open=False)
+anim.run()
+print(f"Open browser at: {anim.url}")
+```
+
+### API Methods
+
+| Method | Description |
+|--------|-------------|
+| `run()` | Start server and open browser |
+| `stop()` | Stop the server |
+| `add(item, id=None)` | Add item, returns ID |
+| `update(id, item)` | Update item by ID |
+| `remove(id)` | Remove item by ID |
+| `clear()` | Remove all items |
+| `get(id)` | Get item by ID |
+| `items()` | Get all (id, item) pairs |
+
+### Properties
+
+| Property | Description |
+|----------|-------------|
+| `url` | Server URL (e.g., `http://127.0.0.1:8200`) |
+| `is_running` | Whether server is running |
+| `title` | Display title |
+| `port` | Server port |
+
+### Installation
+
+The `Animate` class requires the tutorial dependencies:
+
+```bash
+pip install animaid[tutorial]
+# or with uv
+uv pip install animaid[tutorial]
 ```
 
 ## Tutorial

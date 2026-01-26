@@ -46,6 +46,7 @@ AnimAID provides HTML-renderable versions of Python's built-in types:
 | `dict` | `HTMLDict` | Display as tables, cards, or definition lists |
 | `tuple` | `HTMLTuple` | Show tuples with labels or custom separators |
 | `set` | `HTMLSet` | Render unique items as tags or pills |
+| - | `Animate` | Interactive browser display with real-time updates |
 
 ## Learning by Example
 
@@ -231,6 +232,40 @@ Spacing.symmetric(10, 20)    # 10px top/bottom, 20px left/right
 Border.solid(1, Color.gray)  # 1px solid gray
 Border.dashed(2, Color.red)  # 2px dashed red
 ```
+
+## Interactive Display (Animate)
+
+The `Animate` class provides a Tkinter-like interactive environment using HTML. The browser becomes the display surface where you can add, update, and remove AnimAID objects in real-time.
+
+```python
+from animaid import Animate, HTMLString, HTMLList
+
+# Create and start (opens browser automatically)
+anim = Animate()
+anim.run()
+
+# Add items - browser updates in real-time
+anim.add(HTMLString("Hello World!").bold.xl)
+anim.add(HTMLList(["Apple", "Banana", "Cherry"]).pills)
+
+# Update existing items
+item_id = anim.add(HTMLString("Loading..."))
+anim.update(item_id, HTMLString("Done!").success)
+
+# Clean up
+anim.stop()
+```
+
+Or use the context manager:
+
+```python
+with Animate() as anim:
+    anim.add(HTMLString("Temporary display").bold)
+    input("Press Enter to exit...")
+# Server stops automatically
+```
+
+**Note:** Animate requires the tutorial dependencies: `pip install animaid[tutorial]`
 
 ## Interactive Tutorial
 

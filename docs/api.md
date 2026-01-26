@@ -9,6 +9,17 @@
    :show-inheritance:
 ```
 
+## Interactive Display
+
+### Animate
+
+```{eval-rst}
+.. autoclass:: animaid.Animate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+```
+
 ## HTML Types
 
 ### HTMLString
