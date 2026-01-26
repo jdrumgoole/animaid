@@ -1,4 +1,8 @@
-# Animaid Project Instructions
+# AnimAID Project Instructions
+
+## Project Naming
+- In documentation, README, and other non-code locations, use "AnimAID" (with capital A, I, D)
+- In code (package names, imports, variables), use lowercase "animaid"
 
 ## HTML Render Objects
 - Whenever we update an HTML render object (HTMLString, HTMLList, HTMLDict, etc.), make sure to update both the docs and the tutorial.

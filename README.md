@@ -1,8 +1,8 @@
-# Animaid
+# AnimAID
 
 **Turn Python data structures into beautiful HTML with zero effort.**
 
-Animaid is a Python library that wraps common data types (strings, numbers, lists, dicts, tuples, sets) and gives them the ability to render themselves as styled HTML. It's perfect for:
+AnimAID is a Python library that wraps common data types (strings, numbers, lists, dicts, tuples, sets) and gives them the ability to render themselves as styled HTML. It's perfect for:
 
 - Building interactive tutorials and documentation
 - Creating quick web dashboards
@@ -33,11 +33,11 @@ print(greeting.render())
 
 That's it! You just created styled HTML from Python.
 
-## What Can Animaid Do?
+## What Can AnimAID Do?
 
-Animaid provides HTML-renderable versions of Python's built-in types:
+AnimAID provides HTML-renderable versions of Python's built-in types:
 
-| Python Type | Animaid Type | What It Does |
+| Python Type | AnimAID Type | What It Does |
 |-------------|--------------|--------------|
 | `str` | `HTMLString` | Style text with colors, fonts, backgrounds |
 | `int` | `HTMLInt` | Format numbers with commas, currency, percentages |
@@ -158,7 +158,7 @@ pills = tags.pills  # Rounded pill-style items
 
 ## The Fluent API
 
-Animaid uses a "fluent" API where methods return new objects, letting you chain calls:
+AnimAID uses a "fluent" API where methods return new objects, letting you chain calls:
 
 ```python
 # Method chaining
@@ -207,7 +207,7 @@ HTMLSet(items).tags            # Tag-style items
 
 ## CSS Helper Types
 
-Animaid includes helper types for CSS values:
+AnimAID includes helper types for CSS values:
 
 ```python
 from animaid import Color, Size, Spacing, Border
@@ -234,7 +234,7 @@ Border.dashed(2, Color.red)  # 2px dashed red
 
 ## Interactive Tutorial
 
-Animaid includes a web-based tutorial that lets you experiment with all the features:
+AnimAID includes a web-based tutorial that lets you experiment with all the features:
 
 ```bash
 # Start the tutorial server
@@ -252,7 +252,7 @@ The tutorial provides:
 
 ## Type Aliases
 
-For convenience, Animaid provides short aliases:
+For convenience, AnimAID provides short aliases:
 
 ```python
 from animaid import String, Int, Float, List, Dict, Tuple, Set
@@ -264,7 +264,7 @@ String("hello")      # Short alias
 
 ## Common Styling Methods
 
-Most Animaid types share these styling methods:
+Most AnimAID types share these styling methods:
 
 | Method | Example | Description |
 |--------|---------|-------------|
