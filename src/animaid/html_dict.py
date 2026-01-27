@@ -8,14 +8,10 @@ from enum import Enum
 from typing import Any, Self
 
 from animaid.css_types import (
-    Border,
     BorderValue,
-    Color,
     ColorValue,
     CSSValue,
-    Size,
     SizeValue,
-    Spacing,
     SpacingValue,
 )
 from animaid.html_object import HTMLObject
@@ -49,7 +45,8 @@ class HTMLDict(HTMLObject, dict):
 
     HTMLDict behaves like a regular Python dict but includes
     methods for applying CSS styles and rendering to HTML.
-    Supports definition list, table, and flexbox layouts.
+    All styling methods modify the object in-place and return self
+    for method chaining. Supports definition list, table, and flexbox layouts.
 
     Examples:
         >>> d = HTMLDict({"name": "Alice", "age": 30})
@@ -77,7 +74,9 @@ class HTMLDict(HTMLObject, dict):
     _show_keys: bool
     _obs_id: str
 
-    def __init__(self, data: dict[Any, Any] | None = None, **styles: str | CSSValue) -> None:
+    def __init__(
+        self, data: dict[Any, Any] | None = None, **styles: str | CSSValue
+    ) -> None:
         """Initialize an HTMLDict.
 
         Args:
@@ -108,7 +107,8 @@ class HTMLDict(HTMLObject, dict):
         """Publish change notification via pypubsub."""
         try:
             from pubsub import pub
-            pub.sendMessage('animaid.changed', obs_id=self._obs_id)
+
+            pub.sendMessage("animaid.changed", obs_id=self._obs_id)
         except ImportError:
             pass  # pypubsub not installed
 
@@ -127,7 +127,11 @@ class HTMLDict(HTMLObject, dict):
         new_entry_separator: str | None = None,
         new_show_keys: bool | None = None,
     ) -> Self:
-        """Create a copy with modified settings."""
+        """Create a copy with modified settings.
+
+        This method is used internally for operations that must return
+        a new object (like merging dicts with | operator).
+        """
         result = HTMLDict(dict(self))
         result._styles = self._styles.copy()
         result._key_styles = self._key_styles.copy()
@@ -175,399 +179,469 @@ class HTMLDict(HTMLObject, dict):
     # -------------------------------------------------------------------------
 
     def styled(self, **styles: str | CSSValue) -> Self:
-        """Return a copy with additional container styles.
+        """Apply additional container styles in-place.
 
         Args:
             **styles: CSS property-value pairs for the container.
                       Accepts both strings and CSS type objects (Color, Size, etc.)
 
         Returns:
-            A new HTMLDict with combined styles.
+            Self for method chaining.
         """
-        css_styles = {k.replace("_", "-"): _to_css(v) for k, v in styles.items()}
-        return self._copy_with_settings(new_styles=css_styles)
+        for key, value in styles.items():
+            css_key = key.replace("_", "-")
+            self._styles[css_key] = _to_css(value)
+        self._notify()
+        return self
 
     def add_class(self, *class_names: str) -> Self:
-        """Return a copy with additional CSS classes on the container.
+        """Add CSS classes on the container in-place.
 
         Args:
             *class_names: CSS class names to add.
 
         Returns:
-            A new HTMLDict with additional classes.
+            Self for method chaining.
         """
-        return self._copy_with_settings(new_classes=list(class_names))
+        self._css_classes.extend(class_names)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Format methods
     # -------------------------------------------------------------------------
 
-    @property
     def as_definition_list(self) -> Self:
-        """Return a copy rendered as a definition list (<dl>)."""
-        return self._copy_with_settings(new_format=DictFormat.DEFINITION_LIST)
+        """Apply definition list (<dl>) format in-place."""
+        self._format = DictFormat.DEFINITION_LIST
+        self._notify()
+        return self
 
-    @property
     def as_table(self) -> Self:
-        """Return a copy rendered as a table (<table>)."""
-        return self._copy_with_settings(new_format=DictFormat.TABLE)
+        """Apply table (<table>) format in-place."""
+        self._format = DictFormat.TABLE
+        self._notify()
+        return self
 
-    @property
     def as_divs(self) -> Self:
-        """Return a copy rendered as flexbox divs."""
-        return self._copy_with_settings(new_format=DictFormat.DIVS)
+        """Apply flexbox divs format in-place."""
+        self._format = DictFormat.DIVS
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Layout methods
     # -------------------------------------------------------------------------
 
-    @property
     def vertical(self) -> Self:
-        """Return a copy with vertical layout (entries stacked)."""
-        return self._copy_with_settings(new_layout=DictLayout.VERTICAL)
+        """Apply vertical layout (entries stacked) in-place."""
+        self._layout = DictLayout.VERTICAL
+        self._notify()
+        return self
 
-    @property
     def horizontal(self) -> Self:
-        """Return a copy with horizontal layout (entries side by side)."""
-        return self._copy_with_settings(
-            new_layout=DictLayout.HORIZONTAL,
-            new_format=DictFormat.DIVS,
-        )
+        """Apply horizontal layout (entries side by side) in-place."""
+        self._layout = DictLayout.HORIZONTAL
+        self._format = DictFormat.DIVS
+        self._notify()
+        return self
 
     def grid(self, columns: int = 2) -> Self:
-        """Return a copy with grid layout.
+        """Apply grid layout in-place.
 
         Args:
             columns: Number of key-value pairs per row.
         """
-        return self._copy_with_settings(
-            new_layout=DictLayout.GRID,
-            new_format=DictFormat.DIVS,
-            new_grid_columns=columns,
-        )
+        self._layout = DictLayout.GRID
+        self._format = DictFormat.DIVS
+        self._grid_columns = columns
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Key styling methods
     # -------------------------------------------------------------------------
 
     def key_styled(self, **styles: str | CSSValue) -> Self:
-        """Return a copy with styles applied to keys.
+        """Apply styles to keys in-place.
 
         Args:
             **styles: CSS property-value pairs for keys.
                       Accepts both strings and CSS type objects (Color, Size, etc.)
         """
-        css_styles = {k.replace("_", "-"): _to_css(v) for k, v in styles.items()}
-        return self._copy_with_settings(new_key_styles=css_styles)
+        for key, value in styles.items():
+            css_key = key.replace("_", "-")
+            self._key_styles[css_key] = _to_css(value)
+        self._notify()
+        return self
 
-    @property
     def key_bold(self) -> Self:
-        """Return a copy with bold keys."""
-        return self.key_styled(font_weight="bold")
+        """Apply bold style to keys in-place."""
+        self._key_styles["font-weight"] = "bold"
+        self._notify()
+        return self
 
-    @property
     def key_italic(self) -> Self:
-        """Return a copy with italic keys."""
-        return self.key_styled(font_style="italic")
+        """Apply italic style to keys in-place."""
+        self._key_styles["font-style"] = "italic"
+        self._notify()
+        return self
 
     def key_color(self, value: ColorValue) -> Self:
-        """Return a copy with colored keys.
+        """Apply color to keys in-place.
 
         Args:
             value: CSS color value (e.g., "blue", Color.blue, Color.hex("#00f")).
         """
-        return self.key_styled(color=_to_css(value))
+        self._key_styles["color"] = _to_css(value)
+        self._notify()
+        return self
 
     def key_background(self, value: ColorValue) -> Self:
-        """Return a copy with background color on keys.
+        """Apply background color to keys in-place.
 
         Args:
             value: CSS color value (e.g., "yellow", Color.yellow).
         """
-        return self.key_styled(background_color=_to_css(value))
+        self._key_styles["background-color"] = _to_css(value)
+        self._notify()
+        return self
 
     def key_width(self, value: SizeValue) -> Self:
-        """Return a copy with fixed key width.
+        """Apply fixed key width in-place.
 
         Args:
             value: CSS width value (e.g., "100px", Size.px(100)).
         """
         css_value = _to_css(value)
-        return self.key_styled(width=css_value, min_width=css_value)
+        self._key_styles["width"] = css_value
+        self._key_styles["min-width"] = css_value
+        self._notify()
+        return self
 
     def key_padding(self, value: SpacingValue) -> Self:
-        """Return a copy with padding on keys.
+        """Apply padding to keys in-place.
 
         Args:
             value: CSS padding value (e.g., "10px", Size.px(10), Spacing.all(10)).
         """
-        return self.key_styled(padding=_to_css(value))
+        self._key_styles["padding"] = _to_css(value)
+        self._notify()
+        return self
 
     def add_key_class(self, *class_names: str) -> Self:
-        """Return a copy with CSS classes added to keys.
+        """Add CSS classes to keys in-place.
 
         Args:
             *class_names: CSS class names to add to keys.
         """
-        return self._copy_with_settings(new_key_classes=list(class_names))
+        self._key_classes.extend(class_names)
+        self._notify()
+        return self
 
-    @property
     def hide_keys(self) -> Self:
-        """Return a copy that only renders values (no keys)."""
-        return self._copy_with_settings(new_show_keys=False)
+        """Hide keys and only render values in-place."""
+        self._show_keys = False
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Value styling methods
     # -------------------------------------------------------------------------
 
     def value_styled(self, **styles: str | CSSValue) -> Self:
-        """Return a copy with styles applied to values.
+        """Apply styles to values in-place.
 
         Args:
             **styles: CSS property-value pairs for values.
                       Accepts both strings and CSS type objects (Color, Size, etc.)
         """
-        css_styles = {k.replace("_", "-"): _to_css(v) for k, v in styles.items()}
-        return self._copy_with_settings(new_value_styles=css_styles)
+        for key, value in styles.items():
+            css_key = key.replace("_", "-")
+            self._value_styles[css_key] = _to_css(value)
+        self._notify()
+        return self
 
-    @property
     def value_bold(self) -> Self:
-        """Return a copy with bold values."""
-        return self.value_styled(font_weight="bold")
+        """Apply bold style to values in-place."""
+        self._value_styles["font-weight"] = "bold"
+        self._notify()
+        return self
 
-    @property
     def value_italic(self) -> Self:
-        """Return a copy with italic values."""
-        return self.value_styled(font_style="italic")
+        """Apply italic style to values in-place."""
+        self._value_styles["font-style"] = "italic"
+        self._notify()
+        return self
 
     def value_color(self, value: ColorValue) -> Self:
-        """Return a copy with colored values.
+        """Apply color to values in-place.
 
         Args:
             value: CSS color value (e.g., "green", Color.green).
         """
-        return self.value_styled(color=_to_css(value))
+        self._value_styles["color"] = _to_css(value)
+        self._notify()
+        return self
 
     def value_background(self, value: ColorValue) -> Self:
-        """Return a copy with background color on values.
+        """Apply background color to values in-place.
 
         Args:
             value: CSS color value (e.g., "lightgray", Color.hex("#eee")).
         """
-        return self.value_styled(background_color=_to_css(value))
+        self._value_styles["background-color"] = _to_css(value)
+        self._notify()
+        return self
 
     def value_padding(self, value: SpacingValue) -> Self:
-        """Return a copy with padding on values.
+        """Apply padding to values in-place.
 
         Args:
             value: CSS padding value (e.g., "10px", Size.px(10), Spacing.all(10)).
         """
-        return self.value_styled(padding=_to_css(value))
+        self._value_styles["padding"] = _to_css(value)
+        self._notify()
+        return self
 
     def add_value_class(self, *class_names: str) -> Self:
-        """Return a copy with CSS classes added to values.
+        """Add CSS classes to values in-place.
 
         Args:
             *class_names: CSS class names to add to values.
         """
-        return self._copy_with_settings(new_value_classes=list(class_names))
+        self._value_classes.extend(class_names)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Separator methods
     # -------------------------------------------------------------------------
 
     def separator(self, value: str) -> Self:
-        """Return a copy with a separator between key and value.
+        """Apply a separator between key and value in-place.
 
         Args:
-            value: Separator string (e.g., ":", " → ", " = ").
+            value: Separator string (e.g., ":", " -> ", " = ").
         """
-        return self._copy_with_settings(new_key_value_separator=value)
+        self._key_value_separator = value
+        self._notify()
+        return self
 
     def entry_separator(self, value: BorderValue) -> Self:
-        """Return a copy with separator between entries (border).
+        """Apply separator between entries (border) in-place.
 
         Args:
-            value: CSS border value for separator (e.g., "1px solid gray", Border().solid()).
+            value: CSS border value for separator (e.g., "1px solid gray").
         """
-        return self._copy_with_settings(new_entry_separator=_to_css(value))
+        self._entry_separator = _to_css(value)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Container styling methods
     # -------------------------------------------------------------------------
 
     def gap(self, value: SizeValue) -> Self:
-        """Return a copy with gap between entries.
+        """Apply gap between entries in-place.
 
         Args:
             value: CSS gap value (e.g., "10px", Size.px(10), Size.rem(1)).
         """
-        return self.styled(gap=_to_css(value))
+        self._styles["gap"] = _to_css(value)
+        self._notify()
+        return self
 
     def padding(self, value: SpacingValue) -> Self:
-        """Return a copy with container padding.
+        """Apply container padding in-place.
 
         Args:
-            value: CSS padding value (e.g., "10px", Size.px(10), Spacing.symmetric(10, 20)).
+            value: CSS padding value (e.g., "10px", Size.px(10)).
         """
-        return self.styled(padding=_to_css(value))
+        self._styles["padding"] = _to_css(value)
+        self._notify()
+        return self
 
     def margin(self, value: SpacingValue) -> Self:
-        """Return a copy with container margin.
+        """Apply container margin in-place.
 
         Args:
             value: CSS margin value (e.g., "10px", Size.px(10), Spacing.all(10)).
         """
-        return self.styled(margin=_to_css(value))
+        self._styles["margin"] = _to_css(value)
+        self._notify()
+        return self
 
     def border(self, value: BorderValue) -> Self:
-        """Return a copy with container border.
+        """Apply container border in-place.
 
         Args:
-            value: CSS border value (e.g., "1px solid black", Border().solid().color("black")).
+            value: CSS border value (e.g., "1px solid black", Border.solid()).
         """
-        return self.styled(border=_to_css(value))
+        self._styles["border"] = _to_css(value)
+        self._notify()
+        return self
 
     def border_radius(self, value: SizeValue) -> Self:
-        """Return a copy with rounded container corners.
+        """Apply rounded container corners in-place.
 
         Args:
             value: CSS border-radius value (e.g., "5px", Size.px(5), Size.percent(50)).
         """
-        return self.styled(border_radius=_to_css(value))
+        self._styles["border-radius"] = _to_css(value)
+        self._notify()
+        return self
 
     def background(self, value: ColorValue) -> Self:
-        """Return a copy with container background.
+        """Apply container background in-place.
 
         Args:
             value: CSS color value (e.g., "white", Color.white, Color.hex("#fff")).
         """
-        return self.styled(background_color=_to_css(value))
+        self._styles["background-color"] = _to_css(value)
+        self._notify()
+        return self
 
     def color(self, value: ColorValue) -> Self:
-        """Return a copy with text color.
+        """Apply text color in-place.
 
         Args:
             value: CSS color value (e.g., "black", Color.black).
         """
-        return self.styled(color=_to_css(value))
+        self._styles["color"] = _to_css(value)
+        self._notify()
+        return self
 
     def width(self, value: SizeValue) -> Self:
-        """Return a copy with container width.
+        """Apply container width in-place.
 
         Args:
             value: CSS width value (e.g., "300px", Size.px(300), Size.percent(100)).
         """
-        return self.styled(width=_to_css(value))
+        self._styles["width"] = _to_css(value)
+        self._notify()
+        return self
 
     def max_width(self, value: SizeValue) -> Self:
-        """Return a copy with maximum width.
+        """Apply maximum width in-place.
 
         Args:
             value: CSS max-width value (e.g., "500px", Size.px(500), Size.vw(80)).
         """
-        return self.styled(max_width=_to_css(value))
+        self._styles["max-width"] = _to_css(value)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Style Presets (beginner-friendly)
     # -------------------------------------------------------------------------
 
-    @property
     def card(self) -> Self:
-        """Return a copy styled as a card with shadow and rounded corners.
+        """Apply card style with shadow and rounded corners in-place.
 
         Creates a visually appealing card-style display.
         """
-        return (
-            self.as_divs
-            .padding("16px")
-            .border("1px solid #e0e0e0")
-            .border_radius("8px")
-            .background("white")
-            .gap("8px")
-            .key_bold
-            .separator(": ")
-        )
+        self._format = DictFormat.DIVS
+        self._styles["padding"] = "16px"
+        self._styles["border"] = "1px solid #e0e0e0"
+        self._styles["border-radius"] = "8px"
+        self._styles["background-color"] = "white"
+        self._styles["gap"] = "8px"
+        self._key_styles["font-weight"] = "bold"
+        self._key_value_separator = ": "
+        self._notify()
+        return self
 
-    @property
     def simple(self) -> Self:
-        """Return a copy with simple key: value formatting.
+        """Apply simple key: value formatting in-place.
 
         Clean, minimal display with colon separators.
         """
-        return self.separator(": ").key_bold.gap("4px")
+        self._key_value_separator = ": "
+        self._key_styles["font-weight"] = "bold"
+        self._styles["gap"] = "4px"
+        self._notify()
+        return self
 
-    @property
     def striped(self) -> Self:
-        """Return a copy as a striped table.
+        """Apply striped table style in-place.
 
         Creates an alternating row colors table.
         """
-        return (
-            self.as_table
-            .border("1px solid #e0e0e0")
-            .key_padding("8px 12px")
-            .value_padding("8px 12px")
-            .key_background("#f5f5f5")
-            .key_bold
-        )
+        self._format = DictFormat.TABLE
+        self._styles["border"] = "1px solid #e0e0e0"
+        self._key_styles["padding"] = "8px 12px"
+        self._value_styles["padding"] = "8px 12px"
+        self._key_styles["background-color"] = "#f5f5f5"
+        self._key_styles["font-weight"] = "bold"
+        self._notify()
+        return self
 
-    @property
     def compact(self) -> Self:
-        """Return a copy with compact spacing.
+        """Apply compact spacing style in-place.
 
         Minimal padding and spacing for dense displays.
         """
-        return self.gap("2px").key_padding("2px 4px").value_padding("2px 4px")
+        self._styles["gap"] = "2px"
+        self._key_styles["padding"] = "2px 4px"
+        self._value_styles["padding"] = "2px 4px"
+        self._notify()
+        return self
 
-    @property
     def spaced(self) -> Self:
-        """Return a copy with generous spacing.
+        """Apply generous spacing style in-place.
 
         More padding and gaps for readability.
         """
-        return self.gap("12px").key_padding("8px").value_padding("8px")
+        self._styles["gap"] = "12px"
+        self._key_styles["padding"] = "8px"
+        self._value_styles["padding"] = "8px"
+        self._notify()
+        return self
 
-    @property
     def labeled(self) -> Self:
-        """Return a copy with label-style keys.
+        """Apply label-style keys in-place.
 
         Keys are styled as small labels above values.
         """
-        return (
-            self.as_divs
-            .vertical
-            .gap("16px")
-            .key_styled(font_size="0.75em", color="#757575", text_transform="uppercase", letter_spacing="0.05em")
-            .value_styled(font_size="1.1em")
-        )
+        self._format = DictFormat.DIVS
+        self._layout = DictLayout.VERTICAL
+        self._styles["gap"] = "16px"
+        self._key_styles["font-size"] = "0.75em"
+        self._key_styles["color"] = "#757575"
+        self._key_styles["text-transform"] = "uppercase"
+        self._key_styles["letter-spacing"] = "0.05em"
+        self._value_styles["font-size"] = "1.1em"
+        self._notify()
+        return self
 
-    @property
     def inline(self) -> Self:
-        """Return a copy displayed inline horizontally.
+        """Apply inline horizontal display in-place.
 
         All key-value pairs on one line.
         """
-        return (
-            self.horizontal
-            .gap("16px")
-            .separator(": ")
-            .key_bold
-        )
+        self._layout = DictLayout.HORIZONTAL
+        self._format = DictFormat.DIVS
+        self._styles["gap"] = "16px"
+        self._key_value_separator = ": "
+        self._key_styles["font-weight"] = "bold"
+        self._notify()
+        return self
 
-    @property
     def bordered(self) -> Self:
-        """Return a copy with bordered cells.
+        """Apply bordered cells style in-place.
 
         Each key-value pair has visible borders.
         """
-        return (
-            self.as_table
-            .border("1px solid #e0e0e0")
-            .styled(border_collapse="collapse")
-            .key_styled(border="1px solid #e0e0e0", padding="8px")
-            .value_styled(border="1px solid #e0e0e0", padding="8px")
-        )
+        self._format = DictFormat.TABLE
+        self._styles["border"] = "1px solid #e0e0e0"
+        self._styles["border-collapse"] = "collapse"
+        self._key_styles["border"] = "1px solid #e0e0e0"
+        self._key_styles["padding"] = "8px"
+        self._value_styles["border"] = "1px solid #e0e0e0"
+        self._value_styles["padding"] = "8px"
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Rendering

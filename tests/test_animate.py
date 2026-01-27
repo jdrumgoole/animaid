@@ -1,10 +1,8 @@
 """Tests for Animate class."""
 
 import time
-import urllib.request
 import urllib.error
-
-import pytest
+import urllib.request
 
 from animaid import Animate, HTMLString
 
@@ -60,7 +58,7 @@ class TestAnimateItemManagement:
 
     def test_add_mixed_types(self) -> None:
         """Add should generate type-specific IDs."""
-        from animaid import HTMLList, HTMLDict, HTMLInt
+        from animaid import HTMLDict, HTMLInt, HTMLList
 
         anim = Animate()
         str_id = anim.add(HTMLString("Hello"))
@@ -145,7 +143,7 @@ class TestAnimateItemManagement:
         anim = Animate()
         item = HTMLString("Hello")
         item_id = anim.add(item)
-        assert hasattr(item, '_anim_id')
+        assert hasattr(item, "_anim_id")
         assert item._anim_id == item_id
 
     def test_remove_by_object(self) -> None:
@@ -213,8 +211,8 @@ class TestAnimateFullState:
     def test_get_full_state_with_items(self) -> None:
         """Get full state should return rendered items."""
         anim = Animate()
-        anim.add(HTMLString("Hello").bold)
-        anim.add(HTMLString("World").italic)
+        anim.add(HTMLString("Hello").bold())
+        anim.add(HTMLString("World").italic())
         state = anim.get_full_state()
         assert len(state) == 2
         assert state[0]["id"] == "string_1"

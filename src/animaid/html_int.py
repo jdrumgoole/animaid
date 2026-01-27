@@ -3,18 +3,14 @@
 from __future__ import annotations
 
 import html
+import uuid
 from typing import TYPE_CHECKING, Any, Self
 
 from animaid.css_types import (
-    Border,
     BorderValue,
-    Color,
     ColorValue,
     CSSValue,
-    Display,
-    Size,
     SizeValue,
-    Spacing,
     SpacingValue,
 )
 from animaid.html_object import HTMLObject
@@ -33,18 +29,20 @@ def _to_css(value: object) -> str:
 class HTMLInt(HTMLObject, int):
     """An int subclass that renders as styled HTML.
 
-    HTMLInt behaves like a regular Python int but includes methods and
-    properties for applying CSS styles, number formatting, and rendering to HTML.
+    HTMLInt behaves like a regular Python int but includes methods
+    for applying CSS styles, number formatting, and rendering to HTML.
+    All styling methods modify the object in-place and return self
+    for method chaining.
 
     Examples:
         >>> n = HTMLInt(42)
-        >>> n.bold.red.render()
+        >>> n.bold().red().render()
         '<span style="font-weight: bold; color: red">42</span>'
 
         >>> HTMLInt(1234567).comma().render()
         '<span>1,234,567</span>'
 
-        >>> HTMLInt(1000).currency("$").bold.render()
+        >>> HTMLInt(1000).currency("$").bold().render()
         '<span style="font-weight: bold">$1,000</span>'
 
         >>> HTMLInt(1).ordinal().render()
@@ -56,6 +54,7 @@ class HTMLInt(HTMLObject, int):
     _tag: str
     _display_format: str
     _format_options: dict[str, object]
+    _obs_id: str
 
     def __new__(cls, value: int = 0, **styles: str | CSSValue) -> Self:
         """Create a new HTMLInt instance.
@@ -82,10 +81,20 @@ class HTMLInt(HTMLObject, int):
         self._tag = "span"
         self._display_format = "default"
         self._format_options = {}
+        self._obs_id = str(uuid.uuid4())
 
         for key, val in styles.items():
             css_key = key.replace("_", "-")
             self._styles[css_key] = _to_css(val)
+
+    def _notify(self) -> None:
+        """Publish change notification via pypubsub."""
+        try:
+            from pubsub import pub
+
+            pub.sendMessage("animaid.changed", obs_id=self._obs_id)
+        except ImportError:
+            pass  # pypubsub not installed
 
     def _copy_with_settings(
         self,
@@ -96,6 +105,9 @@ class HTMLInt(HTMLObject, int):
         new_format_options: dict[str, object] | None = None,
     ) -> Self:
         """Create a copy of this HTMLInt with modified settings.
+
+        This method is used internally for operations that must return
+        a new object (like arithmetic operations).
 
         Args:
             new_styles: Styles to merge with existing styles.
@@ -113,6 +125,7 @@ class HTMLInt(HTMLObject, int):
         result._tag = self._tag
         result._display_format = self._display_format
         result._format_options = self._format_options.copy()
+        result._obs_id = self._obs_id  # Preserve ID so updates still work
 
         if new_styles:
             result._styles.update(new_styles)
@@ -128,38 +141,45 @@ class HTMLInt(HTMLObject, int):
         return result  # type: ignore[return-value]
 
     def styled(self, **styles: str | CSSValue) -> Self:
-        """Return a copy with additional inline styles.
+        """Apply additional inline styles in-place.
 
         Args:
             **styles: CSS property-value pairs.
 
         Returns:
-            A new HTMLInt with the combined styles.
+            Self for method chaining.
         """
-        css_styles = {k.replace("_", "-"): _to_css(v) for k, v in styles.items()}
-        return self._copy_with_settings(new_styles=css_styles)
+        for key, value in styles.items():
+            css_key = key.replace("_", "-")
+            self._styles[css_key] = _to_css(value)
+        self._notify()
+        return self
 
     def add_class(self, *class_names: str) -> Self:
-        """Return a copy with additional CSS classes.
+        """Add CSS classes in-place.
 
         Args:
             *class_names: CSS class names to add.
 
         Returns:
-            A new HTMLInt with the additional classes.
+            Self for method chaining.
         """
-        return self._copy_with_settings(new_classes=list(class_names))
+        self._css_classes.extend(class_names)
+        self._notify()
+        return self
 
     def tag(self, tag_name: str) -> Self:
-        """Return a copy using a different HTML tag.
+        """Change the HTML tag in-place.
 
         Args:
             tag_name: The HTML tag to use (e.g., "div", "p", "strong").
 
         Returns:
-            A new HTMLInt using the specified tag.
+            Self for method chaining.
         """
-        return self._copy_with_settings(new_tag=tag_name)
+        self._tag = tag_name
+        self._notify()
+        return self
 
     def _format_value(self) -> str:
         """Format the integer value based on display format settings."""
@@ -208,16 +228,18 @@ class HTMLInt(HTMLObject, int):
     # -------------------------------------------------------------------------
 
     def comma(self) -> Self:
-        """Return a copy formatted with thousand separators.
+        """Apply thousand separator formatting in-place.
 
         Examples:
             >>> HTMLInt(1234567).comma().render()
             '<span>1,234,567</span>'
         """
-        return self._copy_with_settings(new_format="comma")
+        self._display_format = "comma"
+        self._notify()
+        return self
 
     def currency(self, symbol: str = "$") -> Self:
-        """Return a copy formatted as currency.
+        """Apply currency formatting in-place.
 
         Args:
             symbol: Currency symbol (default "$")
@@ -228,22 +250,24 @@ class HTMLInt(HTMLObject, int):
             >>> HTMLInt(1000).currency("€").render()
             '<span>€1,000</span>'
         """
-        return self._copy_with_settings(
-            new_format="currency",
-            new_format_options={"symbol": symbol}
-        )
+        self._display_format = "currency"
+        self._format_options["symbol"] = symbol
+        self._notify()
+        return self
 
     def percent(self) -> Self:
-        """Return a copy formatted as a percentage.
+        """Apply percentage formatting in-place.
 
         Examples:
             >>> HTMLInt(85).percent().render()
             '<span>85%</span>'
         """
-        return self._copy_with_settings(new_format="percent")
+        self._display_format = "percent"
+        self._notify()
+        return self
 
     def ordinal(self) -> Self:
-        """Return a copy formatted as an ordinal (1st, 2nd, 3rd, etc.).
+        """Apply ordinal formatting (1st, 2nd, 3rd, etc.) in-place.
 
         Examples:
             >>> HTMLInt(1).ordinal().render()
@@ -251,10 +275,12 @@ class HTMLInt(HTMLObject, int):
             >>> HTMLInt(22).ordinal().render()
             '<span>22nd</span>'
         """
-        return self._copy_with_settings(new_format="ordinal")
+        self._display_format = "ordinal"
+        self._notify()
+        return self
 
     def padded(self, width: int = 2) -> Self:
-        """Return a copy zero-padded to the specified width.
+        """Apply zero-padding formatting in-place.
 
         Args:
             width: Minimum width (default 2)
@@ -263,189 +289,238 @@ class HTMLInt(HTMLObject, int):
             >>> HTMLInt(7).padded(3).render()
             '<span>007</span>'
         """
-        return self._copy_with_settings(
-            new_format="padded",
-            new_format_options={"width": width}
-        )
+        self._display_format = "padded"
+        self._format_options["width"] = width
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
-    # Style Properties (no-argument styles)
+    # Style Methods (no-argument styles)
     # -------------------------------------------------------------------------
 
-    @property
     def bold(self) -> Self:
-        """Return a copy with bold text."""
-        return self.styled(font_weight="bold")
+        """Apply bold text style in-place."""
+        self._styles["font-weight"] = "bold"
+        self._notify()
+        return self
 
-    @property
     def italic(self) -> Self:
-        """Return a copy with italic text."""
-        return self.styled(font_style="italic")
+        """Apply italic text style in-place."""
+        self._styles["font-style"] = "italic"
+        self._notify()
+        return self
 
-    @property
     def underline(self) -> Self:
-        """Return a copy with underlined text."""
-        return self.styled(text_decoration="underline")
+        """Apply underline text style in-place."""
+        self._styles["text-decoration"] = "underline"
+        self._notify()
+        return self
 
-    @property
     def strikethrough(self) -> Self:
-        """Return a copy with strikethrough text."""
-        return self.styled(text_decoration="line-through")
+        """Apply strikethrough text style in-place."""
+        self._styles["text-decoration"] = "line-through"
+        self._notify()
+        return self
 
-    @property
     def monospace(self) -> Self:
-        """Return a copy with monospace font."""
-        return self.styled(font_family="monospace")
+        """Apply monospace font in-place."""
+        self._styles["font-family"] = "monospace"
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Color Shortcuts
     # -------------------------------------------------------------------------
 
-    @property
     def red(self) -> Self:
-        """Return a copy with red text."""
-        return self.color("red")
+        """Apply red text color in-place."""
+        self._styles["color"] = "red"
+        self._notify()
+        return self
 
-    @property
     def blue(self) -> Self:
-        """Return a copy with blue text."""
-        return self.color("blue")
+        """Apply blue text color in-place."""
+        self._styles["color"] = "blue"
+        self._notify()
+        return self
 
-    @property
     def green(self) -> Self:
-        """Return a copy with green text."""
-        return self.color("green")
+        """Apply green text color in-place."""
+        self._styles["color"] = "green"
+        self._notify()
+        return self
 
-    @property
     def yellow(self) -> Self:
-        """Return a copy with yellow text."""
-        return self.color("#b8860b")
+        """Apply yellow text color in-place."""
+        self._styles["color"] = "#b8860b"
+        self._notify()
+        return self
 
-    @property
     def orange(self) -> Self:
-        """Return a copy with orange text."""
-        return self.color("orange")
+        """Apply orange text color in-place."""
+        self._styles["color"] = "orange"
+        self._notify()
+        return self
 
-    @property
     def purple(self) -> Self:
-        """Return a copy with purple text."""
-        return self.color("purple")
+        """Apply purple text color in-place."""
+        self._styles["color"] = "purple"
+        self._notify()
+        return self
 
-    @property
     def gray(self) -> Self:
-        """Return a copy with gray text."""
-        return self.color("gray")
+        """Apply gray text color in-place."""
+        self._styles["color"] = "gray"
+        self._notify()
+        return self
 
-    @property
     def white(self) -> Self:
-        """Return a copy with white text."""
-        return self.color("white")
+        """Apply white text color in-place."""
+        self._styles["color"] = "white"
+        self._notify()
+        return self
 
-    @property
     def black(self) -> Self:
-        """Return a copy with black text."""
-        return self.color("black")
+        """Apply black text color in-place."""
+        self._styles["color"] = "black"
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Size Shortcuts
     # -------------------------------------------------------------------------
 
-    @property
     def xs(self) -> Self:
-        """Return a copy with extra-small text (12px)."""
-        return self.font_size("12px")
+        """Apply extra-small text size (12px) in-place."""
+        self._styles["font-size"] = "12px"
+        self._notify()
+        return self
 
-    @property
     def small(self) -> Self:
-        """Return a copy with small text (14px)."""
-        return self.font_size("14px")
+        """Apply small text size (14px) in-place."""
+        self._styles["font-size"] = "14px"
+        self._notify()
+        return self
 
-    @property
     def medium(self) -> Self:
-        """Return a copy with medium text (16px)."""
-        return self.font_size("16px")
+        """Apply medium text size (16px) in-place."""
+        self._styles["font-size"] = "16px"
+        self._notify()
+        return self
 
-    @property
     def large(self) -> Self:
-        """Return a copy with large text (20px)."""
-        return self.font_size("20px")
+        """Apply large text size (20px) in-place."""
+        self._styles["font-size"] = "20px"
+        self._notify()
+        return self
 
-    @property
     def xl(self) -> Self:
-        """Return a copy with extra-large text (24px)."""
-        return self.font_size("24px")
+        """Apply extra-large text size (24px) in-place."""
+        self._styles["font-size"] = "24px"
+        self._notify()
+        return self
 
-    @property
     def xxl(self) -> Self:
-        """Return a copy with 2x extra-large text (32px)."""
-        return self.font_size("32px")
+        """Apply 2x extra-large text size (32px) in-place."""
+        self._styles["font-size"] = "32px"
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Style Presets
     # -------------------------------------------------------------------------
 
-    @property
     def success(self) -> Self:
-        """Return a copy styled for success (green)."""
-        return self.styled(color="#2e7d32", background_color="#e8f5e9", padding="2px 6px", border_radius="4px")
+        """Apply success style (green) in-place."""
+        self._styles["color"] = "#2e7d32"
+        self._styles["background-color"] = "#e8f5e9"
+        self._styles["padding"] = "2px 6px"
+        self._styles["border-radius"] = "4px"
+        self._notify()
+        return self
 
-    @property
     def warning(self) -> Self:
-        """Return a copy styled for warning (orange)."""
-        return self.styled(color="#e65100", background_color="#fff3e0", padding="2px 6px", border_radius="4px")
+        """Apply warning style (orange) in-place."""
+        self._styles["color"] = "#e65100"
+        self._styles["background-color"] = "#fff3e0"
+        self._styles["padding"] = "2px 6px"
+        self._styles["border-radius"] = "4px"
+        self._notify()
+        return self
 
-    @property
     def error(self) -> Self:
-        """Return a copy styled for error (red)."""
-        return self.styled(color="#c62828", background_color="#ffebee", padding="2px 6px", border_radius="4px")
+        """Apply error style (red) in-place."""
+        self._styles["color"] = "#c62828"
+        self._styles["background-color"] = "#ffebee"
+        self._styles["padding"] = "2px 6px"
+        self._styles["border-radius"] = "4px"
+        self._notify()
+        return self
 
-    @property
     def info(self) -> Self:
-        """Return a copy styled for info (blue)."""
-        return self.styled(color="#1565c0", background_color="#e3f2fd", padding="2px 6px", border_radius="4px")
+        """Apply info style (blue) in-place."""
+        self._styles["color"] = "#1565c0"
+        self._styles["background-color"] = "#e3f2fd"
+        self._styles["padding"] = "2px 6px"
+        self._styles["border-radius"] = "4px"
+        self._notify()
+        return self
 
-    @property
     def badge(self) -> Self:
-        """Return a copy styled as a badge/pill."""
-        return self.styled(
-            background_color="#e0e0e0",
-            padding="4px 10px",
-            border_radius="12px",
-            font_size="0.85em",
-            font_weight="500",
-        )
+        """Apply badge/pill style in-place."""
+        self._styles["background-color"] = "#e0e0e0"
+        self._styles["padding"] = "4px 10px"
+        self._styles["border-radius"] = "12px"
+        self._styles["font-size"] = "0.85em"
+        self._styles["font-weight"] = "500"
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Style Methods (require value arguments)
     # -------------------------------------------------------------------------
 
     def color(self, value: ColorValue) -> Self:
-        """Return a copy with the specified text color."""
-        return self.styled(color=_to_css(value))
+        """Apply specified text color in-place."""
+        self._styles["color"] = _to_css(value)
+        self._notify()
+        return self
 
     def background(self, value: ColorValue) -> Self:
-        """Return a copy with the specified background color."""
-        return self.styled(background_color=_to_css(value))
+        """Apply specified background color in-place."""
+        self._styles["background-color"] = _to_css(value)
+        self._notify()
+        return self
 
     def font_size(self, value: SizeValue) -> Self:
-        """Return a copy with the specified font size."""
-        return self.styled(font_size=_to_css(value))
+        """Apply specified font size in-place."""
+        self._styles["font-size"] = _to_css(value)
+        self._notify()
+        return self
 
     def padding(self, value: SpacingValue) -> Self:
-        """Return a copy with the specified padding."""
-        return self.styled(padding=_to_css(value))
+        """Apply specified padding in-place."""
+        self._styles["padding"] = _to_css(value)
+        self._notify()
+        return self
 
     def margin(self, value: SpacingValue) -> Self:
-        """Return a copy with the specified margin."""
-        return self.styled(margin=_to_css(value))
+        """Apply specified margin in-place."""
+        self._styles["margin"] = _to_css(value)
+        self._notify()
+        return self
 
     def border(self, value: BorderValue) -> Self:
-        """Return a copy with the specified border."""
-        return self.styled(border=_to_css(value))
+        """Apply specified border in-place."""
+        self._styles["border"] = _to_css(value)
+        self._notify()
+        return self
 
     def border_radius(self, value: SizeValue) -> Self:
-        """Return a copy with the specified border radius."""
-        return self.styled(border_radius=_to_css(value))
+        """Apply specified border radius in-place."""
+        self._styles["border-radius"] = _to_css(value)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Arithmetic Operations (return HTMLInt or HTMLFloat)
@@ -458,11 +533,13 @@ class HTMLInt(HTMLObject, int):
         result._tag = self._tag
         result._display_format = self._display_format
         result._format_options = self._format_options.copy()
+        result._obs_id = self._obs_id  # Preserve ID so updates still work
         return result
 
     def __add__(self, other: Any) -> Any:  # type: ignore[override]
         """Add: HTMLInt + number."""
         from animaid.html_float import HTMLFloat
+
         result: Any
         if isinstance(other, float) and not isinstance(other, int):
             result = HTMLFloat(int(self) + other)
@@ -481,6 +558,7 @@ class HTMLInt(HTMLObject, int):
     def __sub__(self, other: Any) -> Any:  # type: ignore[override]
         """Subtract: HTMLInt - number."""
         from animaid.html_float import HTMLFloat
+
         result: Any
         if isinstance(other, float) and not isinstance(other, int):
             result = HTMLFloat(int(self) - other)
@@ -495,6 +573,7 @@ class HTMLInt(HTMLObject, int):
     def __rsub__(self, other: Any) -> Any:  # type: ignore[override]
         """Reverse subtract: number - HTMLInt."""
         from animaid.html_float import HTMLFloat
+
         result: Any
         if isinstance(other, float):
             result = HTMLFloat(other - int(self))
@@ -506,6 +585,7 @@ class HTMLInt(HTMLObject, int):
     def __mul__(self, other: Any) -> Any:  # type: ignore[override]
         """Multiply: HTMLInt * number."""
         from animaid.html_float import HTMLFloat
+
         result: Any
         if isinstance(other, float) and not isinstance(other, int):
             result = HTMLFloat(int(self) * other)
@@ -524,12 +604,14 @@ class HTMLInt(HTMLObject, int):
     def __truediv__(self, other: Any) -> Any:  # type: ignore[override]
         """True divide: HTMLInt / number (always returns HTMLFloat)."""
         from animaid.html_float import HTMLFloat
+
         result = HTMLFloat(int(self) / other)
         return self._preserve_settings(result)
 
     def __rtruediv__(self, other: Any) -> Any:  # type: ignore[override]
         """Reverse true divide: number / HTMLInt."""
         from animaid.html_float import HTMLFloat
+
         result = HTMLFloat(other / int(self))
         return self._preserve_settings(result)
 

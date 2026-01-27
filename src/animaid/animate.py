@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 import threading
 import time
-import uuid
 import webbrowser
 from typing import TYPE_CHECKING, Any
 
@@ -64,7 +63,7 @@ class Animate:
         self._obs_id_to_item_id: dict[str, str] = {}  # Maps obs_id -> item_id
         self._pubsub_subscribed = False
 
-    def run(self) -> "Animate":
+    def run(self) -> Animate:
         """Start the server in a background thread and open the browser.
 
         Returns:
@@ -76,7 +75,8 @@ class Animate:
         # Subscribe to pypubsub for reactive updates
         try:
             from pubsub import pub
-            pub.subscribe(self._on_data_changed, 'animaid.changed')
+
+            pub.subscribe(self._on_data_changed, "animaid.changed")
             self._pubsub_subscribed = True
         except ImportError:
             pass  # pypubsub not installed
@@ -129,7 +129,8 @@ class Animate:
         if self._pubsub_subscribed:
             try:
                 from pubsub import pub
-                pub.unsubscribe(self._on_data_changed, 'animaid.changed')
+
+                pub.unsubscribe(self._on_data_changed, "animaid.changed")
             except Exception:
                 pass
             self._pubsub_subscribed = False
@@ -144,7 +145,7 @@ class Animate:
         self._server = None
         self._server_thread = None
 
-    def add(self, item: "HTMLObject | str", id: str | None = None) -> str:
+    def add(self, item: HTMLObject | str, id: str | None = None) -> str:
         """Add an item to the display.
 
         Args:
@@ -161,7 +162,7 @@ class Animate:
             self._items.append((id, item))
 
             # Track observable ID if present (for reactive updates)
-            obs_id = getattr(item, '_obs_id', None)
+            obs_id = getattr(item, "_obs_id", None)
             if obs_id:
                 self._obs_id_to_item_id[obs_id] = id
 
@@ -174,7 +175,7 @@ class Animate:
         self._broadcast_add(id, item)
         return id
 
-    def update(self, id: str, item: "HTMLObject | str") -> bool:
+    def update(self, id: str, item: HTMLObject | str) -> bool:
         """Update an existing item by ID.
 
         Args:
@@ -192,7 +193,7 @@ class Animate:
                     return True
         return False
 
-    def remove(self, item_or_id: "HTMLObject | str") -> bool:
+    def remove(self, item_or_id: HTMLObject | str) -> bool:
         """Remove an item by ID or by object reference.
 
         Args:
@@ -203,7 +204,7 @@ class Animate:
         """
         # Check if passed an object with _anim_id (use that ID)
         # Must check _anim_id first since HTMLString is a str subclass
-        anim_id = getattr(item_or_id, '_anim_id', None)
+        anim_id = getattr(item_or_id, "_anim_id", None)
         if anim_id is not None:
             id = anim_id
         elif isinstance(item_or_id, str):
@@ -215,7 +216,7 @@ class Animate:
             for i, (item_id, item) in enumerate(self._items):
                 if item_id == id:
                     # Clean up obs_id mapping
-                    obs_id = getattr(item, '_obs_id', None)
+                    obs_id = getattr(item, "_obs_id", None)
                     if obs_id:
                         self._obs_id_to_item_id.pop(obs_id, None)
 
@@ -230,7 +231,7 @@ class Animate:
                     return True
         return False
 
-    def clear(self, item_or_id: "HTMLObject | str") -> bool:
+    def clear(self, item_or_id: HTMLObject | str) -> bool:
         """Remove an item by ID or by object reference.
 
         Args:
@@ -293,7 +294,7 @@ class Animate:
         """Get the server port."""
         return self._port
 
-    def _generate_id(self, item: "HTMLObject | str") -> str:
+    def _generate_id(self, item: HTMLObject | str) -> str:
         """Generate a unique ID for an item based on its type.
 
         Args:
@@ -316,18 +317,18 @@ class Animate:
             self._type_counters[type_name] = count
             return f"{type_name}_{count}"
 
-    def _render_item(self, item: "HTMLObject | str") -> str:
+    def _render_item(self, item: HTMLObject | str) -> str:
         """Render an item to HTML string."""
         if hasattr(item, "render"):
             return item.render()
         return str(item)
 
-    def _broadcast_add(self, id: str, item: "HTMLObject | str") -> None:
+    def _broadcast_add(self, id: str, item: HTMLObject | str) -> None:
         """Broadcast an add message to all connected clients."""
         html = self._render_item(item)
         self._broadcast({"type": "add", "id": id, "html": html})
 
-    def _broadcast_update(self, id: str, item: "HTMLObject | str") -> None:
+    def _broadcast_update(self, id: str, item: HTMLObject | str) -> None:
         """Broadcast an update message to all connected clients."""
         html = self._render_item(item)
         self._broadcast({"type": "update", "id": id, "html": html})
@@ -353,9 +354,7 @@ class Animate:
         for ws in list(self._connections):
             try:
                 if self._loop is not None:
-                    asyncio.run_coroutine_threadsafe(
-                        ws.send_text(data), self._loop
-                    )
+                    asyncio.run_coroutine_threadsafe(ws.send_text(data), self._loop)
             except Exception:
                 dead_connections.add(ws)
 
@@ -370,8 +369,7 @@ class Animate:
         """
         with self._lock:
             return [
-                {"id": id, "html": self._render_item(item)}
-                for id, item in self._items
+                {"id": id, "html": self._render_item(item)} for id, item in self._items
             ]
 
     def _on_data_changed(self, obs_id: str) -> None:
@@ -411,7 +409,7 @@ class Animate:
             for item_id, item in self._items:
                 self._broadcast_update(item_id, item)
 
-    def __enter__(self) -> "Animate":
+    def __enter__(self) -> Animate:
         """Enter context manager - start the server."""
         return self.run()
 

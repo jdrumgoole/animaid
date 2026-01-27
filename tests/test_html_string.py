@@ -1,7 +1,5 @@
 """Tests for HTMLString class."""
 
-import pytest
-
 from animaid import HTMLString
 
 
@@ -87,68 +85,68 @@ class TestHTMLStringRendering:
 
     def test_dunder_html(self) -> None:
         """__html__ should return rendered output for Jinja2."""
-        s = HTMLString("Hello").bold
+        s = HTMLString("Hello").bold()
         assert s.__html__() == s.render()
 
 
-class TestHTMLStringStyleProperties:
-    """Test style property methods."""
+class TestHTMLStringStyleMethods:
+    """Test style methods."""
 
     def test_bold(self) -> None:
-        """Bold property should add font-weight: bold."""
-        s = HTMLString("Hello").bold
+        """Bold method should add font-weight: bold."""
+        s = HTMLString("Hello").bold()
         assert "font-weight: bold" in s.render()
 
     def test_italic(self) -> None:
-        """Italic property should add font-style: italic."""
-        s = HTMLString("Hello").italic
+        """Italic method should add font-style: italic."""
+        s = HTMLString("Hello").italic()
         assert "font-style: italic" in s.render()
 
     def test_underline(self) -> None:
-        """Underline property should add text-decoration: underline."""
-        s = HTMLString("Hello").underline
+        """Underline method should add text-decoration: underline."""
+        s = HTMLString("Hello").underline()
         assert "text-decoration: underline" in s.render()
 
     def test_strikethrough(self) -> None:
-        """Strikethrough property should add text-decoration: line-through."""
-        s = HTMLString("Hello").strikethrough
+        """Strikethrough method should add text-decoration: line-through."""
+        s = HTMLString("Hello").strikethrough()
         assert "text-decoration: line-through" in s.render()
 
     def test_uppercase(self) -> None:
-        """Uppercase property should add text-transform: uppercase."""
-        s = HTMLString("Hello").uppercase
+        """Uppercase method should add text-transform: uppercase."""
+        s = HTMLString("Hello").uppercase()
         assert "text-transform: uppercase" in s.render()
 
     def test_lowercase(self) -> None:
-        """Lowercase property should add text-transform: lowercase."""
-        s = HTMLString("Hello").lowercase
+        """Lowercase method should add text-transform: lowercase."""
+        s = HTMLString("Hello").lowercase()
         assert "text-transform: lowercase" in s.render()
 
     def test_capitalize(self) -> None:
-        """Capitalize property should add text-transform: capitalize."""
-        s = HTMLString("Hello").capitalize
+        """Capitalize method should add text-transform: capitalize."""
+        s = HTMLString("Hello").capitalize()
         assert "text-transform: capitalize" in s.render()
 
     def test_nowrap(self) -> None:
-        """Nowrap property should add white-space: nowrap."""
-        s = HTMLString("Hello").nowrap
+        """Nowrap method should add white-space: nowrap."""
+        s = HTMLString("Hello").nowrap()
         assert "white-space: nowrap" in s.render()
 
     def test_monospace(self) -> None:
-        """Monospace property should add font-family: monospace."""
-        s = HTMLString("Hello").monospace
+        """Monospace method should add font-family: monospace."""
+        s = HTMLString("Hello").monospace()
         assert "font-family: monospace" in s.render()
 
-    def test_chained_properties(self) -> None:
-        """Properties should be chainable."""
-        s = HTMLString("Hello").bold.italic.underline
+    def test_chained_methods(self) -> None:
+        """Methods should be chainable."""
+        s = HTMLString("Hello").bold().italic().underline()
         rendered = s.render()
         assert "font-weight: bold" in rendered
         assert "font-style: italic" in rendered
         assert "text-decoration: underline" in rendered
 
 
-class TestHTMLStringStyleMethods:
+class TestHTMLStringStyleMethodsWithArgs:
     """Test style methods that take arguments."""
 
     def test_color(self) -> None:
@@ -214,9 +212,7 @@ class TestHTMLStringStyleMethods:
     def test_styled_method(self) -> None:
         """Styled method should set arbitrary styles."""
         s = HTMLString("Hello").styled(
-            color="blue",
-            font_size="18px",
-            text_align="center"
+            color="blue", font_size="18px", text_align="center"
         )
         rendered = s.render()
         assert "color: blue" in rendered
@@ -224,24 +220,22 @@ class TestHTMLStringStyleMethods:
         assert "text-align: center" in rendered
 
 
-class TestHTMLStringImmutability:
-    """Test that HTMLString operations return new instances."""
+class TestHTMLStringInPlace:
+    """Test that HTMLString operations modify in-place and return self."""
 
-    def test_styled_returns_new_instance(self) -> None:
-        """Styling should return a new instance."""
+    def test_styled_returns_self(self) -> None:
+        """Styling should return self (same instance)."""
         s1 = HTMLString("Hello")
-        s2 = s1.bold
-        assert s1 is not s2
-        assert "font-weight" not in s1.render()
-        assert "font-weight: bold" in s2.render()
+        s2 = s1.bold()
+        assert s1 is s2
+        assert "font-weight: bold" in s1.render()
 
-    def test_chaining_preserves_original(self) -> None:
-        """Chaining should not modify original."""
+    def test_chaining_modifies_original(self) -> None:
+        """Chaining should modify the original object."""
         s1 = HTMLString("Hello")
-        s2 = s1.bold.color("red")
-        assert s1.render() == "<span>Hello</span>"
-        assert "font-weight: bold" in s2.render()
-        assert "color: red" in s2.render()
+        s1.bold().color("red")
+        assert "font-weight: bold" in s1.render()
+        assert "color: red" in s1.render()
 
 
 class TestHTMLStringOperations:
@@ -249,7 +243,7 @@ class TestHTMLStringOperations:
 
     def test_concatenation_preserves_type(self) -> None:
         """Concatenation should return HTMLString."""
-        s = HTMLString("Hello").bold
+        s = HTMLString("Hello").bold()
         result = s + " World"
         assert isinstance(result, HTMLString)
         assert str(result) == "Hello World"
@@ -257,14 +251,14 @@ class TestHTMLStringOperations:
 
     def test_right_concatenation(self) -> None:
         """Right concatenation should work."""
-        s = HTMLString("World").bold
+        s = HTMLString("World").bold()
         result = "Hello " + s
         assert isinstance(result, HTMLString)
         assert str(result) == "Hello World"
 
     def test_slicing_preserves_type(self) -> None:
         """Slicing should return HTMLString with styles."""
-        s = HTMLString("Hello World").bold
+        s = HTMLString("Hello World").bold()
         result = s[0:5]
         assert isinstance(result, HTMLString)
         assert str(result) == "Hello"

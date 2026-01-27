@@ -10,8 +10,15 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
-from animaid import HTMLDict, HTMLFloat, HTMLInt, HTMLList, HTMLSet, HTMLString, HTMLTuple
-
+from animaid import (
+    HTMLDict,
+    HTMLFloat,
+    HTMLInt,
+    HTMLList,
+    HTMLSet,
+    HTMLString,
+    HTMLTuple,
+)
 
 # -------------------------------------------------------------------------
 # CSS Type Code Generation Helpers
@@ -19,9 +26,29 @@ from animaid import HTMLDict, HTMLFloat, HTMLInt, HTMLList, HTMLSet, HTMLString,
 
 # Named colors that Color class supports
 NAMED_COLORS = {
-    "red", "blue", "green", "yellow", "orange", "purple", "pink", "cyan",
-    "magenta", "white", "black", "gray", "grey", "transparent", "inherit",
-    "navy", "teal", "olive", "maroon", "aqua", "fuchsia", "lime", "silver",
+    "red",
+    "blue",
+    "green",
+    "yellow",
+    "orange",
+    "purple",
+    "pink",
+    "cyan",
+    "magenta",
+    "white",
+    "black",
+    "gray",
+    "grey",
+    "transparent",
+    "inherit",
+    "navy",
+    "teal",
+    "olive",
+    "maroon",
+    "aqua",
+    "fuchsia",
+    "lime",
+    "silver",
 }
 
 # Semantic colors (map hex values to Color attributes)
@@ -74,13 +101,20 @@ def size_to_css_type(value: str) -> str:
         return size_presets[value.lower()]
 
     # Try to parse unit-based values
-    match = re.match(r'^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|fr|pt|ch)$', value.lower())
+    match = re.match(r"^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|fr|pt|ch)$", value.lower())
     if match:
         num_str, unit = match.groups()
-        num = float(num_str) if '.' in num_str else int(num_str)
+        num = float(num_str) if "." in num_str else int(num_str)
         unit_map = {
-            'px': 'px', 'em': 'em', 'rem': 'rem', '%': 'percent',
-            'vh': 'vh', 'vw': 'vw', 'fr': 'fr', 'pt': 'pt', 'ch': 'ch'
+            "px": "px",
+            "em": "em",
+            "rem": "rem",
+            "%": "percent",
+            "vh": "vh",
+            "vw": "vw",
+            "fr": "fr",
+            "pt": "pt",
+            "ch": "ch",
         }
         return f"Size.{unit_map[unit]}({num})"
 
@@ -89,7 +123,17 @@ def size_to_css_type(value: str) -> str:
 
 
 # Colors that have direct shortcuts on HTMLString (e.g., .red, .blue)
-SHORTCUT_COLORS = {"red", "blue", "green", "orange", "purple", "pink", "gray", "white", "black"}
+SHORTCUT_COLORS = {
+    "red",
+    "blue",
+    "green",
+    "orange",
+    "purple",
+    "pink",
+    "gray",
+    "white",
+    "black",
+}
 
 
 def color_to_css_type(value: str) -> str:
@@ -116,11 +160,14 @@ def color_to_css_type(value: str) -> str:
         return SEMANTIC_COLOR_MAP[value.lower()]
 
     # Hex colors
-    if value.startswith('#'):
+    if value.startswith("#"):
         return f'Color.hex("{value}")'
 
     # RGB/RGBA
-    rgb_match = re.match(r'^rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)$', lower)
+    rgb_pattern = (
+        r"^rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)$"
+    )
+    rgb_match = re.match(rgb_pattern, lower)
     if rgb_match:
         r, g, b, a = rgb_match.groups()
         if a:
@@ -128,12 +175,15 @@ def color_to_css_type(value: str) -> str:
         return f"Color.rgb({r}, {g}, {b})"
 
     # HSL/HSLA
-    hsl_match = re.match(r'^hsla?\s*\(\s*(\d+)\s*,\s*(\d+)%?\s*,\s*(\d+)%?\s*(?:,\s*([\d.]+))?\s*\)$', lower)
+    hsl_pattern = (
+        r"^hsla?\s*\(\s*(\d+)\s*,\s*(\d+)%?\s*,\s*(\d+)%?\s*(?:,\s*([\d.]+))?\s*\)$"
+    )
+    hsl_match = re.match(hsl_pattern, lower)
     if hsl_match:
-        h, s, l, a = hsl_match.groups()
-        if a:
-            return f"Color.hsla({h}, {s}, {l}, {a})"
-        return f"Color.hsl({h}, {s}, {l})"
+        hue, sat, lum, alpha = hsl_match.groups()
+        if alpha:
+            return f"Color.hsla({hue}, {sat}, {lum}, {alpha})"
+        return f"Color.hsl({hue}, {sat}, {lum})"
 
     # Can't parse, use string
     return f'"{value}"'
@@ -157,7 +207,9 @@ def border_to_css_type(value: str) -> str:
         return f'"{value}"'
 
     # Parse "Npx style color" format
-    match = re.match(r'^(\d+)px\s+(solid|dashed|dotted|double|groove|ridge|inset|outset|none)\s+(.+)$', value, re.I)
+    styles = "solid|dashed|dotted|double|groove|ridge|inset|outset|none"
+    border_pattern = rf"^(\d+)px\s+({styles})\s+(.+)$"
+    match = re.match(border_pattern, value, re.I)
     if match:
         width, style, color = match.groups()
         width_int = int(width)
@@ -241,7 +293,7 @@ def spacing_to_css_type(value: str) -> str:
     # Try to parse numeric values from parts
     nums = []
     for part in parts:
-        match = re.match(r'^(-?\d+)px$', part)
+        match = re.match(r"^(-?\d+)px$", part)
         if match:
             nums.append(int(match.group(1)))
         else:
@@ -317,17 +369,19 @@ def get_css_imports(req: Any) -> list[str]:
     imports = set()
 
     # Check all string fields that might need CSS types
-    for field_name, field_value in vars(req).items() if hasattr(req, '__dict__') else []:
+    items = vars(req).items() if hasattr(req, "__dict__") else []
+    for field_name, field_value in items:
         if isinstance(field_value, str) and field_value:
-            if any(x in field_name for x in ['color', 'background']):
-                imports.add('Color')
-            if any(x in field_name for x in ['size', 'width', 'height', 'radius', 'gap']):
-                imports.add('Size')
-            if 'border' in field_name and 'radius' not in field_name:
-                imports.add('Border')
-            if any(x in field_name for x in ['padding', 'margin']):
-                imports.add('Size')
-                imports.add('Spacing')
+            if any(x in field_name for x in ["color", "background"]):
+                imports.add("Color")
+            size_fields = ["size", "width", "height", "radius", "gap"]
+            if any(x in field_name for x in size_fields):
+                imports.add("Size")
+            if "border" in field_name and "radius" not in field_name:
+                imports.add("Border")
+            if any(x in field_name for x in ["padding", "margin"]):
+                imports.add("Size")
+                imports.add("Spacing")
 
     return sorted(imports)
 
@@ -346,7 +400,20 @@ def pretty_print_html(html: str, indent: str = "  ") -> str:
     block_tags = {"ul", "ol", "div", "dl", "table", "thead", "tbody", "tr"}
 
     # Self-closing or inline tags
-    inline_tags = {"span", "strong", "em", "b", "i", "a", "code", "li", "dt", "dd", "td", "th"}
+    inline_tags = {
+        "span",
+        "strong",
+        "em",
+        "b",
+        "i",
+        "a",
+        "code",
+        "li",
+        "dt",
+        "dd",
+        "td",
+        "th",
+    }
 
     result = []
     level = 0
@@ -372,7 +439,6 @@ def pretty_print_html(html: str, indent: str = "  ") -> str:
 
         is_closing = match.group(1) == "/"
         tag_name = match.group(2).lower()
-        tag_attrs = match.group(3)
         full_tag = match.group(0)
 
         if is_closing:
@@ -393,16 +459,12 @@ def pretty_print_html(html: str, indent: str = "  ") -> str:
                 level += 1
             elif tag_name in inline_tags:
                 # Check if next content is just text followed by closing tag
-                close_pattern = re.compile(
-                    rf"([^<]*)</{tag_name}>", re.IGNORECASE
-                )
+                close_pattern = re.compile(rf"([^<]*)</{tag_name}>", re.IGNORECASE)
                 close_match = close_pattern.match(html, match.end())
                 if close_match:
                     # Inline element with text content - keep on one line
                     content = close_match.group(1)
-                    result.append(
-                        indent * level + f"{full_tag}{content}</{tag_name}>"
-                    )
+                    result.append(indent * level + f"{full_tag}{content}</{tag_name}>")
                     pos = close_match.end()
                     continue
                 else:
@@ -416,7 +478,10 @@ def pretty_print_html(html: str, indent: str = "  ") -> str:
 
     return "\n".join(result)
 
-app = FastAPI(title="Animaid Tutorial", description="Interactive tutorial for animaid HTML types")
+
+app = FastAPI(
+    title="Animaid Tutorial", description="Interactive tutorial for animaid HTML types"
+)
 
 # Setup static files and templates
 BASE_DIR = Path(__file__).parent
@@ -471,7 +536,8 @@ class HTMLFloatRequest(BaseModel):
     """Request model for HTMLFloat rendering."""
 
     value: float = 3.14159
-    format: str = "default"  # default, comma, currency, percent, decimal, scientific, significant
+    # Format: default, comma, currency, percent, decimal, scientific, significant
+    format: str = "default"
     currency_symbol: str = "$"
     decimals: int = 2
     precision: int = 2
@@ -554,7 +620,8 @@ class HTMLListRequest(BaseModel):
 class HTMLDictRequest(BaseModel):
     """Request model for HTMLDict rendering."""
 
-    items: str = "name=Alice, role=Developer, status=Active"  # key=value, comma-separated
+    # key=value, comma-separated
+    items: str = "name=Alice, role=Developer, status=Active"
     format: str = "definition_list"  # definition_list, table, divs
     layout: str = "vertical"  # vertical, horizontal, grid
     grid_columns: int = 2
@@ -745,7 +812,11 @@ async def get_string_code(req: HTMLStringRequest = None) -> dict[str, str]:
         imports.append("Color")  # Border often includes color
     imports = sorted(set(imports), key=lambda x: (x != "HTMLString", x))
     imports_str = ", ".join(imports)
-    lines = [f'from animaid import {imports_str}', '', f's = HTMLString("{req.content}")']
+    lines = [
+        f"from animaid import {imports_str}",
+        "",
+        f's = HTMLString("{req.content}")',
+    ]
 
     # Add chained methods
     chains = []
@@ -762,17 +833,17 @@ async def get_string_code(req: HTMLStringRequest = None) -> dict[str, str]:
     if req.uppercase:
         chains.append(".uppercase")
     if req.color:
-        chains.append(f'.color({color_to_css_type(req.color)})')
+        chains.append(f".color({color_to_css_type(req.color)})")
     if req.background:
-        chains.append(f'.background({color_to_css_type(req.background)})')
+        chains.append(f".background({color_to_css_type(req.background)})")
     if req.font_size:
-        chains.append(f'.font_size({size_to_css_type(req.font_size)})')
+        chains.append(f".font_size({size_to_css_type(req.font_size)})")
     if req.padding:
-        chains.append(f'.padding({spacing_to_css_type(req.padding)})')
+        chains.append(f".padding({spacing_to_css_type(req.padding)})")
     if req.border:
-        chains.append(f'.border({border_to_css_type(req.border)})')
+        chains.append(f".border({border_to_css_type(req.border)})")
     if req.border_radius:
-        chains.append(f'.border_radius({size_to_css_type(req.border_radius)})')
+        chains.append(f".border_radius({size_to_css_type(req.border_radius)})")
     if req.tag and req.tag != "span":
         chains.append(f'.tag("{req.tag}")')
 
@@ -798,7 +869,7 @@ def generate_simple_string_code(req: HTMLStringRequest) -> dict[str, str]:
 
     Uses simple shortcuts like .red, .large instead of .color(Color.red).
     """
-    lines = ['from animaid import HTMLString', '', f's = HTMLString("{req.content}")']
+    lines = ["from animaid import HTMLString", "", f's = HTMLString("{req.content}")']
 
     chains = []
     # Boolean properties
@@ -828,7 +899,14 @@ def generate_simple_string_code(req: HTMLStringRequest) -> dict[str, str]:
         chains.append(f'.background("{req.background}")')
 
     # Size shortcuts
-    size_shortcuts = {"12px": ".xs", "14px": ".small", "16px": ".medium", "20px": ".large", "24px": ".xl", "32px": ".xxl"}
+    size_shortcuts = {
+        "12px": ".xs",
+        "14px": ".small",
+        "16px": ".medium",
+        "20px": ".large",
+        "24px": ".xl",
+        "32px": ".xxl",
+    }
     if req.font_size in size_shortcuts:
         chains.append(size_shortcuts[req.font_size])
     elif req.font_size:
@@ -1192,7 +1270,14 @@ async def get_tuple_code(req: HTMLTupleRequest) -> dict[str, str]:
     imports = ["HTMLTuple"]
     if req.background or req.item_background or req.color:
         imports.append("Color")
-    if req.gap or req.border_radius or req.item_border_radius or req.padding or req.item_padding:
+    size_check = (
+        req.gap
+        or req.border_radius
+        or req.item_border_radius
+        or req.padding
+        or req.item_padding
+    )
+    if size_check:
         imports.append("Size")
         # Check if any spacing values need Spacing (multiple values)
         for spacing_val in [req.padding, req.item_padding]:
@@ -1216,7 +1301,11 @@ async def get_tuple_code(req: HTMLTupleRequest) -> dict[str, str]:
             f"t = HTMLTuple(Point({items_str}))",
         ]
     else:
-        lines = [f"from animaid import {imports_str}", "", f"t = HTMLTuple(({items_str},))"]
+        lines = [
+            f"from animaid import {imports_str}",
+            "",
+            f"t = HTMLTuple(({items_str},))",
+        ]
 
     # Add chained methods
     if req.format == "plain":
@@ -1248,7 +1337,8 @@ async def get_tuple_code(req: HTMLTupleRequest) -> dict[str, str]:
     if req.item_border:
         lines.append(f"t = t.item_border({border_to_css_type(req.item_border)})")
     if req.item_border_radius:
-        lines.append(f"t = t.item_border_radius({size_to_css_type(req.item_border_radius)})")
+        radius = size_to_css_type(req.item_border_radius)
+        lines.append(f"t = t.item_border_radius({radius})")
     if req.background:
         lines.append(f"t = t.background({color_to_css_type(req.background)})")
     if req.item_background:
@@ -1338,15 +1428,22 @@ async def get_set_html(req: HTMLSetRequest) -> dict[str, str]:
 async def get_set_code(req: HTMLSetRequest) -> dict[str, str]:
     """Generate Python code for the current HTMLSet configuration."""
     items_list = [item.strip() for item in req.items.split(",") if item.strip()]
-    # Use set to remove duplicates for the code generation
-    unique_items = sorted(set(items_list), key=items_list.index)  # Preserve order of first occurrence
+    # Use set to remove duplicates for code generation (preserve first occurrence order)
+    unique_items = sorted(set(items_list), key=items_list.index)
     items_str = ", ".join(f'"{item}"' for item in unique_items)
 
     # Build imports (always use CSS types)
     imports = ["HTMLSet"]
     if req.background or req.item_background or req.color:
         imports.append("Color")
-    if req.gap or req.border_radius or req.item_border_radius or req.padding or req.item_padding:
+    size_check = (
+        req.gap
+        or req.border_radius
+        or req.item_border_radius
+        or req.padding
+        or req.item_padding
+    )
+    if size_check:
         imports.append("Size")
         # Check if any spacing values need Spacing (multiple values)
         for spacing_val in [req.padding, req.item_padding]:
@@ -1392,7 +1489,8 @@ async def get_set_code(req: HTMLSetRequest) -> dict[str, str]:
     if req.item_border:
         lines.append(f"s = s.item_border({border_to_css_type(req.item_border)})")
     if req.item_border_radius:
-        lines.append(f"s = s.item_border_radius({size_to_css_type(req.item_border_radius)})")
+        radius = size_to_css_type(req.item_border_radius)
+        lines.append(f"s = s.item_border_radius({radius})")
     if req.background:
         lines.append(f"s = s.background({color_to_css_type(req.background)})")
     if req.item_background:
@@ -1423,7 +1521,15 @@ async def get_list_code(req: HTMLListRequest) -> dict[str, str]:
     imports = ["HTMLList"]
     if req.background or req.item_background or req.color:
         imports.append("Color")
-    if req.gap or req.border_radius or req.item_border_radius or req.padding or req.margin or req.item_padding:
+    size_check = (
+        req.gap
+        or req.border_radius
+        or req.item_border_radius
+        or req.padding
+        or req.margin
+        or req.item_padding
+    )
+    if size_check:
         imports.append("Size")
         # Check if any spacing values need Spacing (multiple values)
         for spacing_val in [req.padding, req.margin, req.item_padding]:
@@ -1457,33 +1563,37 @@ async def get_list_code(req: HTMLListRequest) -> dict[str, str]:
         lines.append("lst = lst.plain")
 
     if req.gap:
-        lines.append(f'lst = lst.gap({size_to_css_type(req.gap)})')
+        lines.append(f"lst = lst.gap({size_to_css_type(req.gap)})")
     if req.padding:
-        lines.append(f'lst = lst.padding({spacing_to_css_type(req.padding)})')
+        lines.append(f"lst = lst.padding({spacing_to_css_type(req.padding)})")
     if req.margin:
-        lines.append(f'lst = lst.margin({spacing_to_css_type(req.margin)})')
+        lines.append(f"lst = lst.margin({spacing_to_css_type(req.margin)})")
     if req.item_padding:
-        lines.append(f'lst = lst.item_padding({spacing_to_css_type(req.item_padding)})')
+        lines.append(f"lst = lst.item_padding({spacing_to_css_type(req.item_padding)})")
     if req.border:
-        lines.append(f'lst = lst.border({border_to_css_type(req.border)})')
+        lines.append(f"lst = lst.border({border_to_css_type(req.border)})")
     if req.border_radius:
-        lines.append(f'lst = lst.border_radius({size_to_css_type(req.border_radius)})')
+        lines.append(f"lst = lst.border_radius({size_to_css_type(req.border_radius)})")
     if req.item_border:
-        lines.append(f'lst = lst.item_border({border_to_css_type(req.item_border)})')
+        lines.append(f"lst = lst.item_border({border_to_css_type(req.item_border)})")
     if req.item_border_radius:
-        lines.append(f'lst = lst.item_border_radius({size_to_css_type(req.item_border_radius)})')
+        radius = size_to_css_type(req.item_border_radius)
+        lines.append(f"lst = lst.item_border_radius({radius})")
     if req.separator:
-        lines.append(f'lst = lst.separator({border_to_css_type(req.separator)})')
+        lines.append(f"lst = lst.separator({border_to_css_type(req.separator)})")
     if req.background:
-        lines.append(f'lst = lst.background({color_to_css_type(req.background)})')
+        lines.append(f"lst = lst.background({color_to_css_type(req.background)})")
     if req.item_background:
-        lines.append(f'lst = lst.item_background({color_to_css_type(req.item_background)})')
+        bg = color_to_css_type(req.item_background)
+        lines.append(f"lst = lst.item_background({bg})")
     if req.color:
-        lines.append(f'lst = lst.color({color_to_css_type(req.color)})')
+        lines.append(f"lst = lst.color({color_to_css_type(req.color)})")
     if req.align_items:
-        lines.append(f'lst = lst.align_items({align_items_to_css_type(req.align_items)})')
+        align = align_items_to_css_type(req.align_items)
+        lines.append(f"lst = lst.align_items({align})")
     if req.justify_content:
-        lines.append(f'lst = lst.justify_content({justify_content_to_css_type(req.justify_content)})')
+        justify = justify_content_to_css_type(req.justify_content)
+        lines.append(f"lst = lst.justify_content({justify})")
 
     lines.append("")
     lines.append("html = lst.render()")
@@ -1589,7 +1699,14 @@ async def get_dict_code(req: HTMLDictRequest) -> dict[str, str]:
 
     # Build imports - always use CSS types
     imports = ["HTMLDict"]
-    if req.key_color or req.key_background or req.value_color or req.value_background or req.background:
+    color_fields = (
+        req.key_color
+        or req.key_background
+        or req.value_color
+        or req.value_background
+        or req.background
+    )
+    if color_fields:
         imports.append("Color")
     if req.key_width or req.gap or req.border_radius or req.width:
         imports.append("Size")
@@ -1623,42 +1740,44 @@ async def get_dict_code(req: HTMLDictRequest) -> dict[str, str]:
     if req.key_italic:
         lines.append("d = d.key_italic")
     if req.key_color:
-        lines.append(f'd = d.key_color({color_to_css_type(req.key_color)})')
+        lines.append(f"d = d.key_color({color_to_css_type(req.key_color)})")
     if req.key_background:
-        lines.append(f'd = d.key_background({color_to_css_type(req.key_background)})')
+        lines.append(f"d = d.key_background({color_to_css_type(req.key_background)})")
     if req.key_width:
-        lines.append(f'd = d.key_width({size_to_css_type(req.key_width)})')
+        lines.append(f"d = d.key_width({size_to_css_type(req.key_width)})")
     if req.key_padding:
-        lines.append(f'd = d.key_padding({spacing_to_css_type(req.key_padding)})')
+        lines.append(f"d = d.key_padding({spacing_to_css_type(req.key_padding)})")
 
     if req.value_bold:
         lines.append("d = d.value_bold")
     if req.value_italic:
         lines.append("d = d.value_italic")
     if req.value_color:
-        lines.append(f'd = d.value_color({color_to_css_type(req.value_color)})')
+        lines.append(f"d = d.value_color({color_to_css_type(req.value_color)})")
     if req.value_background:
-        lines.append(f'd = d.value_background({color_to_css_type(req.value_background)})')
+        bg = color_to_css_type(req.value_background)
+        lines.append(f"d = d.value_background({bg})")
     if req.value_padding:
-        lines.append(f'd = d.value_padding({spacing_to_css_type(req.value_padding)})')
+        lines.append(f"d = d.value_padding({spacing_to_css_type(req.value_padding)})")
 
     if req.separator:
         lines.append(f'd = d.separator("{req.separator}")')
     if req.entry_separator:
-        lines.append(f'd = d.entry_separator({border_to_css_type(req.entry_separator)})')
+        sep = border_to_css_type(req.entry_separator)
+        lines.append(f"d = d.entry_separator({sep})")
 
     if req.gap:
-        lines.append(f'd = d.gap({size_to_css_type(req.gap)})')
+        lines.append(f"d = d.gap({size_to_css_type(req.gap)})")
     if req.padding:
-        lines.append(f'd = d.padding({spacing_to_css_type(req.padding)})')
+        lines.append(f"d = d.padding({spacing_to_css_type(req.padding)})")
     if req.border:
-        lines.append(f'd = d.border({border_to_css_type(req.border)})')
+        lines.append(f"d = d.border({border_to_css_type(req.border)})")
     if req.border_radius:
-        lines.append(f'd = d.border_radius({size_to_css_type(req.border_radius)})')
+        lines.append(f"d = d.border_radius({size_to_css_type(req.border_radius)})")
     if req.background:
-        lines.append(f'd = d.background({color_to_css_type(req.background)})')
+        lines.append(f"d = d.background({color_to_css_type(req.background)})")
     if req.width:
-        lines.append(f'd = d.width({size_to_css_type(req.width)})')
+        lines.append(f"d = d.width({size_to_css_type(req.width)})")
 
     lines.append("")
     lines.append("html = d.render()")
@@ -1752,13 +1871,17 @@ async def get_dict_of_lists_code(req: DictOfListsRequest) -> dict[str, str]:
     if req.list_direction == "horizontal":
         list_chains.append("    lst = lst.horizontal")
     if req.list_gap:
-        list_chains.append(f'    lst = lst.gap({size_to_css_type(req.list_gap)})')
+        gap = size_to_css_type(req.list_gap)
+        list_chains.append(f"    lst = lst.gap({gap})")
     if req.item_background:
-        list_chains.append(f'    lst = lst.item_background({color_to_css_type(req.item_background)})')
+        bg = color_to_css_type(req.item_background)
+        list_chains.append(f"    lst = lst.item_background({bg})")
     if req.item_padding:
-        list_chains.append(f'    lst = lst.item_padding({spacing_to_css_type(req.item_padding)})')
+        pad = spacing_to_css_type(req.item_padding)
+        list_chains.append(f"    lst = lst.item_padding({pad})")
     if req.item_border_radius:
-        list_chains.append(f'    lst = lst.item_border_radius({size_to_css_type(req.item_border_radius)})')
+        radius = size_to_css_type(req.item_border_radius)
+        list_chains.append(f"    lst = lst.item_border_radius({radius})")
     list_chains.append("    return lst")
     lines.extend(list_chains)
 
@@ -1777,7 +1900,7 @@ async def get_dict_of_lists_code(req: DictOfListsRequest) -> dict[str, str]:
     if req.key_bold:
         lines.append("d = d.key_bold")
     if req.key_color:
-        lines.append(f'd = d.key_color({color_to_css_type(req.key_color)})')
+        lines.append(f"d = d.key_color({color_to_css_type(req.key_color)})")
 
     lines.append("")
     lines.append("html = d.render()")
@@ -1862,18 +1985,20 @@ async def get_list_of_dicts_code(req: ListOfDictsRequest) -> dict[str, str]:
     imports_str = ", ".join(imports)
     lines = [f"from animaid import {imports_str}"]
 
-    lines.extend([
-        "",
-        "records = [",
-        f'    {{"Name": "{req.record1_name}", "Role": "{req.record1_role}"}},',
-        f'    {{"Name": "{req.record2_name}", "Role": "{req.record2_role}"}},',
-        f'    {{"Name": "{req.record3_name}", "Role": "{req.record3_role}"}},',
-        "]",
-        "",
-        "cards = []",
-        "for record in records:",
-        "    d = HTMLDict(record)",
-    ])
+    lines.extend(
+        [
+            "",
+            "records = [",
+            f'    {{"Name": "{req.record1_name}", "Role": "{req.record1_role}"}},',
+            f'    {{"Name": "{req.record2_name}", "Role": "{req.record2_role}"}},',
+            f'    {{"Name": "{req.record3_name}", "Role": "{req.record3_role}"}},',
+            "]",
+            "",
+            "cards = []",
+            "for record in records:",
+            "    d = HTMLDict(record)",
+        ]
+    )
 
     if req.card_format == "table":
         lines.append("    d = d.as_table")
@@ -1883,13 +2008,14 @@ async def get_list_of_dicts_code(req: ListOfDictsRequest) -> dict[str, str]:
     if req.key_bold:
         lines.append("    d = d.key_bold")
     if req.card_padding:
-        lines.append(f'    d = d.padding({spacing_to_css_type(req.card_padding)})')
+        lines.append(f"    d = d.padding({spacing_to_css_type(req.card_padding)})")
     if req.card_border:
-        lines.append(f'    d = d.border({border_to_css_type(req.card_border)})')
+        lines.append(f"    d = d.border({border_to_css_type(req.card_border)})")
     if req.card_border_radius:
-        lines.append(f'    d = d.border_radius({size_to_css_type(req.card_border_radius)})')
+        radius = size_to_css_type(req.card_border_radius)
+        lines.append(f"    d = d.border_radius({radius})")
     if req.card_background:
-        lines.append(f'    d = d.background({color_to_css_type(req.card_background)})')
+        lines.append(f"    d = d.background({color_to_css_type(req.card_background)})")
 
     lines.append("    cards.append(d)")
     lines.append("")
@@ -1901,7 +2027,7 @@ async def get_list_of_dicts_code(req: ListOfDictsRequest) -> dict[str, str]:
         lines.append("lst = lst.grid(3)")
 
     if req.list_gap:
-        lines.append(f'lst = lst.gap({size_to_css_type(req.list_gap)})')
+        lines.append(f"lst = lst.gap({size_to_css_type(req.list_gap)})")
 
     lines.append("")
     lines.append("html = lst.render()")

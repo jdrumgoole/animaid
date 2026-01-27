@@ -4,5 +4,8 @@ import animaid
 
 
 def test_version():
-    """Test that version is defined."""
-    assert animaid.__version__ == "0.2.0"
+    """Test that version is defined and follows semver pattern."""
+    assert animaid.__version__
+    parts = animaid.__version__.split(".")
+    assert len(parts) == 3
+    assert all(part.isdigit() for part in parts)

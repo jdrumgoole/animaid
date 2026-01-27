@@ -24,7 +24,7 @@ class TestHTMLSetBasics:
 
     def test_render_default_braces(self) -> None:
         """Test default rendering with braces."""
-        s = HTMLSet({1, 2, 3}).sorted
+        s = HTMLSet({1, 2, 3}).sorted()
         html = s.render()
         assert html.startswith("<span>")
         assert html.endswith("</span>")
@@ -43,7 +43,7 @@ class TestHTMLSetBasics:
 
     def test_string_items(self) -> None:
         """Test set with string items."""
-        s = HTMLSet({"a", "b", "c"}).sorted
+        s = HTMLSet({"a", "b", "c"}).sorted()
         html = s.render()
         assert "a" in html
         assert "b" in html
@@ -55,14 +55,14 @@ class TestSetFormats:
 
     def test_braces_format(self) -> None:
         """Test braces format."""
-        s = HTMLSet({1, 2, 3}).braces.sorted
+        s = HTMLSet({1, 2, 3}).braces().sorted()
         html = s.render()
         assert "{" in html
         assert "}" in html
 
     def test_plain_format(self) -> None:
         """Test plain format without braces."""
-        s = HTMLSet({1, 2, 3}).plain
+        s = HTMLSet({1, 2, 3}).plain()
         html = s.render()
         assert "{" not in html
         assert "}" not in html
@@ -74,31 +74,31 @@ class TestSetDirection:
 
     def test_horizontal(self) -> None:
         """Test horizontal layout (default)."""
-        s = HTMLSet({1, 2, 3}).plain.horizontal
+        s = HTMLSet({1, 2, 3}).plain().horizontal()
         html = s.render()
         assert "flex-direction: row" in html
 
     def test_vertical(self) -> None:
         """Test vertical layout."""
-        s = HTMLSet({1, 2, 3}).plain.vertical
+        s = HTMLSet({1, 2, 3}).plain().vertical()
         html = s.render()
         assert "flex-direction: column" in html
 
     def test_horizontal_reverse(self) -> None:
         """Test horizontal reverse layout."""
-        s = HTMLSet({1, 2, 3}).plain.horizontal_reverse
+        s = HTMLSet({1, 2, 3}).plain().horizontal_reverse()
         html = s.render()
         assert "flex-direction: row-reverse" in html
 
     def test_vertical_reverse(self) -> None:
         """Test vertical reverse layout."""
-        s = HTMLSet({1, 2, 3}).plain.vertical_reverse
+        s = HTMLSet({1, 2, 3}).plain().vertical_reverse()
         html = s.render()
         assert "flex-direction: column-reverse" in html
 
     def test_grid(self) -> None:
         """Test grid layout."""
-        s = HTMLSet({1, 2, 3, 4, 5, 6}).plain.grid(3)
+        s = HTMLSet({1, 2, 3, 4, 5, 6}).plain().grid(3)
         html = s.render()
         assert "display: inline-grid" in html
         assert "grid-template-columns" in html
@@ -109,7 +109,7 @@ class TestSetStyles:
 
     def test_gap(self) -> None:
         """Test gap styling."""
-        s = HTMLSet({1, 2, 3}).plain.gap("10px")
+        s = HTMLSet({1, 2, 3}).plain().gap("10px")
         assert "gap: 10px" in s.render()
 
     def test_padding(self) -> None:
@@ -148,25 +148,25 @@ class TestSetItemStyles:
 
     def test_item_padding(self) -> None:
         """Test item padding."""
-        s = HTMLSet({1, 2, 3}).plain.item_padding("5px")
+        s = HTMLSet({1, 2, 3}).plain().item_padding("5px")
         html = s.render()
         assert "padding: 5px" in html
 
     def test_item_background(self) -> None:
         """Test item background."""
-        s = HTMLSet({1, 2, 3}).plain.item_background("#f0f0f0")
+        s = HTMLSet({1, 2, 3}).plain().item_background("#f0f0f0")
         html = s.render()
         assert "background-color: #f0f0f0" in html
 
     def test_item_border(self) -> None:
         """Test item border."""
-        s = HTMLSet({1, 2, 3}).plain.item_border("1px solid gray")
+        s = HTMLSet({1, 2, 3}).plain().item_border("1px solid gray")
         html = s.render()
         assert "border: 1px solid gray" in html
 
     def test_item_border_radius(self) -> None:
         """Test item border radius."""
-        s = HTMLSet({1, 2, 3}).plain.item_border_radius("4px")
+        s = HTMLSet({1, 2, 3}).plain().item_border_radius("4px")
         html = s.render()
         assert "border-radius: 4px" in html
 
@@ -176,21 +176,21 @@ class TestSetPresets:
 
     def test_pills_preset(self) -> None:
         """Test pills preset."""
-        s = HTMLSet({1, 2, 3}).pills
+        s = HTMLSet({1, 2, 3}).pills()
         html = s.render()
         assert "border-radius: 20px" in html
         assert "background-color: #e0e0e0" in html
 
     def test_tags_preset(self) -> None:
         """Test tags preset."""
-        s = HTMLSet({1, 2, 3}).tags
+        s = HTMLSet({1, 2, 3}).tags()
         html = s.render()
         assert "background-color: #f5f5f5" in html
         assert "border-radius: 4px" in html
 
     def test_inline_preset(self) -> None:
         """Test inline preset."""
-        s = HTMLSet({1, 2, 3}).inline
+        s = HTMLSet({1, 2, 3}).inline()
         html = s.render()
         assert "flex-direction: row" in html
 
@@ -200,19 +200,19 @@ class TestSetAlignment:
 
     def test_center(self) -> None:
         """Test center alignment."""
-        s = HTMLSet({1, 2, 3}).plain.center
+        s = HTMLSet({1, 2, 3}).plain().center()
         html = s.render()
         assert "align-items: center" in html
         assert "justify-content: center" in html
 
     def test_align_items(self) -> None:
         """Test align_items method."""
-        s = HTMLSet({1, 2, 3}).plain.align_items("flex-start")
+        s = HTMLSet({1, 2, 3}).plain().align_items("flex-start")
         assert "align-items: flex-start" in s.render()
 
     def test_justify_content(self) -> None:
         """Test justify_content method."""
-        s = HTMLSet({1, 2, 3}).plain.justify_content("space-between")
+        s = HTMLSet({1, 2, 3}).plain().justify_content("space-between")
         assert "justify-content: space-between" in s.render()
 
 
@@ -221,7 +221,7 @@ class TestSetOperations:
 
     def test_union(self) -> None:
         """Test union operation preserves settings."""
-        s1 = HTMLSet({1, 2}).plain.gap("10px")
+        s1 = HTMLSet({1, 2}).plain().gap("10px")
         s2 = {3, 4}
         result = s1.union(s2)
         assert set(result) == {1, 2, 3, 4}
@@ -238,7 +238,7 @@ class TestSetOperations:
 
     def test_intersection(self) -> None:
         """Test intersection operation preserves settings."""
-        s1 = HTMLSet({1, 2, 3}).plain.gap("10px")
+        s1 = HTMLSet({1, 2, 3}).plain().gap("10px")
         s2 = {2, 3, 4}
         result = s1.intersection(s2)
         assert set(result) == {2, 3}
@@ -255,7 +255,7 @@ class TestSetOperations:
 
     def test_difference(self) -> None:
         """Test difference operation preserves settings."""
-        s1 = HTMLSet({1, 2, 3}).plain.gap("10px")
+        s1 = HTMLSet({1, 2, 3}).plain().gap("10px")
         s2 = {2, 3}
         result = s1.difference(s2)
         assert set(result) == {1}
@@ -272,7 +272,7 @@ class TestSetOperations:
 
     def test_symmetric_difference(self) -> None:
         """Test symmetric difference operation preserves settings."""
-        s1 = HTMLSet({1, 2, 3}).plain.gap("10px")
+        s1 = HTMLSet({1, 2, 3}).plain().gap("10px")
         s2 = {2, 3, 4}
         result = s1.symmetric_difference(s2)
         assert set(result) == {1, 4}
@@ -326,9 +326,9 @@ class TestSetMembership:
 class TestSetOrdering:
     """Test set ordering options."""
 
-    def test_sorted_property(self) -> None:
-        """Test sorted property."""
-        s = HTMLSet({3, 1, 2}).sorted
+    def test_sorted_method(self) -> None:
+        """Test sorted method."""
+        s = HTMLSet({3, 1, 2}).sorted()
         html = s.render()
         # Items should be in sorted order in the output
         idx_1 = html.find("1")
@@ -336,9 +336,9 @@ class TestSetOrdering:
         idx_3 = html.find("3")
         assert idx_1 < idx_2 < idx_3
 
-    def test_unsorted_property(self) -> None:
-        """Test unsorted property."""
-        s = HTMLSet({1, 2, 3}).sorted.unsorted
+    def test_unsorted_method(self) -> None:
+        """Test unsorted method."""
+        s = HTMLSet({1, 2, 3}).sorted().unsorted()
         assert s._sorted is False
 
 
@@ -356,17 +356,17 @@ class TestSetRepr:
 
     def test_repr_with_format(self) -> None:
         """Test repr with format."""
-        s = HTMLSet({1, 2, 3}).plain
+        s = HTMLSet({1, 2, 3}).plain()
         assert "format=plain" in repr(s)
 
     def test_repr_with_direction(self) -> None:
         """Test repr with direction."""
-        s = HTMLSet({1, 2, 3}).vertical
+        s = HTMLSet({1, 2, 3}).vertical()
         assert "direction=vertical" in repr(s)
 
     def test_repr_with_sorted(self) -> None:
         """Test repr with sorted."""
-        s = HTMLSet({1, 2, 3}).sorted
+        s = HTMLSet({1, 2, 3}).sorted()
         assert "sorted=True" in repr(s)
 
 
@@ -375,12 +375,14 @@ class TestSetChaining:
 
     def test_multiple_styles(self) -> None:
         """Test chaining multiple style methods."""
-        s = (HTMLSet({1, 2, 3})
-             .plain
-             .horizontal
-             .gap("10px")
-             .padding("5px")
-             .border("1px solid black"))
+        s = (
+            HTMLSet({1, 2, 3})
+            .plain()
+            .horizontal()
+            .gap("10px")
+            .padding("5px")
+            .border("1px solid black")
+        )
         html = s.render()
         assert "gap: 10px" in html
         assert "padding: 5px" in html
@@ -388,7 +390,7 @@ class TestSetChaining:
 
     def test_preset_then_customize(self) -> None:
         """Test using preset then customizing."""
-        s = HTMLSet({1, 2, 3}).pills.gap("20px")
+        s = HTMLSet({1, 2, 3}).pills().gap("20px")
         html = s.render()
         assert "gap: 20px" in html
         assert "border-radius: 20px" in html
@@ -400,8 +402,9 @@ class TestHTMLObjectNesting:
     def test_nested_html_string(self) -> None:
         """Test set containing HTMLString."""
         from animaid import HTMLString
-        s1 = HTMLString("hello").bold
-        s2 = HTMLString("world").italic
+
+        s1 = HTMLString("hello").bold()
+        s2 = HTMLString("world").italic()
         # Note: HTMLString must be hashable for this to work
         # Sets require hashable items
         s = HTMLSet({s1, s2})
@@ -412,6 +415,7 @@ class TestHTMLObjectNesting:
     def test_nested_html_int(self) -> None:
         """Test set containing HTMLInt."""
         from animaid import HTMLInt
+
         n1 = HTMLInt(1000).comma()
         n2 = HTMLInt(2000).comma()
         s = HTMLSet({n1, n2})

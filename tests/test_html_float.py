@@ -76,13 +76,13 @@ class TestHTMLFloatFormatting:
         """Test scientific notation."""
         n = HTMLFloat(1234567.89).scientific()
         html = n.render()
-        assert 'e+06' in html or 'E+06' in html.upper()
+        assert "e+06" in html or "E+06" in html.upper()
 
     def test_scientific_custom_precision(self) -> None:
         """Test scientific with custom precision."""
         n = HTMLFloat(1234567.89).scientific(4)
         html = n.render()
-        assert 'e+06' in html or 'E+06' in html.upper()
+        assert "e+06" in html or "E+06" in html.upper()
 
     def test_significant_figures(self) -> None:
         """Test significant figures."""
@@ -100,63 +100,63 @@ class TestHTMLFloatStyles:
 
     def test_bold(self) -> None:
         """Test bold style."""
-        n = HTMLFloat(3.14).bold
-        assert 'font-weight: bold' in n.render()
+        n = HTMLFloat(3.14).bold()
+        assert "font-weight: bold" in n.render()
 
     def test_italic(self) -> None:
         """Test italic style."""
-        n = HTMLFloat(3.14).italic
-        assert 'font-style: italic' in n.render()
+        n = HTMLFloat(3.14).italic()
+        assert "font-style: italic" in n.render()
 
     def test_underline(self) -> None:
         """Test underline style."""
-        n = HTMLFloat(3.14).underline
-        assert 'text-decoration: underline' in n.render()
+        n = HTMLFloat(3.14).underline()
+        assert "text-decoration: underline" in n.render()
 
     def test_monospace(self) -> None:
         """Test monospace style."""
-        n = HTMLFloat(3.14).monospace
-        assert 'font-family: monospace' in n.render()
+        n = HTMLFloat(3.14).monospace()
+        assert "font-family: monospace" in n.render()
 
     def test_color_red(self) -> None:
         """Test red color shortcut."""
-        n = HTMLFloat(3.14).red
-        assert 'color: red' in n.render()
+        n = HTMLFloat(3.14).red()
+        assert "color: red" in n.render()
 
     def test_color_green(self) -> None:
         """Test green color shortcut."""
-        n = HTMLFloat(3.14).green
-        assert 'color: green' in n.render()
+        n = HTMLFloat(3.14).green()
+        assert "color: green" in n.render()
 
     def test_color_method(self) -> None:
         """Test color method."""
         n = HTMLFloat(3.14).color("#ff5500")
-        assert 'color: #ff5500' in n.render()
+        assert "color: #ff5500" in n.render()
 
     def test_background(self) -> None:
         """Test background color."""
         n = HTMLFloat(3.14).background("yellow")
-        assert 'background-color: yellow' in n.render()
+        assert "background-color: yellow" in n.render()
 
     def test_font_size(self) -> None:
         """Test font size."""
         n = HTMLFloat(3.14).font_size("20px")
-        assert 'font-size: 20px' in n.render()
+        assert "font-size: 20px" in n.render()
 
     def test_padding(self) -> None:
         """Test padding."""
         n = HTMLFloat(3.14).padding("10px")
-        assert 'padding: 10px' in n.render()
+        assert "padding: 10px" in n.render()
 
     def test_border(self) -> None:
         """Test border."""
         n = HTMLFloat(3.14).border("1px solid black")
-        assert 'border: 1px solid black' in n.render()
+        assert "border: 1px solid black" in n.render()
 
     def test_border_radius(self) -> None:
         """Test border radius."""
         n = HTMLFloat(3.14).border_radius("5px")
-        assert 'border-radius: 5px' in n.render()
+        assert "border-radius: 5px" in n.render()
 
 
 class TestHTMLFloatPresets:
@@ -164,31 +164,31 @@ class TestHTMLFloatPresets:
 
     def test_success_preset(self) -> None:
         """Test success preset."""
-        n = HTMLFloat(3.14).success
+        n = HTMLFloat(3.14).success()
         html = n.render()
-        assert 'color: #2e7d32' in html
-        assert 'background-color: #e8f5e9' in html
+        assert "color: #2e7d32" in html
+        assert "background-color: #e8f5e9" in html
 
     def test_warning_preset(self) -> None:
         """Test warning preset."""
-        n = HTMLFloat(3.14).warning
+        n = HTMLFloat(3.14).warning()
         html = n.render()
-        assert 'color: #e65100' in html
-        assert 'background-color: #fff3e0' in html
+        assert "color: #e65100" in html
+        assert "background-color: #fff3e0" in html
 
     def test_error_preset(self) -> None:
         """Test error preset."""
-        n = HTMLFloat(3.14).error
+        n = HTMLFloat(3.14).error()
         html = n.render()
-        assert 'color: #c62828' in html
-        assert 'background-color: #ffebee' in html
+        assert "color: #c62828" in html
+        assert "background-color: #ffebee" in html
 
     def test_badge_preset(self) -> None:
         """Test badge preset."""
-        n = HTMLFloat(3.14).badge
+        n = HTMLFloat(3.14).badge()
         html = n.render()
-        assert 'background-color: #e0e0e0' in html
-        assert 'border-radius: 12px' in html
+        assert "background-color: #e0e0e0" in html
+        assert "border-radius: 12px" in html
 
 
 class TestHTMLFloatArithmetic:
@@ -261,7 +261,7 @@ class TestHTMLFloatArithmetic:
     def test_pow(self) -> None:
         """Test power."""
         n = HTMLFloat(2.0)
-        result = n ** 3
+        result = n**3
         assert isinstance(result, HTMLFloat)
         assert float(result) == 8.0
 
@@ -285,26 +285,26 @@ class TestHTMLFloatStylePreservation:
 
     def test_styles_preserved_after_add(self) -> None:
         """Test styles are preserved after addition."""
-        n = HTMLFloat(10.5).bold.red
+        n = HTMLFloat(10.5).bold().red()
         result = n + 5.0
         html = result.render()
-        assert 'font-weight: bold' in html
-        assert 'color: red' in html
-        assert '15.5' in html
+        assert "font-weight: bold" in html
+        assert "color: red" in html
+        assert "15.5" in html
 
     def test_format_preserved_after_add(self) -> None:
         """Test formatting is preserved after addition."""
         n = HTMLFloat(1000.50).currency()
         result = n + 234.50
-        assert '$1,235.00' in result.render()
+        assert "$1,235.00" in result.render()
 
     def test_styles_preserved_after_multiply(self) -> None:
         """Test styles are preserved after multiplication."""
-        n = HTMLFloat(10.5).success
+        n = HTMLFloat(10.5).success()
         result = n * 2
         html = result.render()
-        assert 'color: #2e7d32' in html
-        assert '21' in html
+        assert "color: #2e7d32" in html
+        assert "21" in html
 
 
 class TestHTMLFloatChaining:
@@ -312,29 +312,29 @@ class TestHTMLFloatChaining:
 
     def test_format_and_style_chain(self) -> None:
         """Test chaining format and style methods."""
-        n = HTMLFloat(0.856).percent().bold.blue.large
+        n = HTMLFloat(0.856).percent().bold().blue().large()
         html = n.render()
-        assert '85.60%' in html
-        assert 'font-weight: bold' in html
-        assert 'color: blue' in html
-        assert 'font-size: 20px' in html
+        assert "85.60%" in html
+        assert "font-weight: bold" in html
+        assert "color: blue" in html
+        assert "font-size: 20px" in html
 
     def test_multiple_styles(self) -> None:
         """Test chaining multiple styles."""
-        n = HTMLFloat(3.14).bold.italic.underline.monospace
+        n = HTMLFloat(3.14).bold().italic().underline().monospace()
         html = n.render()
-        assert 'font-weight: bold' in html
-        assert 'font-style: italic' in html
-        assert 'text-decoration: underline' in html
-        assert 'font-family: monospace' in html
+        assert "font-weight: bold" in html
+        assert "font-style: italic" in html
+        assert "text-decoration: underline" in html
+        assert "font-family: monospace" in html
 
     def test_currency_with_styles(self) -> None:
         """Test currency formatting with styles."""
-        n = HTMLFloat(1234.56).currency("$", 2).success.xl
+        n = HTMLFloat(1234.56).currency("$", 2).success().xl()
         html = n.render()
-        assert '$1,234.56' in html
-        assert 'color: #2e7d32' in html
-        assert 'font-size: 24px' in html
+        assert "$1,234.56" in html
+        assert "color: #2e7d32" in html
+        assert "font-size: 24px" in html
 
 
 class TestHTMLFloatRepr:
@@ -352,5 +352,5 @@ class TestHTMLFloatRepr:
 
     def test_repr_with_styles(self) -> None:
         """Test repr with styles."""
-        n = HTMLFloat(3.14).bold
+        n = HTMLFloat(3.14).bold()
         assert "font-weight='bold'" in repr(n)

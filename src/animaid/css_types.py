@@ -9,8 +9,7 @@ from __future__ import annotations
 import re
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import ClassVar, Self
-
+from typing import ClassVar
 
 # =============================================================================
 # Base Protocol
@@ -58,17 +57,37 @@ class Size(CSSValue):
 
     # Valid CSS length units
     VALID_UNITS: ClassVar[set[str]] = {
-        "px", "em", "rem", "%", "vh", "vw", "vmin", "vmax",
-        "pt", "pc", "in", "cm", "mm", "ex", "ch", "fr"
+        "px",
+        "em",
+        "rem",
+        "%",
+        "vh",
+        "vw",
+        "vmin",
+        "vmax",
+        "pt",
+        "pc",
+        "in",
+        "cm",
+        "mm",
+        "ex",
+        "ch",
+        "fr",
     }
 
     # Special keyword values
     KEYWORDS: ClassVar[set[str]] = {
-        "auto", "inherit", "initial", "unset", "none",
-        "min-content", "max-content", "fit-content"
+        "auto",
+        "inherit",
+        "initial",
+        "unset",
+        "none",
+        "min-content",
+        "max-content",
+        "fit-content",
     }
 
-    def __init__(self, value   : float | str, unit: str = "") -> None:
+    def __init__(self, value: float | str, unit: str = "") -> None:
         """Create a Size from a value and optional unit.
 
         Args:
@@ -83,9 +102,8 @@ class Size(CSSValue):
             self._value, self._unit = self._parse_string(value)
         else:
             if unit and unit not in self.VALID_UNITS:
-                raise ValueError(
-                    f"Invalid unit '{unit}'. Valid units: {', '.join(sorted(self.VALID_UNITS))}"
-                )
+                valid = ", ".join(sorted(self.VALID_UNITS))
+                raise ValueError(f"Invalid unit '{unit}'. Valid units: {valid}")
             self._value = value
             self._unit = unit
 
@@ -278,10 +296,33 @@ class Color(CSSValue):
 
     # Named CSS colors (subset of most common)
     NAMED_COLORS: ClassVar[set[str]] = {
-        "black", "white", "red", "green", "blue", "yellow", "cyan", "magenta",
-        "gray", "grey", "orange", "pink", "purple", "brown", "navy", "teal",
-        "olive", "maroon", "aqua", "fuchsia", "lime", "silver", "transparent",
-        "currentcolor", "inherit", "initial", "unset"
+        "black",
+        "white",
+        "red",
+        "green",
+        "blue",
+        "yellow",
+        "cyan",
+        "magenta",
+        "gray",
+        "grey",
+        "orange",
+        "pink",
+        "purple",
+        "brown",
+        "navy",
+        "teal",
+        "olive",
+        "maroon",
+        "aqua",
+        "fuchsia",
+        "lime",
+        "silver",
+        "transparent",
+        "currentcolor",
+        "inherit",
+        "initial",
+        "unset",
     }
 
     # Class-level color instances (set after class definition)
@@ -338,7 +379,8 @@ class Color(CSSValue):
         # Hex colors
         if value.startswith("#"):
             hex_part = value[1:]
-            if len(hex_part) in (3, 4, 6, 8) and all(c in "0123456789abcdefABCDEF" for c in hex_part):
+            valid_hex = all(c in "0123456789abcdefABCDEF" for c in hex_part)
+            if len(hex_part) in (3, 4, 6, 8) and valid_hex:
                 return value
             raise ValueError(f"Invalid hex color: '{value}'")
 
@@ -400,41 +442,41 @@ class Color(CSSValue):
         return cls(f"rgba({r}, {g}, {b}, {a})")
 
     @classmethod
-    def hsl(cls, h: int, s: int, l: int) -> Color:
+    def hsl(cls, h: int, s: int, lightness: int) -> Color:
         """Create an HSL color.
 
         Args:
             h: Hue (0-360)
             s: Saturation (0-100)
-            l: Lightness (0-100)
+            lightness: Lightness (0-100)
         """
         if not 0 <= h <= 360:
             raise ValueError(f"hue must be 0-360, got {h}")
         if not 0 <= s <= 100:
             raise ValueError(f"saturation must be 0-100, got {s}")
-        if not 0 <= l <= 100:
-            raise ValueError(f"lightness must be 0-100, got {l}")
-        return cls(f"hsl({h}, {s}%, {l}%)")
+        if not 0 <= lightness <= 100:
+            raise ValueError(f"lightness must be 0-100, got {lightness}")
+        return cls(f"hsl({h}, {s}%, {lightness}%)")
 
     @classmethod
-    def hsla(cls, h: int, s: int, l: int, a: float) -> Color:
+    def hsla(cls, h: int, s: int, lightness: int, a: float) -> Color:
         """Create an HSLA color with alpha.
 
         Args:
             h: Hue (0-360)
             s: Saturation (0-100)
-            l: Lightness (0-100)
+            lightness: Lightness (0-100)
             a: Alpha (0.0-1.0)
         """
         if not 0 <= h <= 360:
             raise ValueError(f"hue must be 0-360, got {h}")
         if not 0 <= s <= 100:
             raise ValueError(f"saturation must be 0-100, got {s}")
-        if not 0 <= l <= 100:
-            raise ValueError(f"lightness must be 0-100, got {l}")
+        if not 0 <= lightness <= 100:
+            raise ValueError(f"lightness must be 0-100, got {lightness}")
         if not 0.0 <= a <= 1.0:
             raise ValueError(f"alpha must be 0.0-1.0, got {a}")
-        return cls(f"hsla({h}, {s}%, {l}%, {a})")
+        return cls(f"hsla({h}, {s}%, {lightness}%, {a})")
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Color):
@@ -830,7 +872,9 @@ class Border(CSSValue):
     # -------------------------------------------------------------------------
 
     @classmethod
-    def solid(cls, width: Size | str | int | float = 1, color: Color | str = "black") -> Border:
+    def solid(
+        cls, width: Size | str | int | float = 1, color: Color | str = "black"
+    ) -> Border:
         """Create a solid border.
 
         Args:
@@ -846,7 +890,9 @@ class Border(CSSValue):
         return cls(width, BorderStyle.SOLID, color)
 
     @classmethod
-    def dashed(cls, width: Size | str | int | float = 1, color: Color | str = "black") -> Border:
+    def dashed(
+        cls, width: Size | str | int | float = 1, color: Color | str = "black"
+    ) -> Border:
         """Create a dashed border.
 
         Args:
@@ -862,7 +908,9 @@ class Border(CSSValue):
         return cls(width, BorderStyle.DASHED, color)
 
     @classmethod
-    def dotted(cls, width: Size | str | int | float = 1, color: Color | str = "black") -> Border:
+    def dotted(
+        cls, width: Size | str | int | float = 1, color: Color | str = "black"
+    ) -> Border:
         """Create a dotted border.
 
         Args:
@@ -876,7 +924,9 @@ class Border(CSSValue):
         return cls(width, BorderStyle.DOTTED, color)
 
     @classmethod
-    def double(cls, width: Size | str | int | float = 3, color: Color | str = "black") -> Border:
+    def double(
+        cls, width: Size | str | int | float = 3, color: Color | str = "black"
+    ) -> Border:
         """Create a double border.
 
         Args:
@@ -904,7 +954,9 @@ class Border(CSSValue):
     # -------------------------------------------------------------------------
 
     @classmethod
-    def thin(cls, color: Color | str = "black", style: BorderStyle | str = BorderStyle.SOLID) -> Border:
+    def thin(
+        cls, color: Color | str = "black", style: BorderStyle | str = BorderStyle.SOLID
+    ) -> Border:
         """Create a thin border (1px).
 
         Args:
@@ -920,7 +972,9 @@ class Border(CSSValue):
         return cls(1, style, color)
 
     @classmethod
-    def medium(cls, color: Color | str = "black", style: BorderStyle | str = BorderStyle.SOLID) -> Border:
+    def medium(
+        cls, color: Color | str = "black", style: BorderStyle | str = BorderStyle.SOLID
+    ) -> Border:
         """Create a medium border (2px).
 
         Args:
@@ -934,7 +988,9 @@ class Border(CSSValue):
         return cls(2, style, color)
 
     @classmethod
-    def thick(cls, color: Color | str = "black", style: BorderStyle | str = BorderStyle.SOLID) -> Border:
+    def thick(
+        cls, color: Color | str = "black", style: BorderStyle | str = BorderStyle.SOLID
+    ) -> Border:
         """Create a thick border (4px).
 
         Args:
@@ -1019,9 +1075,16 @@ class Spacing(CSSValue):
             return f"{self._top.to_css()} {self._right.to_css()}"
         if self._left is None:
             # Three values: top horizontal bottom
-            return f"{self._top.to_css()} {self._right.to_css()} {self._bottom.to_css()}"
+            top = self._top.to_css()
+            right = self._right.to_css()
+            bottom = self._bottom.to_css()
+            return f"{top} {right} {bottom}"
         # Four values: top right bottom left
-        return f"{self._top.to_css()} {self._right.to_css()} {self._bottom.to_css()} {self._left.to_css()}"
+        top = self._top.to_css()
+        right = self._right.to_css()
+        bottom = self._bottom.to_css()
+        left = self._left.to_css()
+        return f"{top} {right} {bottom} {left}"
 
     @property
     def top(self) -> Size:

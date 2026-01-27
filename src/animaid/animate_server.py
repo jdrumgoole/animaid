@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from animaid.animate import Animate
 
 
-def create_animate_app(animate: "Animate") -> FastAPI:
+def create_animate_app(animate: Animate) -> FastAPI:
     """Create a FastAPI application for the Animate instance.
 
     Args:
@@ -80,8 +80,8 @@ def get_html_page(title: str) -> str:
         }}
 
         body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-                         Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                         Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             margin: 0;
             padding: 20px;
             background-color: #fafafa;

@@ -1,7 +1,5 @@
 """Tests for HTMLDict class."""
 
-import pytest
-
 from animaid import HTMLDict, HTMLList, HTMLString
 
 
@@ -31,7 +29,7 @@ class TestHTMLDictBasics:
 
     def test_repr_with_format(self) -> None:
         """HTMLDict repr should show format."""
-        d = HTMLDict({"a": 1}).as_table
+        d = HTMLDict({"a": 1}).as_table()
         assert "format=table" in repr(d)
 
 
@@ -80,7 +78,7 @@ class TestHTMLDictFormats:
 
     def test_definition_list_format(self) -> None:
         """Definition list format should use dl/dt/dd tags."""
-        d = HTMLDict({"key": "value"}).as_definition_list
+        d = HTMLDict({"key": "value"}).as_definition_list()
         rendered = d.render()
         assert rendered.startswith("<dl")
         assert "<dt>key</dt>" in rendered
@@ -88,7 +86,7 @@ class TestHTMLDictFormats:
 
     def test_table_format(self) -> None:
         """Table format should use table/tr/td tags."""
-        d = HTMLDict({"key": "value"}).as_table
+        d = HTMLDict({"key": "value"}).as_table()
         rendered = d.render()
         assert rendered.startswith("<table")
         assert "<tr>" in rendered
@@ -97,7 +95,7 @@ class TestHTMLDictFormats:
 
     def test_divs_format(self) -> None:
         """Divs format should use div tags with flexbox."""
-        d = HTMLDict({"key": "value"}).as_divs
+        d = HTMLDict({"key": "value"}).as_divs()
         rendered = d.render()
         assert rendered.startswith("<div")
         assert "<div>key</div>" in rendered
@@ -109,13 +107,13 @@ class TestHTMLDictLayout:
 
     def test_vertical_layout(self) -> None:
         """Vertical layout should stack entries."""
-        d = HTMLDict({"a": 1, "b": 2}).as_divs.vertical
+        d = HTMLDict({"a": 1, "b": 2}).as_divs().vertical()
         rendered = d.render()
         assert "flex-direction: column" in rendered
 
     def test_horizontal_layout(self) -> None:
         """Horizontal layout should arrange entries side by side."""
-        d = HTMLDict({"a": 1, "b": 2}).horizontal
+        d = HTMLDict({"a": 1, "b": 2}).horizontal()
         rendered = d.render()
         assert "display: flex" in rendered
         assert "flex-direction: row" in rendered
@@ -133,13 +131,13 @@ class TestHTMLDictKeyStyles:
 
     def test_key_bold(self) -> None:
         """Key bold should add font-weight: bold to keys."""
-        d = HTMLDict({"key": "value"}).key_bold
+        d = HTMLDict({"key": "value"}).key_bold()
         rendered = d.render()
         assert "font-weight: bold" in rendered
 
     def test_key_italic(self) -> None:
         """Key italic should add font-style: italic to keys."""
-        d = HTMLDict({"key": "value"}).key_italic
+        d = HTMLDict({"key": "value"}).key_italic()
         rendered = d.render()
         assert "font-style: italic" in rendered
 
@@ -175,7 +173,7 @@ class TestHTMLDictKeyStyles:
 
     def test_hide_keys(self) -> None:
         """Hide keys should render only values."""
-        d = HTMLDict({"key": "value"}).hide_keys
+        d = HTMLDict({"key": "value"}).hide_keys()
         rendered = d.render()
         assert "key" not in rendered or "<dt>" not in rendered
 
@@ -185,14 +183,14 @@ class TestHTMLDictValueStyles:
 
     def test_value_bold(self) -> None:
         """Value bold should add font-weight: bold to values."""
-        d = HTMLDict({"key": "value"}).value_bold
+        d = HTMLDict({"key": "value"}).value_bold()
         rendered = d.render()
         # The bold style should be on the dd element
         assert "font-weight: bold" in rendered
 
     def test_value_italic(self) -> None:
         """Value italic should add font-style: italic to values."""
-        d = HTMLDict({"key": "value"}).value_italic
+        d = HTMLDict({"key": "value"}).value_italic()
         rendered = d.render()
         assert "font-style: italic" in rendered
 
@@ -242,7 +240,7 @@ class TestHTMLDictContainerStyles:
 
     def test_gap(self) -> None:
         """Gap should add spacing between entries."""
-        d = HTMLDict({"a": 1}).as_divs.gap("10px")
+        d = HTMLDict({"a": 1}).as_divs().gap("10px")
         rendered = d.render()
         assert "gap: 10px" in rendered
 
@@ -300,7 +298,7 @@ class TestHTMLDictNesting:
 
     def test_nested_html_string(self) -> None:
         """HTMLString values should render with their styles."""
-        styled = HTMLString("Important").bold.color("red")
+        styled = HTMLString("Important").bold().color("red")
         d = HTMLDict({"status": styled})
         rendered = d.render()
         assert "font-weight: bold" in rendered
@@ -309,7 +307,7 @@ class TestHTMLDictNesting:
 
     def test_nested_html_list(self) -> None:
         """HTMLList values should render recursively."""
-        items = HTMLList(["a", "b", "c"]).horizontal.gap("5px")
+        items = HTMLList(["a", "b", "c"]).horizontal().gap("5px")
         d = HTMLDict({"items": items})
         rendered = d.render()
         assert "display: flex" in rendered
@@ -317,46 +315,44 @@ class TestHTMLDictNesting:
 
     def test_nested_html_dict(self) -> None:
         """HTMLDict values should render recursively."""
-        inner = HTMLDict({"x": 1, "y": 2}).as_table
+        inner = HTMLDict({"x": 1, "y": 2}).as_table()
         d = HTMLDict({"nested": inner})
         rendered = d.render()
         assert "<table>" in rendered
 
     def test_mixed_nested(self) -> None:
         """Mixed nested types should render correctly."""
-        d = HTMLDict({
-            "name": HTMLString("Alice").bold,
-            "hobbies": HTMLList(["reading", "coding"]),
-            "scores": HTMLDict({"math": 95, "science": 88}),
-        })
+        d = HTMLDict(
+            {
+                "name": HTMLString("Alice").bold(),
+                "hobbies": HTMLList(["reading", "coding"]),
+                "scores": HTMLDict({"math": 95, "science": 88}),
+            }
+        )
         rendered = d.render()
         assert "Alice" in rendered
         assert "reading" in rendered
         assert "math" in rendered
 
 
-class TestHTMLDictImmutability:
-    """Test that styling returns new instances."""
+class TestHTMLDictInPlace:
+    """Test that styling modifies in-place and returns self."""
 
-    def test_key_bold_returns_new(self) -> None:
-        """Key bold should return new instance."""
+    def test_key_bold_returns_self(self) -> None:
+        """Key bold should return self (same instance)."""
         d1 = HTMLDict({"a": 1})
-        d2 = d1.key_bold
-        assert d1 is not d2
+        d2 = d1.key_bold()
+        assert d1 is d2
 
-    def test_chaining_preserves_original(self) -> None:
-        """Chaining should not modify original."""
+    def test_chaining_modifies_original(self) -> None:
+        """Chaining should modify the original object."""
         d1 = HTMLDict({"a": 1})
-        d2 = d1.key_bold.key_color("blue").value_italic
+        d1.key_bold().key_color("blue").value_italic()
 
-        # Original unchanged
-        rendered1 = d1.render()
-        assert "font-weight: bold" not in rendered1
-
-        # New has all styles
-        rendered2 = d2.render()
-        assert "font-weight: bold" in rendered2
-        assert "color: blue" in rendered2
+        # Original should have all styles
+        rendered = d1.render()
+        assert "font-weight: bold" in rendered
+        assert "color: blue" in rendered
 
 
 class TestHTMLDictOperations:
@@ -364,7 +360,7 @@ class TestHTMLDictOperations:
 
     def test_merge_operator(self) -> None:
         """Merge operator should preserve settings."""
-        d = HTMLDict({"a": 1}).key_bold
+        d = HTMLDict({"a": 1}).key_bold()
         result = d | {"b": 2}
         assert isinstance(result, HTMLDict)
         assert dict(result) == {"a": 1, "b": 2}
@@ -378,8 +374,8 @@ class TestHTMLDictChaining:
         """Complex chaining should work correctly."""
         d = (
             HTMLDict({"name": "Alice", "role": "Developer"})
-            .as_table
-            .key_bold
+            .as_table()
+            .key_bold()
             .key_color("#333")
             .key_padding("10px")
             .value_color("#666")

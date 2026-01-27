@@ -24,7 +24,7 @@ from animaid import HTMLString
 
 # Create a styled string
 greeting = HTMLString("Hello, World!")
-greeting = greeting.bold.color("blue")
+greeting = greeting.bold().color("blue")
 
 # Get the HTML
 print(greeting.render())
@@ -57,7 +57,7 @@ from animaid import HTMLString
 
 # Basic styling
 text = HTMLString("Important!")
-text = text.bold.italic.color("red")
+text = text.bold().italic().color("red")
 print(text.render())
 ```
 
@@ -66,8 +66,8 @@ You can chain multiple styles together:
 ```python
 # Chaining styles
 badge = (HTMLString("NEW")
-    .uppercase
-    .bold
+    .uppercase()
+    .bold()
     .padding("4px 8px")
     .background("#4CAF50")
     .color("white")
@@ -83,7 +83,7 @@ from animaid import HTMLInt
 
 # Display as currency
 price = HTMLInt(1234567)
-price = price.currency("$").bold.color("#2e7d32")
+price = price.currency("$").bold().color("#2e7d32")
 print(price.render())
 # Output: $1,234,567
 ```
@@ -107,8 +107,8 @@ print(fruits.render())
 
 # Styled as horizontal cards
 cards = (HTMLList(["Apple", "Banana", "Cherry", "Date"])
-    .horizontal
-    .plain
+    .horizontal()
+    .plain()
     .gap("16px")
     .item_padding("16px")
     .item_border("1px solid #e0e0e0")
@@ -130,8 +130,8 @@ profile = HTMLDict({
 })
 
 styled = (profile
-    .as_divs
-    .key_bold
+    .as_divs()
+    .key_bold()
     .padding("16px")
     .border("1px solid #e0e0e0")
     .border_radius("8px")
@@ -152,32 +152,32 @@ tags = HTMLSet(["Python", "Web", "Python", "HTML"])
 # Only contains: Python, Web, HTML
 
 # Style as pills
-pills = tags.pills  # Rounded pill-style items
+pills = tags.pills()  # Rounded pill-style items
 ```
 
 ![HTMLSet Example](docs/images/tutorial-set-pills.png)
 
 ## The Fluent API
 
-AnimAID uses a "fluent" API where methods return new objects, letting you chain calls:
+AnimAID uses a "fluent" API where methods modify the object in-place and return `self`, letting you chain calls:
 
 ```python
 # Method chaining
 result = (HTMLString("Hello")
-    .bold
-    .italic
+    .bold()
+    .italic()
     .color("blue")
     .padding("10px")
     .border("1px solid black"))
 ```
 
-Each method returns a new object with the style applied, so you can also do:
+Methods modify the original object and return it, so you can also do:
 
 ```python
 # Step by step
 text = HTMLString("Hello")
-text = text.bold
-text = text.color("blue")
+text.bold()
+text.color("blue")
 ```
 
 Both approaches work the same way!
@@ -188,22 +188,22 @@ Many types come with presets for common use cases:
 
 ```python
 # String presets
-HTMLString("Note").highlight   # Yellow background
-HTMLString("def foo").code     # Monospace, dark background
-HTMLString("3").badge          # Circular badge style
+HTMLString("Note").highlight()   # Yellow background
+HTMLString("def foo").code()     # Monospace, dark background
+HTMLString("3").badge()          # Circular badge style
 
 # Number presets
-HTMLInt(99).currency("$")      # $99 in green
-HTMLInt(42).badge              # Circular number badge
+HTMLInt(99).currency("$")        # $99 in green
+HTMLInt(42).badge()              # Circular number badge
 
 # List presets
-HTMLList(items).pills          # Rounded pill items
-HTMLList(items).cards          # Card-style items
-HTMLList(items).tags           # Tag-style items
+HTMLList(items).pills()          # Rounded pill items
+HTMLList(items).cards()          # Card-style items
+HTMLList(items).tags()           # Tag-style items
 
 # Set presets
-HTMLSet(items).pills           # Pill-style unique items
-HTMLSet(items).tags            # Tag-style items
+HTMLSet(items).pills()           # Pill-style unique items
+HTMLSet(items).tags()            # Tag-style items
 ```
 
 ## CSS Helper Types
@@ -245,12 +245,12 @@ anim = Animate()
 anim.run()
 
 # Add items - browser updates in real-time
-anim.add(HTMLString("Hello World!").bold.xl)
-anim.add(HTMLList(["Apple", "Banana", "Cherry"]).pills)
+anim.add(HTMLString("Hello World!").bold().xl())
+anim.add(HTMLList(["Apple", "Banana", "Cherry"]).pills())
 
 # Update existing items
 item_id = anim.add(HTMLString("Loading..."))
-anim.update(item_id, HTMLString("Done!").success)
+anim.update(item_id, HTMLString("Done!").success())
 
 # Clean up
 anim.stop()
@@ -260,7 +260,7 @@ Or use the context manager:
 
 ```python
 with Animate() as anim:
-    anim.add(HTMLString("Temporary display").bold)
+    anim.add(HTMLString("Temporary display").bold())
     input("Press Enter to exit...")
 # Server stops automatically
 ```
@@ -269,29 +269,35 @@ with Animate() as anim:
 
 ### Reactive Updates
 
-Mutable HTML objects (`HTMLList`, `HTMLDict`, `HTMLSet`) automatically notify Animate when their contents change. Simply mutate the object and the browser updates in real-time:
+All HTML objects automatically notify Animate when their styles change. The browser updates in real-time:
 
 ```python
-from animaid import Animate, HTMLList, HTMLDict
+from animaid import Animate, HTMLList, HTMLDict, HTMLString, HTMLInt
 
 anim = Animate()
 anim.run()
 
-# Add a mutable list
-scores = HTMLList([10, 20, 30]).pills
-anim.add(scores)
+# Styling changes trigger automatic updates for ALL types
+message = HTMLString("Hello")
+anim.add(message)
+message.bold().red()   # Browser updates automatically
 
-# Mutate the list - browser updates automatically!
+number = HTMLInt(42)
+anim.add(number)
+number.badge()         # Browser updates automatically
+
+# Mutable types also update on data changes
+scores = HTMLList([10, 20, 30]).pills()
+anim.add(scores)
 scores.append(40)      # Browser shows [10, 20, 30, 40]
 scores[0] = 100        # Browser shows [100, 20, 30, 40]
 
-# Same for dicts
 data = HTMLDict({"score": 0})
 anim.add(data)
 data["score"] = 500    # Browser updates automatically
 ```
 
-**Note:** Immutable types (`HTMLString`, `HTMLInt`, `HTMLFloat`, `HTMLTuple`) require manual updates using `anim.update(item_id, new_value)`.
+**Note:** Immutable types (`HTMLString`, `HTMLInt`, `HTMLFloat`, `HTMLTuple`) can have their styles changed in-place, but to change their underlying data/content, use `anim.update(item_id, new_value)`.
 
 ## Interactive Tutorial
 
@@ -329,8 +335,8 @@ Most AnimAID types share these styling methods:
 
 | Method | Example | Description |
 |--------|---------|-------------|
-| `.bold` | `.bold` | Make text bold |
-| `.italic` | `.italic` | Make text italic |
+| `.bold()` | `.bold()` | Make text bold |
+| `.italic()` | `.italic()` | Make text italic |
 | `.color(c)` | `.color("red")` | Set text color |
 | `.background(c)` | `.background("#f0f0f0")` | Set background color |
 | `.padding(p)` | `.padding("10px")` | Add padding |

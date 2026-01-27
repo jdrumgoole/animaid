@@ -1,7 +1,5 @@
 """Tests for HTMLList class."""
 
-import pytest
-
 from animaid import HTMLList, HTMLString
 
 
@@ -31,7 +29,7 @@ class TestHTMLListBasics:
 
     def test_repr_with_direction(self) -> None:
         """HTMLList repr should show direction."""
-        lst = HTMLList(["a", "b"]).horizontal
+        lst = HTMLList(["a", "b"]).horizontal()
         assert "direction=horizontal" in repr(lst)
 
 
@@ -73,21 +71,21 @@ class TestHTMLListTypes:
 
     def test_unordered_list(self) -> None:
         """Unordered list should use <ul> tag."""
-        lst = HTMLList(["a", "b"]).unordered
+        lst = HTMLList(["a", "b"]).unordered()
         rendered = lst.render()
         assert rendered.startswith("<ul")
         assert "<li>a</li>" in rendered
 
     def test_ordered_list(self) -> None:
         """Ordered list should use <ol> tag."""
-        lst = HTMLList(["a", "b"]).ordered
+        lst = HTMLList(["a", "b"]).ordered()
         rendered = lst.render()
         assert rendered.startswith("<ol")
         assert "<li>a</li>" in rendered
 
     def test_plain_list(self) -> None:
         """Plain list should use <div> tags."""
-        lst = HTMLList(["a", "b"]).plain
+        lst = HTMLList(["a", "b"]).plain()
         rendered = lst.render()
         assert rendered.startswith("<div")
         assert "<div>a</div>" in rendered
@@ -105,20 +103,20 @@ class TestHTMLListDirection:
 
     def test_horizontal(self) -> None:
         """Horizontal layout should use flexbox row."""
-        lst = HTMLList(["a", "b"]).horizontal
+        lst = HTMLList(["a", "b"]).horizontal()
         rendered = lst.render()
         assert "display: flex" in rendered
         assert "flex-direction: row" in rendered
 
     def test_horizontal_reverse(self) -> None:
         """Horizontal reverse should use row-reverse."""
-        lst = HTMLList(["a", "b"]).horizontal_reverse
+        lst = HTMLList(["a", "b"]).horizontal_reverse()
         rendered = lst.render()
         assert "flex-direction: row-reverse" in rendered
 
     def test_vertical_reverse(self) -> None:
         """Vertical reverse should use column-reverse."""
-        lst = HTMLList(["a", "b"]).vertical_reverse
+        lst = HTMLList(["a", "b"]).vertical_reverse()
         rendered = lst.render()
         assert "flex-direction: column-reverse" in rendered
 
@@ -141,7 +139,7 @@ class TestHTMLListSpacing:
 
     def test_gap(self) -> None:
         """Gap should add spacing between items."""
-        lst = HTMLList(["a", "b"]).horizontal.gap("20px")
+        lst = HTMLList(["a", "b"]).horizontal().gap("20px")
         rendered = lst.render()
         assert "gap: 20px" in rendered
 
@@ -189,24 +187,24 @@ class TestHTMLListBorders:
         """Item border should add border to each item."""
         lst = HTMLList(["a", "b"]).item_border("1px solid gray")
         rendered = lst.render()
-        assert 'border: 1px solid gray' in rendered
+        assert "border: 1px solid gray" in rendered
 
     def test_item_border_radius(self) -> None:
         """Item border radius should round item corners."""
         lst = HTMLList(["a", "b"]).item_border_radius("3px")
         rendered = lst.render()
-        assert 'border-radius: 3px' in rendered
+        assert "border-radius: 3px" in rendered
 
     def test_separator_vertical(self) -> None:
         """Separator should add border-bottom between items vertically."""
-        lst = HTMLList(["a", "b", "c"]).plain.separator("1px solid gray")
+        lst = HTMLList(["a", "b", "c"]).plain().separator("1px solid gray")
         rendered = lst.render()
         # First two items should have border-bottom, last should not
         assert "border-bottom: 1px solid gray" in rendered
 
     def test_separator_horizontal(self) -> None:
         """Separator should add border-right between items horizontally."""
-        lst = HTMLList(["a", "b", "c"]).horizontal.separator("1px solid gray")
+        lst = HTMLList(["a", "b", "c"]).horizontal().separator("1px solid gray")
         rendered = lst.render()
         assert "border-right: 1px solid gray" in rendered
 
@@ -238,19 +236,19 @@ class TestHTMLListAlignment:
 
     def test_align_items(self) -> None:
         """Align items should set cross-axis alignment."""
-        lst = HTMLList(["a", "b"]).horizontal.align_items("center")
+        lst = HTMLList(["a", "b"]).horizontal().align_items("center")
         rendered = lst.render()
         assert "align-items: center" in rendered
 
     def test_justify_content(self) -> None:
         """Justify content should set main-axis alignment."""
-        lst = HTMLList(["a", "b"]).horizontal.justify_content("space-between")
+        lst = HTMLList(["a", "b"]).horizontal().justify_content("space-between")
         rendered = lst.render()
         assert "justify-content: space-between" in rendered
 
     def test_center(self) -> None:
         """Center should set both alignments to center."""
-        lst = HTMLList(["a", "b"]).horizontal.center
+        lst = HTMLList(["a", "b"]).horizontal().center()
         rendered = lst.render()
         assert "align-items: center" in rendered
         assert "justify-content: center" in rendered
@@ -283,7 +281,7 @@ class TestHTMLListNesting:
 
     def test_nested_html_list(self) -> None:
         """Nested HTMLList should render recursively."""
-        inner = HTMLList(["x", "y"]).horizontal.gap("5px")
+        inner = HTMLList(["x", "y"]).horizontal().gap("5px")
         outer = HTMLList(["a", inner, "b"])
         rendered = outer.render()
 
@@ -298,7 +296,7 @@ class TestHTMLListNesting:
 
     def test_nested_html_string(self) -> None:
         """HTMLString items should render with their styles."""
-        styled = HTMLString("Important").bold.color("red")
+        styled = HTMLString("Important").bold().color("red")
         lst = HTMLList(["Normal", styled, "Also normal"])
         rendered = lst.render()
 
@@ -309,7 +307,7 @@ class TestHTMLListNesting:
 
     def test_deeply_nested(self) -> None:
         """Deeply nested structures should render correctly."""
-        level3 = HTMLList(["deep"]).horizontal
+        level3 = HTMLList(["deep"]).horizontal()
         level2 = HTMLList([level3, "mid"])
         level1 = HTMLList([level2, "top"])
         rendered = level1.render()
@@ -320,12 +318,14 @@ class TestHTMLListNesting:
 
     def test_mixed_content(self) -> None:
         """Lists with mixed content types should render."""
-        lst = HTMLList([
-            "plain string",
-            HTMLString("styled").italic,
-            123,  # number
-            HTMLList(["nested"]).horizontal,
-        ])
+        lst = HTMLList(
+            [
+                "plain string",
+                HTMLString("styled").italic(),
+                123,  # number
+                HTMLList(["nested"]).horizontal(),
+            ]
+        )
         rendered = lst.render()
 
         assert "plain string" in rendered
@@ -334,30 +334,25 @@ class TestHTMLListNesting:
         assert "nested" in rendered
 
 
-class TestHTMLListImmutability:
-    """Test that styling returns new instances."""
+class TestHTMLListInPlace:
+    """Test that styling modifies in-place and returns self."""
 
-    def test_horizontal_returns_new(self) -> None:
-        """Horizontal should return new instance."""
+    def test_horizontal_returns_self(self) -> None:
+        """Horizontal should return self (same instance)."""
         lst1 = HTMLList(["a", "b"])
-        lst2 = lst1.horizontal
-        assert lst1 is not lst2
+        lst2 = lst1.horizontal()
+        assert lst1 is lst2
 
-    def test_chaining_preserves_original(self) -> None:
-        """Chaining should not modify original."""
+    def test_chaining_modifies_original(self) -> None:
+        """Chaining should modify the original object."""
         lst1 = HTMLList(["a", "b"])
-        lst2 = lst1.horizontal.gap("10px").item_padding("5px")
+        lst1.horizontal().gap("10px").item_padding("5px")
 
-        # Original should be unchanged
-        rendered1 = lst1.render()
-        assert "display: flex" not in rendered1
-        assert "gap" not in rendered1
-
-        # New should have all styles
-        rendered2 = lst2.render()
-        assert "display: flex" in rendered2
-        assert "gap: 10px" in rendered2
-        assert "padding: 5px" in rendered2
+        # Original should have all styles
+        rendered = lst1.render()
+        assert "display: flex" in rendered
+        assert "gap: 10px" in rendered
+        assert "padding: 5px" in rendered
 
 
 class TestHTMLListOperations:
@@ -365,7 +360,7 @@ class TestHTMLListOperations:
 
     def test_concatenation(self) -> None:
         """Concatenation should preserve settings."""
-        lst = HTMLList(["a"]).horizontal.gap("10px")
+        lst = HTMLList(["a"]).horizontal().gap("10px")
         result = lst + ["b", "c"]
         assert isinstance(result, HTMLList)
         assert list(result) == ["a", "b", "c"]
@@ -373,7 +368,7 @@ class TestHTMLListOperations:
 
     def test_slicing(self) -> None:
         """Slicing should return HTMLList with settings."""
-        lst = HTMLList(["a", "b", "c", "d"]).horizontal.gap("5px")
+        lst = HTMLList(["a", "b", "c", "d"]).horizontal().gap("5px")
         result = lst[1:3]
         assert isinstance(result, HTMLList)
         assert list(result) == ["b", "c"]
@@ -403,7 +398,7 @@ class TestHTMLListChaining:
         """Complex chaining should work correctly."""
         lst = (
             HTMLList(["A", "B", "C"])
-            .horizontal
+            .horizontal()
             .gap("20px")
             .padding("10px")
             .background("#f5f5f5")

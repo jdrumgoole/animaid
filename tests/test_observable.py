@@ -2,10 +2,9 @@
 
 import time
 
-import pytest
 from pubsub import pub
 
-from animaid import HTMLList, HTMLDict, HTMLSet
+from animaid import HTMLDict, HTMLList, HTMLSet
 
 
 class TestHTMLListObservable:
@@ -14,7 +13,7 @@ class TestHTMLListObservable:
     def test_has_obs_id(self) -> None:
         """HTMLList should have a unique _obs_id."""
         html_list = HTMLList([1, 2, 3])
-        assert hasattr(html_list, '_obs_id')
+        assert hasattr(html_list, "_obs_id")
         assert html_list._obs_id is not None
 
     def test_append_publishes(self) -> None:
@@ -24,14 +23,14 @@ class TestHTMLListObservable:
         def listener(obs_id: str) -> None:
             received.append(obs_id)
 
-        pub.subscribe(listener, 'animaid.changed')
+        pub.subscribe(listener, "animaid.changed")
         try:
             html_list = HTMLList([1, 2, 3])
             html_list.append(4)
             assert len(received) == 1
             assert received[0] == html_list._obs_id
         finally:
-            pub.unsubscribe(listener, 'animaid.changed')
+            pub.unsubscribe(listener, "animaid.changed")
 
     def test_extend_publishes(self) -> None:
         """Extend should publish change notification."""
@@ -40,13 +39,13 @@ class TestHTMLListObservable:
         def listener(obs_id: str) -> None:
             received.append(obs_id)
 
-        pub.subscribe(listener, 'animaid.changed')
+        pub.subscribe(listener, "animaid.changed")
         try:
             html_list = HTMLList([1, 2, 3])
             html_list.extend([4, 5])
             assert len(received) == 1
         finally:
-            pub.unsubscribe(listener, 'animaid.changed')
+            pub.unsubscribe(listener, "animaid.changed")
 
     def test_setitem_publishes(self) -> None:
         """Setting item should publish change notification."""
@@ -55,13 +54,13 @@ class TestHTMLListObservable:
         def listener(obs_id: str) -> None:
             received.append(obs_id)
 
-        pub.subscribe(listener, 'animaid.changed')
+        pub.subscribe(listener, "animaid.changed")
         try:
             html_list = HTMLList([1, 2, 3])
             html_list[0] = 100
             assert len(received) == 1
         finally:
-            pub.unsubscribe(listener, 'animaid.changed')
+            pub.unsubscribe(listener, "animaid.changed")
 
     def test_pop_publishes(self) -> None:
         """Pop should publish change notification."""
@@ -70,13 +69,13 @@ class TestHTMLListObservable:
         def listener(obs_id: str) -> None:
             received.append(obs_id)
 
-        pub.subscribe(listener, 'animaid.changed')
+        pub.subscribe(listener, "animaid.changed")
         try:
             html_list = HTMLList([1, 2, 3])
             html_list.pop()
             assert len(received) == 1
         finally:
-            pub.unsubscribe(listener, 'animaid.changed')
+            pub.unsubscribe(listener, "animaid.changed")
 
     def test_clear_publishes(self) -> None:
         """Clear should publish change notification."""
@@ -85,19 +84,19 @@ class TestHTMLListObservable:
         def listener(obs_id: str) -> None:
             received.append(obs_id)
 
-        pub.subscribe(listener, 'animaid.changed')
+        pub.subscribe(listener, "animaid.changed")
         try:
             html_list = HTMLList([1, 2, 3])
             html_list.clear()
             assert len(received) == 1
         finally:
-            pub.unsubscribe(listener, 'animaid.changed')
+            pub.unsubscribe(listener, "animaid.changed")
 
-    def test_styled_copy_preserves_obs_id(self) -> None:
-        """Styled copies should preserve _obs_id for reactive updates."""
+    def test_in_place_styling_returns_self(self) -> None:
+        """In-place styling should return self (same object)."""
         html_list = HTMLList([1, 2, 3])
-        styled = html_list.pills
-        assert styled._obs_id == html_list._obs_id
+        styled = html_list.pills()
+        assert styled is html_list
 
 
 class TestHTMLDictObservable:
@@ -106,7 +105,7 @@ class TestHTMLDictObservable:
     def test_has_obs_id(self) -> None:
         """HTMLDict should have a unique _obs_id."""
         html_dict = HTMLDict({"a": 1})
-        assert hasattr(html_dict, '_obs_id')
+        assert hasattr(html_dict, "_obs_id")
         assert html_dict._obs_id is not None
 
     def test_setitem_publishes(self) -> None:
@@ -116,14 +115,14 @@ class TestHTMLDictObservable:
         def listener(obs_id: str) -> None:
             received.append(obs_id)
 
-        pub.subscribe(listener, 'animaid.changed')
+        pub.subscribe(listener, "animaid.changed")
         try:
             html_dict = HTMLDict({"a": 1})
             html_dict["b"] = 2
             assert len(received) == 1
             assert received[0] == html_dict._obs_id
         finally:
-            pub.unsubscribe(listener, 'animaid.changed')
+            pub.unsubscribe(listener, "animaid.changed")
 
     def test_update_publishes(self) -> None:
         """Update should publish change notification."""
@@ -132,13 +131,13 @@ class TestHTMLDictObservable:
         def listener(obs_id: str) -> None:
             received.append(obs_id)
 
-        pub.subscribe(listener, 'animaid.changed')
+        pub.subscribe(listener, "animaid.changed")
         try:
             html_dict = HTMLDict({"a": 1})
             html_dict.update({"b": 2, "c": 3})
             assert len(received) == 1
         finally:
-            pub.unsubscribe(listener, 'animaid.changed')
+            pub.unsubscribe(listener, "animaid.changed")
 
     def test_pop_publishes(self) -> None:
         """Pop should publish change notification."""
@@ -147,13 +146,13 @@ class TestHTMLDictObservable:
         def listener(obs_id: str) -> None:
             received.append(obs_id)
 
-        pub.subscribe(listener, 'animaid.changed')
+        pub.subscribe(listener, "animaid.changed")
         try:
             html_dict = HTMLDict({"a": 1, "b": 2})
             html_dict.pop("a")
             assert len(received) == 1
         finally:
-            pub.unsubscribe(listener, 'animaid.changed')
+            pub.unsubscribe(listener, "animaid.changed")
 
     def test_clear_publishes(self) -> None:
         """Clear should publish change notification."""
@@ -162,19 +161,19 @@ class TestHTMLDictObservable:
         def listener(obs_id: str) -> None:
             received.append(obs_id)
 
-        pub.subscribe(listener, 'animaid.changed')
+        pub.subscribe(listener, "animaid.changed")
         try:
             html_dict = HTMLDict({"a": 1})
             html_dict.clear()
             assert len(received) == 1
         finally:
-            pub.unsubscribe(listener, 'animaid.changed')
+            pub.unsubscribe(listener, "animaid.changed")
 
-    def test_styled_copy_preserves_obs_id(self) -> None:
-        """Styled copies should preserve _obs_id for reactive updates."""
+    def test_in_place_styling_returns_self(self) -> None:
+        """In-place styling should return self (same object)."""
         html_dict = HTMLDict({"a": 1})
-        styled = html_dict.card
-        assert styled._obs_id == html_dict._obs_id
+        styled = html_dict.card()
+        assert styled is html_dict
 
 
 class TestHTMLSetObservable:
@@ -183,7 +182,7 @@ class TestHTMLSetObservable:
     def test_has_obs_id(self) -> None:
         """HTMLSet should have a unique _obs_id."""
         html_set = HTMLSet({1, 2, 3})
-        assert hasattr(html_set, '_obs_id')
+        assert hasattr(html_set, "_obs_id")
         assert html_set._obs_id is not None
 
     def test_add_publishes(self) -> None:
@@ -193,14 +192,14 @@ class TestHTMLSetObservable:
         def listener(obs_id: str) -> None:
             received.append(obs_id)
 
-        pub.subscribe(listener, 'animaid.changed')
+        pub.subscribe(listener, "animaid.changed")
         try:
             html_set = HTMLSet({1, 2, 3})
             html_set.add(4)
             assert len(received) == 1
             assert received[0] == html_set._obs_id
         finally:
-            pub.unsubscribe(listener, 'animaid.changed')
+            pub.unsubscribe(listener, "animaid.changed")
 
     def test_discard_publishes(self) -> None:
         """Discard should publish change notification."""
@@ -209,13 +208,13 @@ class TestHTMLSetObservable:
         def listener(obs_id: str) -> None:
             received.append(obs_id)
 
-        pub.subscribe(listener, 'animaid.changed')
+        pub.subscribe(listener, "animaid.changed")
         try:
             html_set = HTMLSet({1, 2, 3})
             html_set.discard(1)
             assert len(received) == 1
         finally:
-            pub.unsubscribe(listener, 'animaid.changed')
+            pub.unsubscribe(listener, "animaid.changed")
 
     def test_update_publishes(self) -> None:
         """Update should publish change notification."""
@@ -224,13 +223,13 @@ class TestHTMLSetObservable:
         def listener(obs_id: str) -> None:
             received.append(obs_id)
 
-        pub.subscribe(listener, 'animaid.changed')
+        pub.subscribe(listener, "animaid.changed")
         try:
             html_set = HTMLSet({1, 2, 3})
             html_set.update({4, 5})
             assert len(received) == 1
         finally:
-            pub.unsubscribe(listener, 'animaid.changed')
+            pub.unsubscribe(listener, "animaid.changed")
 
     def test_clear_publishes(self) -> None:
         """Clear should publish change notification."""
@@ -239,19 +238,19 @@ class TestHTMLSetObservable:
         def listener(obs_id: str) -> None:
             received.append(obs_id)
 
-        pub.subscribe(listener, 'animaid.changed')
+        pub.subscribe(listener, "animaid.changed")
         try:
             html_set = HTMLSet({1, 2, 3})
             html_set.clear()
             assert len(received) == 1
         finally:
-            pub.unsubscribe(listener, 'animaid.changed')
+            pub.unsubscribe(listener, "animaid.changed")
 
-    def test_styled_copy_preserves_obs_id(self) -> None:
-        """Styled copies should preserve _obs_id for reactive updates."""
+    def test_in_place_styling_returns_self(self) -> None:
+        """In-place styling should return self (same object)."""
         html_set = HTMLSet({1, 2, 3})
-        styled = html_set.pills
-        assert styled._obs_id == html_set._obs_id
+        styled = html_set.pills()
+        assert styled is html_set
 
 
 class TestAnimateWithObservable:
@@ -410,9 +409,8 @@ class TestAnimateWithObservable:
             # Manually modify without triggering notify
             list.append(html_list, 4)  # Bypass our override
 
-            # State should not yet reflect change
-            state = anim.get_full_state()
-            # Note: state will actually reflect it since get_full_state re-renders
+            # State would not yet reflect change without re-render
+            # Note: get_full_state re-renders, so we skip checking here
 
             # Call refresh
             result = anim.refresh(item_id)
@@ -440,5 +438,167 @@ class TestAnimateWithObservable:
 
             # This should not raise
             anim.refresh_all()
+        finally:
+            anim.stop()
+
+
+class TestImmutableTypesObservable:
+    """Test observable mechanism for immutable types (HTMLString, HTMLInt, HTMLFloat, HTMLTuple)."""
+
+    def test_html_string_has_obs_id(self) -> None:
+        """HTMLString should have a unique _obs_id."""
+        from animaid import HTMLString
+
+        s = HTMLString("hello")
+        assert hasattr(s, "_obs_id")
+        assert s._obs_id is not None
+
+    def test_html_string_styling_publishes(self) -> None:
+        """HTMLString styling should publish change notification."""
+        from animaid import HTMLString
+
+        received: list[str] = []
+
+        def listener(obs_id: str) -> None:
+            received.append(obs_id)
+
+        pub.subscribe(listener, "animaid.changed")
+        try:
+            s = HTMLString("hello")
+            s.bold()
+            assert len(received) == 1
+            assert received[0] == s._obs_id
+        finally:
+            pub.unsubscribe(listener, "animaid.changed")
+
+    def test_html_int_has_obs_id(self) -> None:
+        """HTMLInt should have a unique _obs_id."""
+        from animaid import HTMLInt
+
+        n = HTMLInt(42)
+        assert hasattr(n, "_obs_id")
+        assert n._obs_id is not None
+
+    def test_html_int_styling_publishes(self) -> None:
+        """HTMLInt styling should publish change notification."""
+        from animaid import HTMLInt
+
+        received: list[str] = []
+
+        def listener(obs_id: str) -> None:
+            received.append(obs_id)
+
+        pub.subscribe(listener, "animaid.changed")
+        try:
+            n = HTMLInt(42)
+            n.red()
+            assert len(received) == 1
+            assert received[0] == n._obs_id
+        finally:
+            pub.unsubscribe(listener, "animaid.changed")
+
+    def test_html_float_has_obs_id(self) -> None:
+        """HTMLFloat should have a unique _obs_id."""
+        from animaid import HTMLFloat
+
+        f = HTMLFloat(3.14)
+        assert hasattr(f, "_obs_id")
+        assert f._obs_id is not None
+
+    def test_html_float_styling_publishes(self) -> None:
+        """HTMLFloat styling should publish change notification."""
+        from animaid import HTMLFloat
+
+        received: list[str] = []
+
+        def listener(obs_id: str) -> None:
+            received.append(obs_id)
+
+        pub.subscribe(listener, "animaid.changed")
+        try:
+            f = HTMLFloat(3.14)
+            f.bold()
+            assert len(received) == 1
+            assert received[0] == f._obs_id
+        finally:
+            pub.unsubscribe(listener, "animaid.changed")
+
+    def test_html_tuple_has_obs_id(self) -> None:
+        """HTMLTuple should have a unique _obs_id."""
+        from animaid import HTMLTuple
+
+        t = HTMLTuple((1, 2, 3))
+        assert hasattr(t, "_obs_id")
+        assert t._obs_id is not None
+
+    def test_html_tuple_styling_publishes(self) -> None:
+        """HTMLTuple styling should publish change notification."""
+        from animaid import HTMLTuple
+
+        received: list[str] = []
+
+        def listener(obs_id: str) -> None:
+            received.append(obs_id)
+
+        pub.subscribe(listener, "animaid.changed")
+        try:
+            t = HTMLTuple((1, 2, 3))
+            t.pills()
+            assert len(received) == 1
+            assert received[0] == t._obs_id
+        finally:
+            pub.unsubscribe(listener, "animaid.changed")
+
+    def test_animate_updates_on_string_styling(self) -> None:
+        """Animate should update browser when HTMLString is styled."""
+        from animaid import Animate, HTMLString
+
+        anim = Animate(port=8298, auto_open=False)
+        anim.run()
+        time.sleep(0.5)
+
+        try:
+            s = HTMLString("hello")
+            anim.add(s)
+
+            # Verify initial state
+            state = anim.get_full_state()
+            assert "font-weight: bold" not in state[0]["html"]
+
+            # Style the string
+            s.bold()
+
+            time.sleep(0.1)
+
+            # Verify updated state
+            state = anim.get_full_state()
+            assert "font-weight: bold" in state[0]["html"]
+        finally:
+            anim.stop()
+
+    def test_animate_updates_on_int_styling(self) -> None:
+        """Animate should update browser when HTMLInt is styled."""
+        from animaid import Animate, HTMLInt
+
+        anim = Animate(port=8299, auto_open=False)
+        anim.run()
+        time.sleep(0.5)
+
+        try:
+            n = HTMLInt(42)
+            anim.add(n)
+
+            # Verify initial state
+            state = anim.get_full_state()
+            assert "color: red" not in state[0]["html"]
+
+            # Style the int
+            n.red()
+
+            time.sleep(0.1)
+
+            # Verify updated state
+            state = anim.get_full_state()
+            assert "color: red" in state[0]["html"]
         finally:
             anim.stop()

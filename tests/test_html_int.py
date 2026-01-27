@@ -1,6 +1,6 @@
 """Tests for HTMLInt class."""
 
-from animaid import HTMLInt, HTMLFloat
+from animaid import HTMLFloat, HTMLInt
 
 
 class TestHTMLIntBasics:
@@ -113,63 +113,63 @@ class TestHTMLIntStyles:
 
     def test_bold(self) -> None:
         """Test bold style."""
-        n = HTMLInt(42).bold
-        assert 'font-weight: bold' in n.render()
+        n = HTMLInt(42).bold()
+        assert "font-weight: bold" in n.render()
 
     def test_italic(self) -> None:
         """Test italic style."""
-        n = HTMLInt(42).italic
-        assert 'font-style: italic' in n.render()
+        n = HTMLInt(42).italic()
+        assert "font-style: italic" in n.render()
 
     def test_underline(self) -> None:
         """Test underline style."""
-        n = HTMLInt(42).underline
-        assert 'text-decoration: underline' in n.render()
+        n = HTMLInt(42).underline()
+        assert "text-decoration: underline" in n.render()
 
     def test_monospace(self) -> None:
         """Test monospace style."""
-        n = HTMLInt(42).monospace
-        assert 'font-family: monospace' in n.render()
+        n = HTMLInt(42).monospace()
+        assert "font-family: monospace" in n.render()
 
     def test_color_red(self) -> None:
         """Test red color shortcut."""
-        n = HTMLInt(42).red
-        assert 'color: red' in n.render()
+        n = HTMLInt(42).red()
+        assert "color: red" in n.render()
 
     def test_color_blue(self) -> None:
         """Test blue color shortcut."""
-        n = HTMLInt(42).blue
-        assert 'color: blue' in n.render()
+        n = HTMLInt(42).blue()
+        assert "color: blue" in n.render()
 
     def test_color_method(self) -> None:
         """Test color method."""
         n = HTMLInt(42).color("#ff5500")
-        assert 'color: #ff5500' in n.render()
+        assert "color: #ff5500" in n.render()
 
     def test_background(self) -> None:
         """Test background color."""
         n = HTMLInt(42).background("yellow")
-        assert 'background-color: yellow' in n.render()
+        assert "background-color: yellow" in n.render()
 
     def test_font_size(self) -> None:
         """Test font size."""
         n = HTMLInt(42).font_size("20px")
-        assert 'font-size: 20px' in n.render()
+        assert "font-size: 20px" in n.render()
 
     def test_padding(self) -> None:
         """Test padding."""
         n = HTMLInt(42).padding("10px")
-        assert 'padding: 10px' in n.render()
+        assert "padding: 10px" in n.render()
 
     def test_border(self) -> None:
         """Test border."""
         n = HTMLInt(42).border("1px solid black")
-        assert 'border: 1px solid black' in n.render()
+        assert "border: 1px solid black" in n.render()
 
     def test_border_radius(self) -> None:
         """Test border radius."""
         n = HTMLInt(42).border_radius("5px")
-        assert 'border-radius: 5px' in n.render()
+        assert "border-radius: 5px" in n.render()
 
 
 class TestHTMLIntPresets:
@@ -177,31 +177,31 @@ class TestHTMLIntPresets:
 
     def test_success_preset(self) -> None:
         """Test success preset."""
-        n = HTMLInt(42).success
+        n = HTMLInt(42).success()
         html = n.render()
-        assert 'color: #2e7d32' in html
-        assert 'background-color: #e8f5e9' in html
+        assert "color: #2e7d32" in html
+        assert "background-color: #e8f5e9" in html
 
     def test_warning_preset(self) -> None:
         """Test warning preset."""
-        n = HTMLInt(42).warning
+        n = HTMLInt(42).warning()
         html = n.render()
-        assert 'color: #e65100' in html
-        assert 'background-color: #fff3e0' in html
+        assert "color: #e65100" in html
+        assert "background-color: #fff3e0" in html
 
     def test_error_preset(self) -> None:
         """Test error preset."""
-        n = HTMLInt(42).error
+        n = HTMLInt(42).error()
         html = n.render()
-        assert 'color: #c62828' in html
-        assert 'background-color: #ffebee' in html
+        assert "color: #c62828" in html
+        assert "background-color: #ffebee" in html
 
     def test_badge_preset(self) -> None:
         """Test badge preset."""
-        n = HTMLInt(42).badge
+        n = HTMLInt(42).badge()
         html = n.render()
-        assert 'background-color: #e0e0e0' in html
-        assert 'border-radius: 12px' in html
+        assert "background-color: #e0e0e0" in html
+        assert "border-radius: 12px" in html
 
 
 class TestHTMLIntArithmetic:
@@ -274,7 +274,7 @@ class TestHTMLIntArithmetic:
     def test_pow(self) -> None:
         """Test power."""
         n = HTMLInt(2)
-        result = n ** 3
+        result = n**3
         assert isinstance(result, HTMLInt)
         assert int(result) == 8
 
@@ -298,26 +298,26 @@ class TestHTMLIntStylePreservation:
 
     def test_styles_preserved_after_add(self) -> None:
         """Test styles are preserved after addition."""
-        n = HTMLInt(10).bold.red
+        n = HTMLInt(10).bold().red()
         result = n + 5
         html = result.render()
-        assert 'font-weight: bold' in html
-        assert 'color: red' in html
-        assert '>15<' in html
+        assert "font-weight: bold" in html
+        assert "color: red" in html
+        assert ">15<" in html
 
     def test_format_preserved_after_add(self) -> None:
         """Test formatting is preserved after addition."""
         n = HTMLInt(1000000).comma()
         result = n + 234567
-        assert '1,234,567' in result.render()
+        assert "1,234,567" in result.render()
 
     def test_styles_preserved_after_multiply(self) -> None:
         """Test styles are preserved after multiplication."""
-        n = HTMLInt(10).success
+        n = HTMLInt(10).success()
         result = n * 5
         html = result.render()
-        assert 'color: #2e7d32' in html
-        assert '>50<' in html
+        assert "color: #2e7d32" in html
+        assert ">50<" in html
 
 
 class TestHTMLIntChaining:
@@ -325,29 +325,29 @@ class TestHTMLIntChaining:
 
     def test_format_and_style_chain(self) -> None:
         """Test chaining format and style methods."""
-        n = HTMLInt(1234567).comma().bold.blue.large
+        n = HTMLInt(1234567).comma().bold().blue().large()
         html = n.render()
-        assert '1,234,567' in html
-        assert 'font-weight: bold' in html
-        assert 'color: blue' in html
-        assert 'font-size: 20px' in html
+        assert "1,234,567" in html
+        assert "font-weight: bold" in html
+        assert "color: blue" in html
+        assert "font-size: 20px" in html
 
     def test_multiple_styles(self) -> None:
         """Test chaining multiple styles."""
-        n = HTMLInt(42).bold.italic.underline.monospace
+        n = HTMLInt(42).bold().italic().underline().monospace()
         html = n.render()
-        assert 'font-weight: bold' in html
-        assert 'font-style: italic' in html
-        assert 'text-decoration: underline' in html
-        assert 'font-family: monospace' in html
+        assert "font-weight: bold" in html
+        assert "font-style: italic" in html
+        assert "text-decoration: underline" in html
+        assert "font-family: monospace" in html
 
     def test_currency_with_styles(self) -> None:
         """Test currency formatting with styles."""
-        n = HTMLInt(1000).currency("$").success.xl
+        n = HTMLInt(1000).currency("$").success().xl()
         html = n.render()
-        assert '$1,000' in html
-        assert 'color: #2e7d32' in html
-        assert 'font-size: 24px' in html
+        assert "$1,000" in html
+        assert "color: #2e7d32" in html
+        assert "font-size: 24px" in html
 
 
 class TestHTMLIntRepr:
@@ -365,5 +365,5 @@ class TestHTMLIntRepr:
 
     def test_repr_with_styles(self) -> None:
         """Test repr with styles."""
-        n = HTMLInt(42).bold
+        n = HTMLInt(42).bold()
         assert "font-weight='bold'" in repr(n)

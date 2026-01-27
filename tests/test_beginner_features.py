@@ -1,293 +1,301 @@
 """Tests for beginner-friendly features in animaid."""
 
-import pytest
-
-from animaid import HTMLString, HTMLList, HTMLDict
-from animaid import String, List, Dict  # Beginner aliases
-from animaid import Size, Color, Border, Spacing, BorderStyle
+from animaid import (  # Beginner aliases
+    Border,
+    BorderStyle,
+    Color,
+    Dict,
+    HTMLDict,
+    HTMLList,
+    HTMLString,
+    List,
+    Size,
+    Spacing,
+    String,
+)
 
 
 class TestStringColorShortcuts:
-    """Test HTMLString color shortcut properties."""
+    """Test HTMLString color shortcut methods."""
 
     def test_red(self):
-        s = HTMLString("Hello").red
-        assert 'color: red' in s.render()
+        s = HTMLString("Hello").red()
+        assert "color: red" in s.render()
 
     def test_blue(self):
-        s = HTMLString("Hello").blue
-        assert 'color: blue' in s.render()
+        s = HTMLString("Hello").blue()
+        assert "color: blue" in s.render()
 
     def test_green(self):
-        s = HTMLString("Hello").green
-        assert 'color: green' in s.render()
+        s = HTMLString("Hello").green()
+        assert "color: green" in s.render()
 
     def test_yellow(self):
-        s = HTMLString("Hello").yellow
-        assert 'color:' in s.render()
+        s = HTMLString("Hello").yellow()
+        assert "color:" in s.render()
 
     def test_orange(self):
-        s = HTMLString("Hello").orange
-        assert 'color: orange' in s.render()
+        s = HTMLString("Hello").orange()
+        assert "color: orange" in s.render()
 
     def test_purple(self):
-        s = HTMLString("Hello").purple
-        assert 'color: purple' in s.render()
+        s = HTMLString("Hello").purple()
+        assert "color: purple" in s.render()
 
     def test_pink(self):
-        s = HTMLString("Hello").pink
-        assert 'color:' in s.render()
+        s = HTMLString("Hello").pink()
+        assert "color:" in s.render()
 
     def test_gray(self):
-        s = HTMLString("Hello").gray
-        assert 'color: gray' in s.render()
+        s = HTMLString("Hello").gray()
+        assert "color: gray" in s.render()
 
     def test_white(self):
-        s = HTMLString("Hello").white
-        assert 'color: white' in s.render()
+        s = HTMLString("Hello").white()
+        assert "color: white" in s.render()
 
     def test_black(self):
-        s = HTMLString("Hello").black
-        assert 'color: black' in s.render()
+        s = HTMLString("Hello").black()
+        assert "color: black" in s.render()
 
     def test_chaining_colors(self):
-        s = HTMLString("Hello").bold.red
+        s = HTMLString("Hello").bold().red()
         result = s.render()
-        assert 'font-weight: bold' in result
-        assert 'color: red' in result
+        assert "font-weight: bold" in result
+        assert "color: red" in result
 
 
 class TestStringBackgroundShortcuts:
-    """Test HTMLString background color shortcut properties."""
+    """Test HTMLString background color shortcut methods."""
 
     def test_bg_red(self):
-        s = HTMLString("Hello").bg_red
-        assert 'background-color:' in s.render()
+        s = HTMLString("Hello").bg_red()
+        assert "background-color:" in s.render()
 
     def test_bg_blue(self):
-        s = HTMLString("Hello").bg_blue
-        assert 'background-color:' in s.render()
+        s = HTMLString("Hello").bg_blue()
+        assert "background-color:" in s.render()
 
     def test_bg_green(self):
-        s = HTMLString("Hello").bg_green
-        assert 'background-color:' in s.render()
+        s = HTMLString("Hello").bg_green()
+        assert "background-color:" in s.render()
 
     def test_bg_yellow(self):
-        s = HTMLString("Hello").bg_yellow
-        assert 'background-color:' in s.render()
+        s = HTMLString("Hello").bg_yellow()
+        assert "background-color:" in s.render()
 
     def test_bg_orange(self):
-        s = HTMLString("Hello").bg_orange
-        assert 'background-color:' in s.render()
+        s = HTMLString("Hello").bg_orange()
+        assert "background-color:" in s.render()
 
     def test_bg_purple(self):
-        s = HTMLString("Hello").bg_purple
-        assert 'background-color:' in s.render()
+        s = HTMLString("Hello").bg_purple()
+        assert "background-color:" in s.render()
 
     def test_bg_pink(self):
-        s = HTMLString("Hello").bg_pink
-        assert 'background-color:' in s.render()
+        s = HTMLString("Hello").bg_pink()
+        assert "background-color:" in s.render()
 
     def test_bg_gray(self):
-        s = HTMLString("Hello").bg_gray
-        assert 'background-color:' in s.render()
+        s = HTMLString("Hello").bg_gray()
+        assert "background-color:" in s.render()
 
     def test_bg_white(self):
-        s = HTMLString("Hello").bg_white
-        assert 'background-color: white' in s.render()
+        s = HTMLString("Hello").bg_white()
+        assert "background-color: white" in s.render()
 
     def test_bg_black(self):
-        s = HTMLString("Hello").bg_black
-        assert 'background-color: black' in s.render()
+        s = HTMLString("Hello").bg_black()
+        assert "background-color: black" in s.render()
 
 
 class TestStringSizeShortcuts:
-    """Test HTMLString size shortcut properties."""
+    """Test HTMLString size shortcut methods."""
 
     def test_xs(self):
-        s = HTMLString("Hello").xs
-        assert 'font-size: 12px' in s.render()
+        s = HTMLString("Hello").xs()
+        assert "font-size: 12px" in s.render()
 
     def test_small(self):
-        s = HTMLString("Hello").small
-        assert 'font-size: 14px' in s.render()
+        s = HTMLString("Hello").small()
+        assert "font-size: 14px" in s.render()
 
     def test_medium(self):
-        s = HTMLString("Hello").medium
-        assert 'font-size: 16px' in s.render()
+        s = HTMLString("Hello").medium()
+        assert "font-size: 16px" in s.render()
 
     def test_large(self):
-        s = HTMLString("Hello").large
-        assert 'font-size: 20px' in s.render()
+        s = HTMLString("Hello").large()
+        assert "font-size: 20px" in s.render()
 
     def test_xl(self):
-        s = HTMLString("Hello").xl
-        assert 'font-size: 24px' in s.render()
+        s = HTMLString("Hello").xl()
+        assert "font-size: 24px" in s.render()
 
     def test_xxl(self):
-        s = HTMLString("Hello").xxl
-        assert 'font-size: 32px' in s.render()
+        s = HTMLString("Hello").xxl()
+        assert "font-size: 32px" in s.render()
 
 
 class TestStringStylePresets:
-    """Test HTMLString style preset properties."""
+    """Test HTMLString style preset methods."""
 
     def test_highlight(self):
-        s = HTMLString("Hello").highlight
+        s = HTMLString("Hello").highlight()
         result = s.render()
-        assert 'background-color:' in result
-        assert 'padding:' in result
+        assert "background-color:" in result
+        assert "padding:" in result
 
     def test_code(self):
-        s = HTMLString("x = 1").code
+        s = HTMLString("x = 1").code()
         result = s.render()
-        assert 'font-family: monospace' in result
-        assert 'background-color:' in result
-        assert 'border-radius:' in result
+        assert "font-family: monospace" in result
+        assert "background-color:" in result
+        assert "border-radius:" in result
 
     def test_badge(self):
-        s = HTMLString("Tag").badge
+        s = HTMLString("Tag").badge()
         result = s.render()
-        assert 'background-color:' in result
-        assert 'border-radius:' in result
-        assert 'padding:' in result
+        assert "background-color:" in result
+        assert "border-radius:" in result
+        assert "padding:" in result
 
     def test_success(self):
-        s = HTMLString("OK").success
+        s = HTMLString("OK").success()
         result = s.render()
-        assert 'color:' in result
-        assert 'background-color:' in result
+        assert "color:" in result
+        assert "background-color:" in result
 
     def test_warning(self):
-        s = HTMLString("Warning").warning
+        s = HTMLString("Warning").warning()
         result = s.render()
-        assert 'color:' in result
-        assert 'background-color:' in result
+        assert "color:" in result
+        assert "background-color:" in result
 
     def test_error(self):
-        s = HTMLString("Error").error
+        s = HTMLString("Error").error()
         result = s.render()
-        assert 'color:' in result
-        assert 'background-color:' in result
+        assert "color:" in result
+        assert "background-color:" in result
 
     def test_info(self):
-        s = HTMLString("Info").info
+        s = HTMLString("Info").info()
         result = s.render()
-        assert 'color:' in result
-        assert 'background-color:' in result
+        assert "color:" in result
+        assert "background-color:" in result
 
     def test_muted(self):
-        s = HTMLString("Muted text").muted
+        s = HTMLString("Muted text").muted()
         result = s.render()
-        assert 'color:' in result
-        assert 'font-size:' in result
+        assert "color:" in result
+        assert "font-size:" in result
 
     def test_link(self):
-        s = HTMLString("Click me").link
+        s = HTMLString("Click me").link()
         result = s.render()
-        assert 'color:' in result
-        assert 'text-decoration: underline' in result
+        assert "color:" in result
+        assert "text-decoration: underline" in result
 
 
 class TestListPresets:
-    """Test HTMLList style preset properties."""
+    """Test HTMLList style preset methods."""
 
     def test_cards(self):
-        lst = HTMLList(["A", "B", "C"]).cards
+        lst = HTMLList(["A", "B", "C"]).cards()
         result = lst.render()
-        assert '<div' in result
-        assert 'style=' in result
+        assert "<div" in result
+        assert "style=" in result
 
     def test_pills(self):
-        lst = HTMLList(["A", "B", "C"]).pills
+        lst = HTMLList(["A", "B", "C"]).pills()
         result = lst.render()
-        assert '<div' in result
-        assert 'border-radius:' in result
+        assert "<div" in result
+        assert "border-radius:" in result
 
     def test_tags(self):
-        lst = HTMLList(["A", "B", "C"]).tags
+        lst = HTMLList(["A", "B", "C"]).tags()
         result = lst.render()
-        assert '<div' in result
+        assert "<div" in result
 
     def test_menu(self):
-        lst = HTMLList(["A", "B", "C"]).menu
+        lst = HTMLList(["A", "B", "C"]).menu()
         result = lst.render()
-        assert '<div' in result
+        assert "<div" in result
 
     def test_inline(self):
-        lst = HTMLList(["A", "B", "C"]).inline
+        lst = HTMLList(["A", "B", "C"]).inline()
         result = lst.render()
-        assert '<div' in result
-        assert 'display: flex' in result
+        assert "<div" in result
+        assert "display: flex" in result
 
     def test_numbered(self):
-        lst = HTMLList(["A", "B", "C"]).numbered
+        lst = HTMLList(["A", "B", "C"]).numbered()
         result = lst.render()
-        assert '<ol' in result
+        assert "<ol" in result
 
     def test_bulleted(self):
-        lst = HTMLList(["A", "B", "C"]).bulleted
+        lst = HTMLList(["A", "B", "C"]).bulleted()
         result = lst.render()
-        assert '<ul' in result
+        assert "<ul" in result
 
     def test_spaced(self):
-        lst = HTMLList(["A", "B", "C"]).spaced
+        lst = HTMLList(["A", "B", "C"]).spaced()
         result = lst.render()
-        assert 'gap:' in result
+        assert "gap:" in result
 
     def test_compact(self):
-        lst = HTMLList(["A", "B", "C"]).compact
+        lst = HTMLList(["A", "B", "C"]).compact()
         result = lst.render()
-        assert 'gap:' in result
+        assert "gap:" in result
 
 
 class TestDictPresets:
-    """Test HTMLDict style preset properties."""
+    """Test HTMLDict style preset methods."""
 
     def test_card(self):
-        d = HTMLDict({"a": "1", "b": "2"}).card
+        d = HTMLDict({"a": "1", "b": "2"}).card()
         result = d.render()
-        assert '<div' in result
-        assert 'border:' in result
-        assert 'border-radius:' in result
+        assert "<div" in result
+        assert "border:" in result
+        assert "border-radius:" in result
 
     def test_simple(self):
-        d = HTMLDict({"a": "1", "b": "2"}).simple
+        d = HTMLDict({"a": "1", "b": "2"}).simple()
         result = d.render()
-        assert 'font-weight: bold' in result
+        assert "font-weight: bold" in result
 
     def test_striped(self):
-        d = HTMLDict({"a": "1", "b": "2"}).striped
+        d = HTMLDict({"a": "1", "b": "2"}).striped()
         result = d.render()
-        assert '<table' in result
-        assert 'border:' in result
+        assert "<table" in result
+        assert "border:" in result
 
     def test_compact(self):
-        d = HTMLDict({"a": "1", "b": "2"}).compact
+        d = HTMLDict({"a": "1", "b": "2"}).compact()
         result = d.render()
-        assert 'gap:' in result or '<dl' in result
+        assert "gap:" in result or "<dl" in result
 
     def test_spaced(self):
-        d = HTMLDict({"a": "1", "b": "2"}).spaced
+        d = HTMLDict({"a": "1", "b": "2"}).spaced()
         result = d.render()
-        assert 'gap:' in result or '<dl' in result
+        assert "gap:" in result or "<dl" in result
 
     def test_labeled(self):
-        d = HTMLDict({"a": "1", "b": "2"}).labeled
+        d = HTMLDict({"a": "1", "b": "2"}).labeled()
         result = d.render()
-        assert '<div' in result
+        assert "<div" in result
 
     def test_inline(self):
-        d = HTMLDict({"a": "1", "b": "2"}).inline
+        d = HTMLDict({"a": "1", "b": "2"}).inline()
         result = d.render()
-        assert '<div' in result
-        assert 'display: flex' in result
+        assert "<div" in result
+        assert "display: flex" in result
 
     def test_bordered(self):
-        d = HTMLDict({"a": "1", "b": "2"}).bordered
+        d = HTMLDict({"a": "1", "b": "2"}).bordered()
         result = d.render()
-        assert '<table' in result
-        assert 'border:' in result
+        assert "<table" in result
+        assert "border:" in result
 
 
 class TestBeginnerAliases:
@@ -310,49 +318,49 @@ class TestBeginnerAliases:
 
     def test_alias_methods_work(self):
         # String with shortcuts
-        s = String("Hello").bold.red
-        assert 'font-weight: bold' in s.render()
-        assert 'color: red' in s.render()
+        s = String("Hello").bold().red()
+        assert "font-weight: bold" in s.render()
+        assert "color: red" in s.render()
 
         # List with presets
-        lst = List(["A", "B"]).pills
-        assert '<div' in lst.render()
+        lst = List(["A", "B"]).pills()
+        assert "<div" in lst.render()
 
         # Dict with presets
-        d = Dict({"a": "1"}).card
-        assert 'border:' in d.render()
+        d = Dict({"a": "1"}).card()
+        assert "border:" in d.render()
 
 
 class TestChainingShortcuts:
     """Test chaining multiple shortcuts together."""
 
     def test_color_and_size(self):
-        s = HTMLString("Hello").red.large
+        s = HTMLString("Hello").red().large()
         result = s.render()
-        assert 'color: red' in result
-        assert 'font-size: 20px' in result
+        assert "color: red" in result
+        assert "font-size: 20px" in result
 
     def test_background_and_bold(self):
-        s = HTMLString("Hello").bg_yellow.bold
+        s = HTMLString("Hello").bg_yellow().bold()
         result = s.render()
-        assert 'background-color:' in result
-        assert 'font-weight: bold' in result
+        assert "background-color:" in result
+        assert "font-weight: bold" in result
 
     def test_preset_with_color(self):
-        s = HTMLString("Code").code.blue
+        s = HTMLString("Code").code().blue()
         result = s.render()
-        assert 'font-family: monospace' in result
-        assert 'color: blue' in result
+        assert "font-family: monospace" in result
+        assert "color: blue" in result
 
     def test_multiple_list_methods(self):
-        lst = HTMLList(["A", "B"]).pills.gap("20px")
+        lst = HTMLList(["A", "B"]).pills().gap("20px")
         result = lst.render()
-        assert 'gap:' in result
+        assert "gap:" in result
 
     def test_multiple_dict_methods(self):
-        d = HTMLDict({"a": "1"}).card.separator(" -> ")
+        d = HTMLDict({"a": "1"}).card().separator(" -> ")
         result = d.render()
-        assert '-&gt;' in result or '->' in result
+        assert "-&gt;" in result or "->" in result
 
 
 # =============================================================================

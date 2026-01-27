@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import html
+import uuid
 from enum import Enum
 from typing import Any, Self
 
@@ -28,9 +29,7 @@ def _to_css(value: object) -> str:
 def _is_namedtuple(obj: Any) -> bool:
     """Check if an object is a namedtuple instance."""
     return (
-        isinstance(obj, tuple)
-        and hasattr(obj, "_fields")
-        and hasattr(obj, "_asdict")
+        isinstance(obj, tuple) and hasattr(obj, "_fields") and hasattr(obj, "_asdict")
     )
 
 
@@ -57,19 +56,20 @@ class HTMLTuple(HTMLObject, tuple):
 
     HTMLTuple behaves like a regular Python tuple but includes
     methods for applying CSS styles and rendering to HTML.
-    Supports named tuples with field name display.
+    All styling methods modify the object in-place and return self
+    for method chaining. Supports named tuples with field name display.
 
     Examples:
         >>> t = HTMLTuple((1, 2, 3))
         >>> t.render()
         '<div>(1, 2, 3)</div>'
 
-        >>> t.horizontal.pills.render()
+        >>> t.horizontal().pills().render()
         '<div style="display: flex; ...">...</div>'
 
         >>> from collections import namedtuple
         >>> Point = namedtuple('Point', ['x', 'y'])
-        >>> HTMLTuple(Point(10, 20)).labeled.render()
+        >>> HTMLTuple(Point(10, 20)).labeled().render()
         '<dl><dt>x</dt><dd>10</dd><dt>y</dt><dd>20</dd></dl>'
     """
 
@@ -83,6 +83,7 @@ class HTMLTuple(HTMLObject, tuple):
     _separator: str | None
     _show_parens: bool
     _field_names: tuple[str, ...] | None
+    _obs_id: str
 
     def __new__(cls, items: tuple[Any, ...] = (), **styles: str | CSSValue) -> Self:
         """Create a new HTMLTuple instance.
@@ -125,9 +126,20 @@ class HTMLTuple(HTMLObject, tuple):
         else:
             self._field_names = None
 
+        self._obs_id = str(uuid.uuid4())
+
         for key, value in styles.items():
             css_key = key.replace("_", "-")
             self._styles[css_key] = _to_css(value)
+
+    def _notify(self) -> None:
+        """Publish change notification via pypubsub."""
+        try:
+            from pubsub import pub
+
+            pub.sendMessage("animaid.changed", obs_id=self._obs_id)
+        except ImportError:
+            pass  # pypubsub not installed
 
     def _copy_with_settings(
         self,
@@ -141,7 +153,11 @@ class HTMLTuple(HTMLObject, tuple):
         new_separator: str | None = None,
         new_show_parens: bool | None = None,
     ) -> Self:
-        """Create a copy with modified settings."""
+        """Create a copy with modified settings.
+
+        This method is used internally for operations that must return
+        a new object (like slicing or concatenation).
+        """
         result = HTMLTuple(tuple(self))
         result._styles = self._styles.copy()
         result._item_styles = self._item_styles.copy()
@@ -153,6 +169,7 @@ class HTMLTuple(HTMLObject, tuple):
         result._separator = self._separator
         result._show_parens = self._show_parens
         result._field_names = self._field_names
+        result._obs_id = self._obs_id  # Preserve ID so updates still work
 
         if new_styles:
             result._styles.update(new_styles)
@@ -180,228 +197,285 @@ class HTMLTuple(HTMLObject, tuple):
     # -------------------------------------------------------------------------
 
     def styled(self, **styles: str | CSSValue) -> Self:
-        """Return a copy with additional container styles."""
-        css_styles = {k.replace("_", "-"): _to_css(v) for k, v in styles.items()}
-        return self._copy_with_settings(new_styles=css_styles)
+        """Apply additional container styles in-place."""
+        for key, value in styles.items():
+            css_key = key.replace("_", "-")
+            self._styles[css_key] = _to_css(value)
+        self._notify()
+        return self
 
     def add_class(self, *class_names: str) -> Self:
-        """Return a copy with additional CSS classes on the container."""
-        return self._copy_with_settings(new_classes=list(class_names))
+        """Add CSS classes on the container in-place."""
+        self._css_classes.extend(class_names)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Format methods
     # -------------------------------------------------------------------------
 
-    @property
     def plain(self) -> Self:
-        """Return a copy without parentheses decoration."""
-        return self._copy_with_settings(new_format=TupleFormat.PLAIN, new_show_parens=False)
+        """Apply plain format (without parentheses decoration) in-place."""
+        self._format = TupleFormat.PLAIN
+        self._show_parens = False
+        self._notify()
+        return self
 
-    @property
     def parentheses(self) -> Self:
-        """Return a copy with parentheses around items (default)."""
-        return self._copy_with_settings(new_format=TupleFormat.PARENTHESES, new_show_parens=True)
+        """Apply parentheses format (default) in-place."""
+        self._format = TupleFormat.PARENTHESES
+        self._show_parens = True
+        self._notify()
+        return self
 
-    @property
     def labeled(self) -> Self:
-        """Return a copy showing field names (for named tuples).
+        """Apply labeled format showing field names in-place.
 
         For regular tuples, shows index numbers as labels.
         """
-        return self._copy_with_settings(new_format=TupleFormat.LABELED, new_show_parens=False)
+        self._format = TupleFormat.LABELED
+        self._show_parens = False
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Direction methods
     # -------------------------------------------------------------------------
 
-    @property
     def vertical(self) -> Self:
-        """Return a copy with vertical layout."""
-        return self._copy_with_settings(new_direction=TupleDirection.VERTICAL)
+        """Apply vertical layout in-place."""
+        self._direction = TupleDirection.VERTICAL
+        self._notify()
+        return self
 
-    @property
     def horizontal(self) -> Self:
-        """Return a copy with horizontal layout (default)."""
-        return self._copy_with_settings(new_direction=TupleDirection.HORIZONTAL)
+        """Apply horizontal layout (default) in-place."""
+        self._direction = TupleDirection.HORIZONTAL
+        self._notify()
+        return self
 
-    @property
     def vertical_reverse(self) -> Self:
-        """Return a copy with reversed vertical layout."""
-        return self._copy_with_settings(new_direction=TupleDirection.VERTICAL_REVERSE)
+        """Apply reversed vertical layout in-place."""
+        self._direction = TupleDirection.VERTICAL_REVERSE
+        self._notify()
+        return self
 
-    @property
     def horizontal_reverse(self) -> Self:
-        """Return a copy with reversed horizontal layout."""
-        return self._copy_with_settings(new_direction=TupleDirection.HORIZONTAL_REVERSE)
+        """Apply reversed horizontal layout in-place."""
+        self._direction = TupleDirection.HORIZONTAL_REVERSE
+        self._notify()
+        return self
 
     def grid(self, columns: int = 3) -> Self:
-        """Return a copy with CSS grid layout."""
-        return self._copy_with_settings(
-            new_direction=TupleDirection.GRID,
-            new_grid_columns=columns,
-        )
+        """Apply CSS grid layout in-place."""
+        self._direction = TupleDirection.GRID
+        self._grid_columns = columns
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Spacing methods
     # -------------------------------------------------------------------------
 
     def gap(self, value: SizeValue) -> Self:
-        """Return a copy with specified gap between items."""
-        return self.styled(gap=_to_css(value))
+        """Apply specified gap between items in-place."""
+        self._styles["gap"] = _to_css(value)
+        self._notify()
+        return self
 
     def padding(self, value: SpacingValue) -> Self:
-        """Return a copy with padding inside the container."""
-        return self.styled(padding=_to_css(value))
+        """Apply padding inside the container in-place."""
+        self._styles["padding"] = _to_css(value)
+        self._notify()
+        return self
 
     def margin(self, value: SpacingValue) -> Self:
-        """Return a copy with margin outside the container."""
-        return self.styled(margin=_to_css(value))
+        """Apply margin outside the container in-place."""
+        self._styles["margin"] = _to_css(value)
+        self._notify()
+        return self
 
     def item_padding(self, value: SpacingValue) -> Self:
-        """Return a copy with padding inside each item."""
-        css_styles = {"padding": _to_css(value)}
-        return self._copy_with_settings(new_item_styles=css_styles)
+        """Apply padding inside each item in-place."""
+        self._item_styles["padding"] = _to_css(value)
+        self._notify()
+        return self
 
     def item_margin(self, value: SpacingValue) -> Self:
-        """Return a copy with margin around each item."""
-        css_styles = {"margin": _to_css(value)}
-        return self._copy_with_settings(new_item_styles=css_styles)
+        """Apply margin around each item in-place."""
+        self._item_styles["margin"] = _to_css(value)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Border methods
     # -------------------------------------------------------------------------
 
     def border(self, value: BorderValue) -> Self:
-        """Return a copy with border around the container."""
-        return self.styled(border=_to_css(value))
+        """Apply border around the container in-place."""
+        self._styles["border"] = _to_css(value)
+        self._notify()
+        return self
 
     def border_radius(self, value: SizeValue) -> Self:
-        """Return a copy with rounded corners on the container."""
-        return self.styled(border_radius=_to_css(value))
+        """Apply rounded corners on the container in-place."""
+        self._styles["border-radius"] = _to_css(value)
+        self._notify()
+        return self
 
     def item_border(self, value: BorderValue) -> Self:
-        """Return a copy with border around each item."""
-        css_styles = {"border": _to_css(value)}
-        return self._copy_with_settings(new_item_styles=css_styles)
+        """Apply border around each item in-place."""
+        self._item_styles["border"] = _to_css(value)
+        self._notify()
+        return self
 
     def item_border_radius(self, value: SizeValue) -> Self:
-        """Return a copy with rounded corners on each item."""
-        css_styles = {"border-radius": _to_css(value)}
-        return self._copy_with_settings(new_item_styles=css_styles)
+        """Apply rounded corners on each item in-place."""
+        self._item_styles["border-radius"] = _to_css(value)
+        self._notify()
+        return self
 
     def separator(self, value: BorderValue) -> Self:
-        """Return a copy with separator lines between items."""
-        return self._copy_with_settings(new_separator=_to_css(value))
+        """Apply separator lines between items in-place."""
+        self._separator = _to_css(value)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Background and color methods
     # -------------------------------------------------------------------------
 
     def background(self, value: ColorValue) -> Self:
-        """Return a copy with background color on the container."""
-        return self.styled(background_color=_to_css(value))
+        """Apply background color on the container in-place."""
+        self._styles["background-color"] = _to_css(value)
+        self._notify()
+        return self
 
     def item_background(self, value: ColorValue) -> Self:
-        """Return a copy with background color on each item."""
-        css_styles = {"background-color": _to_css(value)}
-        return self._copy_with_settings(new_item_styles=css_styles)
+        """Apply background color on each item in-place."""
+        self._item_styles["background-color"] = _to_css(value)
+        self._notify()
+        return self
 
     def color(self, value: ColorValue) -> Self:
-        """Return a copy with text color."""
-        return self.styled(color=_to_css(value))
+        """Apply text color in-place."""
+        self._styles["color"] = _to_css(value)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Item class methods
     # -------------------------------------------------------------------------
 
     def add_item_class(self, *class_names: str) -> Self:
-        """Return a copy with CSS classes added to each item."""
-        return self._copy_with_settings(new_item_classes=list(class_names))
+        """Add CSS classes to each item in-place."""
+        self._item_classes.extend(class_names)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Alignment methods
     # -------------------------------------------------------------------------
 
     def align_items(self, value: AlignItems | str) -> Self:
-        """Return a copy with specified cross-axis alignment."""
-        return self.styled(align_items=_to_css(value))
+        """Apply specified cross-axis alignment in-place."""
+        self._styles["align-items"] = _to_css(value)
+        self._notify()
+        return self
 
     def justify_content(self, value: JustifyContent | str) -> Self:
-        """Return a copy with specified main-axis alignment."""
-        return self.styled(justify_content=_to_css(value))
+        """Apply specified main-axis alignment in-place."""
+        self._styles["justify-content"] = _to_css(value)
+        self._notify()
+        return self
 
-    @property
     def center(self) -> Self:
-        """Return a copy with items centered on both axes."""
-        return self.styled(align_items="center", justify_content="center")
+        """Apply centered alignment on both axes in-place."""
+        self._styles["align-items"] = "center"
+        self._styles["justify-content"] = "center"
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Size methods
     # -------------------------------------------------------------------------
 
     def width(self, value: SizeValue) -> Self:
-        """Return a copy with specified width."""
-        return self.styled(width=_to_css(value))
+        """Apply specified width in-place."""
+        self._styles["width"] = _to_css(value)
+        self._notify()
+        return self
 
     def height(self, value: SizeValue) -> Self:
-        """Return a copy with specified height."""
-        return self.styled(height=_to_css(value))
+        """Apply specified height in-place."""
+        self._styles["height"] = _to_css(value)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Style Presets
     # -------------------------------------------------------------------------
 
-    @property
     def pills(self) -> Self:
-        """Return a copy styled as pill/badge items."""
-        return (
-            self.plain
-            .horizontal
-            .gap("8px")
-            .item_padding("6px 14px")
-            .item_border_radius("20px")
-            .item_background("#e0e0e0")
-            .styled(flex_wrap="wrap")
-        )
+        """Apply pill/badge style in-place."""
+        self._format = TupleFormat.PLAIN
+        self._show_parens = False
+        self._direction = TupleDirection.HORIZONTAL
+        self._styles["gap"] = "8px"
+        self._item_styles["padding"] = "6px 14px"
+        self._item_styles["border-radius"] = "20px"
+        self._item_styles["background-color"] = "#e0e0e0"
+        self._styles["flex-wrap"] = "wrap"
+        self._notify()
+        return self
 
-    @property
     def tags(self) -> Self:
-        """Return a copy styled as tags/labels."""
-        return (
-            self.plain
-            .horizontal
-            .gap("8px")
-            .item_padding("4px 10px")
-            .item_background("#f5f5f5")
-            .item_border_radius("4px")
-            .styled(flex_wrap="wrap")
-        )
+        """Apply tags/labels style in-place."""
+        self._format = TupleFormat.PLAIN
+        self._show_parens = False
+        self._direction = TupleDirection.HORIZONTAL
+        self._styles["gap"] = "8px"
+        self._item_styles["padding"] = "4px 10px"
+        self._item_styles["background-color"] = "#f5f5f5"
+        self._item_styles["border-radius"] = "4px"
+        self._styles["flex-wrap"] = "wrap"
+        self._notify()
+        return self
 
-    @property
     def inline(self) -> Self:
-        """Return a copy styled as inline items."""
-        return self.plain.horizontal.gap("8px").styled(flex_wrap="wrap")
+        """Apply inline style in-place."""
+        self._format = TupleFormat.PLAIN
+        self._show_parens = False
+        self._direction = TupleDirection.HORIZONTAL
+        self._styles["gap"] = "8px"
+        self._styles["flex-wrap"] = "wrap"
+        self._notify()
+        return self
 
-    @property
     def spaced(self) -> Self:
-        """Return a copy with generous spacing between items."""
-        return self.gap("16px").item_padding("8px")
+        """Apply generous spacing style in-place."""
+        self._styles["gap"] = "16px"
+        self._item_styles["padding"] = "8px"
+        self._notify()
+        return self
 
-    @property
     def compact(self) -> Self:
-        """Return a copy with minimal spacing."""
-        return self.gap("4px").item_padding("2px")
+        """Apply minimal spacing style in-place."""
+        self._styles["gap"] = "4px"
+        self._item_styles["padding"] = "2px"
+        self._notify()
+        return self
 
-    @property
     def card(self) -> Self:
-        """Return a copy styled as a card for named tuple display."""
-        return (
-            self.labeled
-            .padding("16px")
-            .border("1px solid #e0e0e0")
-            .border_radius("8px")
-            .background("white")
-        )
+        """Apply card style for named tuple display in-place."""
+        self._format = TupleFormat.LABELED
+        self._show_parens = False
+        self._styles["padding"] = "16px"
+        self._styles["border"] = "1px solid #e0e0e0"
+        self._styles["border-radius"] = "8px"
+        self._styles["background-color"] = "white"
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Rendering
@@ -528,7 +602,9 @@ class HTMLTuple(HTMLObject, tuple):
         for label, value in zip(labels, self):
             key_html = html.escape(str(label))
             value_html = self._render_item(value)
-            items_html.append(f'<dt style="{dt_style}">{key_html}</dt><dd style="{dd_style}">{value_html}</dd>')
+            dt = f'<dt style="{dt_style}">{key_html}</dt>'
+            dd = f'<dd style="{dd_style}">{value_html}</dd>'
+            items_html.append(f"{dt}{dd}")
 
         attrs = self._build_attributes()
         if attrs:
@@ -616,6 +692,7 @@ class HTMLTuple(HTMLObject, tuple):
         result._separator = self._separator
         result._show_parens = self._show_parens
         result._field_names = None  # Concatenation loses field names
+        result._obs_id = self._obs_id  # Preserve ID so updates still work
         return result  # type: ignore[return-value]
 
     def __getitem__(self, key: Any) -> Any:  # type: ignore[override]
@@ -638,6 +715,7 @@ class HTMLTuple(HTMLObject, tuple):
             new_tuple._show_parens = self._show_parens
             # Slicing loses field name association
             new_tuple._field_names = None
+            new_tuple._obs_id = self._obs_id  # Preserve ID so updates still work
             return new_tuple
         return result
 

@@ -39,15 +39,15 @@ Style text with CSS properties:
 from animaid import HTMLString, Color, Size
 
 # Basic styling with strings
-s = HTMLString("Hello, World!").bold.color("blue")
+s = HTMLString("Hello, World!").bold().color("blue")
 print(s.render())
 # <span style="font-weight: bold; color: blue">Hello, World!</span>
 
 # Using CSS types for type-safe styling
 styled = (
     HTMLString("Important!")
-    .bold
-    .italic
+    .bold()
+    .italic()
     .color(Color.red)
     .background(Color.hex("#ffff00"))
     .padding(Size.px(10))
@@ -63,7 +63,7 @@ from animaid import HTMLList, Size, Color, Border
 
 # Horizontal list with styled items
 items = HTMLList(["Apple", "Banana", "Cherry"])
-items = items.horizontal.gap(Size.px(10)).item_padding(Size.px(8))
+items = items.horizontal().gap(Size.px(10)).item_padding(Size.px(8))
 print(items.render())
 
 # Grid layout with CSS types
@@ -84,16 +84,16 @@ from animaid import HTMLDict, Color, Size, Border
 
 # Definition list format (default)
 d = HTMLDict({"name": "Alice", "role": "Developer"})
-d = d.key_bold.key_color(Color.hex("#333")).value_color(Color.hex("#666"))
+d = d.key_bold().key_color(Color.hex("#333")).value_color(Color.hex("#666"))
 print(d.render())
 
 # Table format
-table = HTMLDict({"x": 1, "y": 2, "z": 3}).as_table
+table = HTMLDict({"x": 1, "y": 2, "z": 3}).as_table()
 
 # Card layout with CSS types
 card = (
     HTMLDict({"Name": "Alice", "Email": "alice@example.com"})
-    .key_bold
+    .key_bold()
     .padding(Size.px(12))
     .border(Border().solid().color(Color.hex("#ccc")))
     .border_radius(Size.px(8))
@@ -109,16 +109,16 @@ from animaid import HTMLDict, HTMLList, Size, Border, Color
 
 # Dict of Lists
 categories = HTMLDict({
-    "Fruits": HTMLList(["Apple", "Banana"]).horizontal.gap(Size.px(8)),
-    "Vegetables": HTMLList(["Carrot", "Broccoli"]).horizontal.gap(Size.px(8)),
-}).key_bold
+    "Fruits": HTMLList(["Apple", "Banana"]).horizontal().gap(Size.px(8)),
+    "Vegetables": HTMLList(["Carrot", "Broccoli"]).horizontal().gap(Size.px(8)),
+}).key_bold()
 
 # List of Dicts (cards)
 card_border = Border().solid().color(Color.hex("#ddd"))
 cards = HTMLList([
-    HTMLDict({"Name": "Alice", "Role": "Dev"}).key_bold.padding(Size.px(10)).border(card_border),
-    HTMLDict({"Name": "Bob", "Role": "Design"}).key_bold.padding(Size.px(10)).border(card_border),
-]).horizontal.gap(Size.px(16))
+    HTMLDict({"Name": "Alice", "Role": "Dev"}).key_bold().padding(Size.px(10)).border(card_border),
+    HTMLDict({"Name": "Bob", "Role": "Design"}).key_bold().padding(Size.px(10)).border(card_border),
+]).horizontal().gap(Size.px(16))
 ```
 
 ## CSS Types
@@ -258,13 +258,13 @@ anim = Animate()
 anim.run()
 
 # Add items - browser updates in real-time
-anim.add(HTMLString("Hello World!").bold.xl)
-anim.add(HTMLString("This updates live").italic.blue)
-anim.add(HTMLList(["Apple", "Banana", "Cherry"]).pills)
+anim.add(HTMLString("Hello World!").bold().xl())
+anim.add(HTMLString("This updates live").italic().blue())
+anim.add(HTMLList(["Apple", "Banana", "Cherry"]).pills())
 
 # Update an existing item
-item_id = anim.add(HTMLString("Loading...").muted)
-anim.update(item_id, HTMLString("Done!").success)
+item_id = anim.add(HTMLString("Loading...").muted())
+anim.update(item_id, HTMLString("Done!").success())
 
 # Remove items - by ID or by object
 anim.remove(item_id)  # By ID
@@ -284,8 +284,8 @@ Use the context manager for automatic cleanup:
 from animaid import Animate, HTMLString
 
 with Animate() as anim:
-    anim.add(HTMLString("Temporary display").bold)
-    anim.add(HTMLString("Server stops when context exits").muted)
+    anim.add(HTMLString("Temporary display").bold())
+    anim.add(HTMLString("Server stops when context exits").muted())
     input("Press Enter to exit...")
 # Server stops automatically when context exits
 ```
@@ -348,7 +348,7 @@ anim = Animate()
 anim.run()
 
 # Add a mutable list
-scores = HTMLList([10, 20, 30]).pills
+scores = HTMLList([10, 20, 30]).pills()
 anim.add(scores)
 
 # Mutate the list - browser updates automatically!
@@ -357,17 +357,36 @@ scores[0] = 100        # Browser shows [100, 20, 30, 40]
 scores.pop()           # Browser shows [100, 20, 30]
 
 # Same for dicts
-data = HTMLDict({"score": 0, "level": 1}).card
+data = HTMLDict({"score": 0, "level": 1}).card()
 anim.add(data)
 data["score"] = 500    # Browser updates automatically
 
 # And sets
-tags = HTMLSet({"python", "html"}).pills
+tags = HTMLSet({"python", "html"}).pills()
 anim.add(tags)
 tags.add("css")        # Browser updates automatically
 ```
 
-**Immutable types require manual updates:** `HTMLString`, `HTMLInt`, `HTMLFloat`, and `HTMLTuple` are immutable (they inherit from Python's immutable types). To update them, use the `update()` method:
+**Styling updates work on all types:** All HTML types (`HTMLString`, `HTMLInt`, `HTMLFloat`, `HTMLTuple`, `HTMLList`, `HTMLDict`, `HTMLSet`) automatically notify Animate when their styles change:
+
+```python
+from animaid import Animate, HTMLString, HTMLInt
+
+anim = Animate()
+anim.run()
+
+# Style changes trigger automatic updates
+message = HTMLString("Hello")
+anim.add(message)
+message.bold()        # Browser updates automatically
+message.red()         # Browser updates automatically
+
+number = HTMLInt(42)
+anim.add(number)
+number.badge()        # Browser updates automatically
+```
+
+**Immutable types need update() for data changes:** Since `HTMLString`, `HTMLInt`, `HTMLFloat`, and `HTMLTuple` inherit from Python's immutable types, you cannot change their underlying data. To display different content, use the `update()` method:
 
 ```python
 from animaid import Animate, HTMLString
@@ -375,11 +394,11 @@ from animaid import Animate, HTMLString
 anim = Animate()
 anim.run()
 
-message = HTMLString("Loading...").muted
+message = HTMLString("Loading...").muted()
 item_id = anim.add(message)
 
-# Must use update() for immutable types
-anim.update(item_id, HTMLString("Complete!").success)
+# Must use update() to change the content (not just style)
+anim.update(item_id, HTMLString("Complete!").success())
 ```
 
 **Manual refresh:** If you modify an object through a method that bypasses the notification system, use `refresh()` or `refresh_all()`:

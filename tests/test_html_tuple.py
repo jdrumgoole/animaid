@@ -51,7 +51,7 @@ class TestNamedTuples:
     def test_namedtuple_labeled(self) -> None:
         """Test labeled rendering of named tuple."""
         Point = namedtuple("Point", ["x", "y"])
-        t = HTMLTuple(Point(10, 20)).labeled
+        t = HTMLTuple(Point(10, 20)).labeled()
         html = t.render()
         assert ">x</dt>" in html
         assert ">10</dd>" in html
@@ -66,7 +66,7 @@ class TestNamedTuples:
 
     def test_regular_tuple_labeled_uses_indices(self) -> None:
         """Test that regular tuples use indices as labels."""
-        t = HTMLTuple((1, 2, 3)).labeled
+        t = HTMLTuple((1, 2, 3)).labeled()
         html = t.render()
         assert ">0</dt>" in html
         assert ">1</dt>" in html
@@ -78,19 +78,19 @@ class TestTupleFormats:
 
     def test_parentheses_format(self) -> None:
         """Test parentheses format."""
-        t = HTMLTuple((1, 2, 3)).parentheses
+        t = HTMLTuple((1, 2, 3)).parentheses()
         assert "(1, 2, 3)" in t.render()
 
     def test_plain_format(self) -> None:
         """Test plain format without parentheses."""
-        t = HTMLTuple((1, 2, 3)).plain
+        t = HTMLTuple((1, 2, 3)).plain()
         html = t.render()
         assert "(" not in html
         assert "<div" in html
 
     def test_labeled_format(self) -> None:
         """Test labeled format."""
-        t = HTMLTuple((1, 2, 3)).labeled
+        t = HTMLTuple((1, 2, 3)).labeled()
         html = t.render()
         assert "<dl" in html
         assert "<dt " in html  # dt has style attribute now
@@ -102,31 +102,31 @@ class TestTupleDirection:
 
     def test_horizontal(self) -> None:
         """Test horizontal layout (default)."""
-        t = HTMLTuple((1, 2, 3)).plain.horizontal
+        t = HTMLTuple((1, 2, 3)).plain().horizontal()
         html = t.render()
         assert "flex-direction: row" in html
 
     def test_vertical(self) -> None:
         """Test vertical layout."""
-        t = HTMLTuple((1, 2, 3)).plain.vertical
+        t = HTMLTuple((1, 2, 3)).plain().vertical()
         html = t.render()
         assert "flex-direction: column" in html
 
     def test_horizontal_reverse(self) -> None:
         """Test horizontal reverse layout."""
-        t = HTMLTuple((1, 2, 3)).plain.horizontal_reverse
+        t = HTMLTuple((1, 2, 3)).plain().horizontal_reverse()
         html = t.render()
         assert "flex-direction: row-reverse" in html
 
     def test_vertical_reverse(self) -> None:
         """Test vertical reverse layout."""
-        t = HTMLTuple((1, 2, 3)).plain.vertical_reverse
+        t = HTMLTuple((1, 2, 3)).plain().vertical_reverse()
         html = t.render()
         assert "flex-direction: column-reverse" in html
 
     def test_grid(self) -> None:
         """Test grid layout."""
-        t = HTMLTuple((1, 2, 3, 4, 5, 6)).plain.grid(3)
+        t = HTMLTuple((1, 2, 3, 4, 5, 6)).plain().grid(3)
         html = t.render()
         assert "display: inline-grid" in html
         assert "grid-template-columns" in html
@@ -137,7 +137,7 @@ class TestTupleStyles:
 
     def test_gap(self) -> None:
         """Test gap styling."""
-        t = HTMLTuple((1, 2, 3)).plain.gap("10px")
+        t = HTMLTuple((1, 2, 3)).plain().gap("10px")
         assert "gap: 10px" in t.render()
 
     def test_padding(self) -> None:
@@ -176,25 +176,25 @@ class TestTupleItemStyles:
 
     def test_item_padding(self) -> None:
         """Test item padding."""
-        t = HTMLTuple((1, 2, 3)).plain.item_padding("5px")
+        t = HTMLTuple((1, 2, 3)).plain().item_padding("5px")
         html = t.render()
         assert "padding: 5px" in html
 
     def test_item_background(self) -> None:
         """Test item background."""
-        t = HTMLTuple((1, 2, 3)).plain.item_background("#f0f0f0")
+        t = HTMLTuple((1, 2, 3)).plain().item_background("#f0f0f0")
         html = t.render()
         assert "background-color: #f0f0f0" in html
 
     def test_item_border(self) -> None:
         """Test item border."""
-        t = HTMLTuple((1, 2, 3)).plain.item_border("1px solid gray")
+        t = HTMLTuple((1, 2, 3)).plain().item_border("1px solid gray")
         html = t.render()
         assert "border: 1px solid gray" in html
 
     def test_item_border_radius(self) -> None:
         """Test item border radius."""
-        t = HTMLTuple((1, 2, 3)).plain.item_border_radius("4px")
+        t = HTMLTuple((1, 2, 3)).plain().item_border_radius("4px")
         html = t.render()
         assert "border-radius: 4px" in html
 
@@ -204,28 +204,28 @@ class TestTuplePresets:
 
     def test_pills_preset(self) -> None:
         """Test pills preset."""
-        t = HTMLTuple((1, 2, 3)).pills
+        t = HTMLTuple((1, 2, 3)).pills()
         html = t.render()
         assert "border-radius: 20px" in html
         assert "background-color: #e0e0e0" in html
 
     def test_tags_preset(self) -> None:
         """Test tags preset."""
-        t = HTMLTuple((1, 2, 3)).tags
+        t = HTMLTuple((1, 2, 3)).tags()
         html = t.render()
         assert "background-color: #f5f5f5" in html
         assert "border-radius: 4px" in html
 
     def test_inline_preset(self) -> None:
         """Test inline preset."""
-        t = HTMLTuple((1, 2, 3)).inline
+        t = HTMLTuple((1, 2, 3)).inline()
         html = t.render()
         assert "flex-direction: row" in html
 
     def test_card_preset(self) -> None:
         """Test card preset for named tuples."""
         Point = namedtuple("Point", ["x", "y"])
-        t = HTMLTuple(Point(10, 20)).card
+        t = HTMLTuple(Point(10, 20)).card()
         html = t.render()
         assert "border: 1px solid #e0e0e0" in html
         assert "border-radius: 8px" in html
@@ -237,19 +237,19 @@ class TestTupleAlignment:
 
     def test_center(self) -> None:
         """Test center alignment."""
-        t = HTMLTuple((1, 2, 3)).plain.center
+        t = HTMLTuple((1, 2, 3)).plain().center()
         html = t.render()
         assert "align-items: center" in html
         assert "justify-content: center" in html
 
     def test_align_items(self) -> None:
         """Test align_items method."""
-        t = HTMLTuple((1, 2, 3)).plain.align_items("flex-start")
+        t = HTMLTuple((1, 2, 3)).plain().align_items("flex-start")
         assert "align-items: flex-start" in t.render()
 
     def test_justify_content(self) -> None:
         """Test justify_content method."""
-        t = HTMLTuple((1, 2, 3)).plain.justify_content("space-between")
+        t = HTMLTuple((1, 2, 3)).plain().justify_content("space-between")
         assert "justify-content: space-between" in t.render()
 
 
@@ -258,7 +258,7 @@ class TestTupleOperations:
 
     def test_concatenation(self) -> None:
         """Test tuple concatenation preserves settings."""
-        t1 = HTMLTuple((1, 2)).plain.gap("10px")
+        t1 = HTMLTuple((1, 2)).plain().gap("10px")
         t2 = (3, 4)
         result = t1 + t2
         assert tuple(result) == (1, 2, 3, 4)
@@ -268,7 +268,7 @@ class TestTupleOperations:
 
     def test_slicing(self) -> None:
         """Test tuple slicing preserves settings."""
-        t = HTMLTuple((1, 2, 3, 4)).plain.gap("10px")
+        t = HTMLTuple((1, 2, 3, 4)).plain().gap("10px")
         result = t[1:3]
         assert tuple(result) == (2, 3)
         assert isinstance(result, HTMLTuple)
@@ -303,12 +303,12 @@ class TestTupleRepr:
 
     def test_repr_with_format(self) -> None:
         """Test repr with format."""
-        t = HTMLTuple((1, 2, 3)).plain
+        t = HTMLTuple((1, 2, 3)).plain()
         assert "format=plain" in repr(t)
 
     def test_repr_with_direction(self) -> None:
         """Test repr with direction."""
-        t = HTMLTuple((1, 2, 3)).vertical
+        t = HTMLTuple((1, 2, 3)).vertical()
         assert "direction=vertical" in repr(t)
 
     def test_repr_with_fields(self) -> None:
@@ -323,12 +323,14 @@ class TestTupleChaining:
 
     def test_multiple_styles(self) -> None:
         """Test chaining multiple style methods."""
-        t = (HTMLTuple((1, 2, 3))
-             .plain
-             .horizontal
-             .gap("10px")
-             .padding("5px")
-             .border("1px solid black"))
+        t = (
+            HTMLTuple((1, 2, 3))
+            .plain()
+            .horizontal()
+            .gap("10px")
+            .padding("5px")
+            .border("1px solid black")
+        )
         html = t.render()
         assert "gap: 10px" in html
         assert "padding: 5px" in html
@@ -336,7 +338,7 @@ class TestTupleChaining:
 
     def test_preset_then_customize(self) -> None:
         """Test using preset then customizing."""
-        t = HTMLTuple((1, 2, 3)).pills.gap("20px")
+        t = HTMLTuple((1, 2, 3)).pills().gap("20px")
         html = t.render()
         assert "gap: 20px" in html
         assert "border-radius: 20px" in html
@@ -348,7 +350,8 @@ class TestHTMLObjectNesting:
     def test_nested_html_string(self) -> None:
         """Test tuple containing HTMLString."""
         from animaid import HTMLString
-        s = HTMLString("hello").bold
+
+        s = HTMLString("hello").bold()
         t = HTMLTuple((s, "world"))
         html = t.render()
         assert "font-weight: bold" in html
@@ -358,6 +361,7 @@ class TestHTMLObjectNesting:
     def test_nested_html_int(self) -> None:
         """Test tuple containing HTMLInt."""
         from animaid import HTMLInt
+
         n = HTMLInt(1000).comma()
         t = HTMLTuple((n, "items"))
         html = t.render()

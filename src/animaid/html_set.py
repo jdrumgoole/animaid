@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import html
 import uuid
+from collections.abc import Iterable
 from enum import Enum
-from typing import Any, Iterable, Self
+from typing import Any, Self
 
 from animaid.css_types import (
     AlignItems,
@@ -48,7 +49,8 @@ class HTMLSet(HTMLObject, set):
 
     HTMLSet behaves like a regular Python set but includes
     methods for applying CSS styles and rendering to HTML.
-    Items are automatically deduplicated (set behavior).
+    All styling methods modify the object in-place and return self
+    for method chaining. Items are automatically deduplicated (set behavior).
     Mutations trigger notifications for reactive updates.
 
     Examples:
@@ -56,7 +58,7 @@ class HTMLSet(HTMLObject, set):
         >>> s.render()
         '<span>{1, 2, 3}</span>'
 
-        >>> s.horizontal.pills.render()
+        >>> s.horizontal().pills().render()
         '<div style="display: flex; ...">...</div>'
 
         >>> HTMLSet([1, 1, 2, 2, 3])  # Duplicates removed
@@ -101,7 +103,8 @@ class HTMLSet(HTMLObject, set):
         """Publish change notification via pypubsub."""
         try:
             from pubsub import pub
-            pub.sendMessage('animaid.changed', obs_id=self._obs_id)
+
+            pub.sendMessage("animaid.changed", obs_id=self._obs_id)
         except ImportError:
             pass  # pypubsub not installed
 
@@ -117,7 +120,11 @@ class HTMLSet(HTMLObject, set):
         new_separator: str | None = None,
         new_sorted: bool | None = None,
     ) -> Self:
-        """Create a copy with modified settings."""
+        """Create a copy with modified settings.
+
+        This method is used internally for operations that must return
+        a new object (like set operations that return new sets).
+        """
         result = HTMLSet(self)
         result._styles = self._styles.copy()
         result._item_styles = self._item_styles.copy()
@@ -156,223 +163,293 @@ class HTMLSet(HTMLObject, set):
     # -------------------------------------------------------------------------
 
     def styled(self, **styles: str | CSSValue) -> Self:
-        """Return a copy with additional container styles."""
-        css_styles = {k.replace("_", "-"): _to_css(v) for k, v in styles.items()}
-        return self._copy_with_settings(new_styles=css_styles)
+        """Apply additional container styles in-place.
+
+        Args:
+            **styles: CSS property-value pairs for the container.
+
+        Returns:
+            Self for method chaining.
+        """
+        for key, value in styles.items():
+            css_key = key.replace("_", "-")
+            self._styles[css_key] = _to_css(value)
+        self._notify()
+        return self
 
     def add_class(self, *class_names: str) -> Self:
-        """Return a copy with additional CSS classes on the container."""
-        return self._copy_with_settings(new_classes=list(class_names))
+        """Add CSS classes on the container in-place.
+
+        Args:
+            *class_names: CSS class names to add.
+
+        Returns:
+            Self for method chaining.
+        """
+        self._css_classes.extend(class_names)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Format methods
     # -------------------------------------------------------------------------
 
-    @property
     def plain(self) -> Self:
-        """Return a copy without brace decoration."""
-        return self._copy_with_settings(new_format=SetFormat.PLAIN)
+        """Apply plain format (without brace decoration) in-place."""
+        self._format = SetFormat.PLAIN
+        self._notify()
+        return self
 
-    @property
     def braces(self) -> Self:
-        """Return a copy with braces around items (default)."""
-        return self._copy_with_settings(new_format=SetFormat.BRACES)
+        """Apply braces format (default) in-place."""
+        self._format = SetFormat.BRACES
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Ordering methods
     # -------------------------------------------------------------------------
 
-    @property
     def sorted(self) -> Self:
-        """Return a copy that renders items in sorted order."""
-        return self._copy_with_settings(new_sorted=True)
+        """Apply sorted rendering order in-place."""
+        self._sorted = True
+        self._notify()
+        return self
 
-    @property
     def unsorted(self) -> Self:
-        """Return a copy that renders items in iteration order."""
-        return self._copy_with_settings(new_sorted=False)
+        """Apply iteration order (no sorting) in-place."""
+        self._sorted = False
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Direction methods
     # -------------------------------------------------------------------------
 
-    @property
     def vertical(self) -> Self:
-        """Return a copy with vertical layout."""
-        return self._copy_with_settings(new_direction=SetDirection.VERTICAL)
+        """Apply vertical layout in-place."""
+        self._direction = SetDirection.VERTICAL
+        self._notify()
+        return self
 
-    @property
     def horizontal(self) -> Self:
-        """Return a copy with horizontal layout (default)."""
-        return self._copy_with_settings(new_direction=SetDirection.HORIZONTAL)
+        """Apply horizontal layout (default) in-place."""
+        self._direction = SetDirection.HORIZONTAL
+        self._notify()
+        return self
 
-    @property
     def vertical_reverse(self) -> Self:
-        """Return a copy with reversed vertical layout."""
-        return self._copy_with_settings(new_direction=SetDirection.VERTICAL_REVERSE)
+        """Apply reversed vertical layout in-place."""
+        self._direction = SetDirection.VERTICAL_REVERSE
+        self._notify()
+        return self
 
-    @property
     def horizontal_reverse(self) -> Self:
-        """Return a copy with reversed horizontal layout."""
-        return self._copy_with_settings(new_direction=SetDirection.HORIZONTAL_REVERSE)
+        """Apply reversed horizontal layout in-place."""
+        self._direction = SetDirection.HORIZONTAL_REVERSE
+        self._notify()
+        return self
 
     def grid(self, columns: int = 3) -> Self:
-        """Return a copy with CSS grid layout."""
-        return self._copy_with_settings(
-            new_direction=SetDirection.GRID,
-            new_grid_columns=columns,
-        )
+        """Apply CSS grid layout in-place.
+
+        Args:
+            columns: Number of columns in the grid.
+        """
+        self._direction = SetDirection.GRID
+        self._grid_columns = columns
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Spacing methods
     # -------------------------------------------------------------------------
 
     def gap(self, value: SizeValue) -> Self:
-        """Return a copy with specified gap between items."""
-        return self.styled(gap=_to_css(value))
+        """Apply specified gap between items in-place."""
+        self._styles["gap"] = _to_css(value)
+        self._notify()
+        return self
 
     def padding(self, value: SpacingValue) -> Self:
-        """Return a copy with padding inside the container."""
-        return self.styled(padding=_to_css(value))
+        """Apply padding inside the container in-place."""
+        self._styles["padding"] = _to_css(value)
+        self._notify()
+        return self
 
     def margin(self, value: SpacingValue) -> Self:
-        """Return a copy with margin outside the container."""
-        return self.styled(margin=_to_css(value))
+        """Apply margin outside the container in-place."""
+        self._styles["margin"] = _to_css(value)
+        self._notify()
+        return self
 
     def item_padding(self, value: SpacingValue) -> Self:
-        """Return a copy with padding inside each item."""
-        css_styles = {"padding": _to_css(value)}
-        return self._copy_with_settings(new_item_styles=css_styles)
+        """Apply padding inside each item in-place."""
+        self._item_styles["padding"] = _to_css(value)
+        self._notify()
+        return self
 
     def item_margin(self, value: SpacingValue) -> Self:
-        """Return a copy with margin around each item."""
-        css_styles = {"margin": _to_css(value)}
-        return self._copy_with_settings(new_item_styles=css_styles)
+        """Apply margin around each item in-place."""
+        self._item_styles["margin"] = _to_css(value)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Border methods
     # -------------------------------------------------------------------------
 
     def border(self, value: BorderValue) -> Self:
-        """Return a copy with border around the container."""
-        return self.styled(border=_to_css(value))
+        """Apply border around the container in-place."""
+        self._styles["border"] = _to_css(value)
+        self._notify()
+        return self
 
     def border_radius(self, value: SizeValue) -> Self:
-        """Return a copy with rounded corners on the container."""
-        return self.styled(border_radius=_to_css(value))
+        """Apply rounded corners on the container in-place."""
+        self._styles["border-radius"] = _to_css(value)
+        self._notify()
+        return self
 
     def item_border(self, value: BorderValue) -> Self:
-        """Return a copy with border around each item."""
-        css_styles = {"border": _to_css(value)}
-        return self._copy_with_settings(new_item_styles=css_styles)
+        """Apply border around each item in-place."""
+        self._item_styles["border"] = _to_css(value)
+        self._notify()
+        return self
 
     def item_border_radius(self, value: SizeValue) -> Self:
-        """Return a copy with rounded corners on each item."""
-        css_styles = {"border-radius": _to_css(value)}
-        return self._copy_with_settings(new_item_styles=css_styles)
+        """Apply rounded corners on each item in-place."""
+        self._item_styles["border-radius"] = _to_css(value)
+        self._notify()
+        return self
 
     def separator(self, value: BorderValue) -> Self:
-        """Return a copy with separator lines between items."""
-        return self._copy_with_settings(new_separator=_to_css(value))
+        """Apply separator lines between items in-place."""
+        self._separator = _to_css(value)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Background and color methods
     # -------------------------------------------------------------------------
 
     def background(self, value: ColorValue) -> Self:
-        """Return a copy with background color on the container."""
-        return self.styled(background_color=_to_css(value))
+        """Apply background color on the container in-place."""
+        self._styles["background-color"] = _to_css(value)
+        self._notify()
+        return self
 
     def item_background(self, value: ColorValue) -> Self:
-        """Return a copy with background color on each item."""
-        css_styles = {"background-color": _to_css(value)}
-        return self._copy_with_settings(new_item_styles=css_styles)
+        """Apply background color on each item in-place."""
+        self._item_styles["background-color"] = _to_css(value)
+        self._notify()
+        return self
 
     def color(self, value: ColorValue) -> Self:
-        """Return a copy with text color."""
-        return self.styled(color=_to_css(value))
+        """Apply text color in-place."""
+        self._styles["color"] = _to_css(value)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Item class methods
     # -------------------------------------------------------------------------
 
     def add_item_class(self, *class_names: str) -> Self:
-        """Return a copy with CSS classes added to each item."""
-        return self._copy_with_settings(new_item_classes=list(class_names))
+        """Add CSS classes to each item in-place."""
+        self._item_classes.extend(class_names)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Alignment methods
     # -------------------------------------------------------------------------
 
     def align_items(self, value: AlignItems | str) -> Self:
-        """Return a copy with specified cross-axis alignment."""
-        return self.styled(align_items=_to_css(value))
+        """Apply specified cross-axis alignment in-place."""
+        self._styles["align-items"] = _to_css(value)
+        self._notify()
+        return self
 
     def justify_content(self, value: JustifyContent | str) -> Self:
-        """Return a copy with specified main-axis alignment."""
-        return self.styled(justify_content=_to_css(value))
+        """Apply specified main-axis alignment in-place."""
+        self._styles["justify-content"] = _to_css(value)
+        self._notify()
+        return self
 
-    @property
     def center(self) -> Self:
-        """Return a copy with items centered on both axes."""
-        return self.styled(align_items="center", justify_content="center")
+        """Apply centered alignment on both axes in-place."""
+        self._styles["align-items"] = "center"
+        self._styles["justify-content"] = "center"
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Size methods
     # -------------------------------------------------------------------------
 
     def width(self, value: SizeValue) -> Self:
-        """Return a copy with specified width."""
-        return self.styled(width=_to_css(value))
+        """Apply specified width in-place."""
+        self._styles["width"] = _to_css(value)
+        self._notify()
+        return self
 
     def height(self, value: SizeValue) -> Self:
-        """Return a copy with specified height."""
-        return self.styled(height=_to_css(value))
+        """Apply specified height in-place."""
+        self._styles["height"] = _to_css(value)
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Style Presets
     # -------------------------------------------------------------------------
 
-    @property
     def pills(self) -> Self:
-        """Return a copy styled as pill/badge items."""
-        return (
-            self.plain
-            .horizontal
-            .gap("8px")
-            .item_padding("6px 14px")
-            .item_border_radius("20px")
-            .item_background("#e0e0e0")
-            .styled(flex_wrap="wrap")
-        )
+        """Apply pill/badge style in-place."""
+        self._format = SetFormat.PLAIN
+        self._direction = SetDirection.HORIZONTAL
+        self._styles["gap"] = "8px"
+        self._styles["flex-wrap"] = "wrap"
+        self._item_styles["padding"] = "6px 14px"
+        self._item_styles["border-radius"] = "20px"
+        self._item_styles["background-color"] = "#e0e0e0"
+        self._notify()
+        return self
 
-    @property
     def tags(self) -> Self:
-        """Return a copy styled as tags/labels."""
-        return (
-            self.plain
-            .horizontal
-            .gap("8px")
-            .item_padding("4px 10px")
-            .item_background("#f5f5f5")
-            .item_border_radius("4px")
-            .styled(flex_wrap="wrap")
-        )
+        """Apply tags/labels style in-place."""
+        self._format = SetFormat.PLAIN
+        self._direction = SetDirection.HORIZONTAL
+        self._styles["gap"] = "8px"
+        self._styles["flex-wrap"] = "wrap"
+        self._item_styles["padding"] = "4px 10px"
+        self._item_styles["background-color"] = "#f5f5f5"
+        self._item_styles["border-radius"] = "4px"
+        self._notify()
+        return self
 
-    @property
     def inline(self) -> Self:
-        """Return a copy styled as inline items."""
-        return self.plain.horizontal.gap("8px").styled(flex_wrap="wrap")
+        """Apply inline style in-place."""
+        self._format = SetFormat.PLAIN
+        self._direction = SetDirection.HORIZONTAL
+        self._styles["gap"] = "8px"
+        self._styles["flex-wrap"] = "wrap"
+        self._notify()
+        return self
 
-    @property
     def spaced(self) -> Self:
-        """Return a copy with generous spacing between items."""
-        return self.gap("16px").item_padding("8px")
+        """Apply generous spacing style in-place."""
+        self._styles["gap"] = "16px"
+        self._item_styles["padding"] = "8px"
+        self._notify()
+        return self
 
-    @property
     def compact(self) -> Self:
-        """Return a copy with minimal spacing."""
-        return self.gap("4px").item_padding("2px")
+        """Apply minimal spacing style in-place."""
+        self._styles["gap"] = "4px"
+        self._item_styles["padding"] = "2px"
+        self._notify()
+        return self
 
     # -------------------------------------------------------------------------
     # Rendering
@@ -383,7 +460,7 @@ class HTMLSet(HTMLObject, set):
         items = list(self)
         if self._sorted:
             try:
-                items = sorted(items, key=str)
+                items = sorted(items, key=str)  # type: ignore[assignment]
             except TypeError:
                 # If items can't be sorted, keep original order
                 pass
