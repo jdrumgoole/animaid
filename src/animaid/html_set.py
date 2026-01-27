@@ -1,8 +1,9 @@
-"""HTMLSet - A frozenset subclass with HTML rendering capabilities."""
+"""HTMLSet - A set subclass with HTML rendering capabilities."""
 
 from __future__ import annotations
 
 import html
+import uuid
 from enum import Enum
 from typing import Any, Iterable, Self
 
@@ -42,12 +43,13 @@ class SetFormat(Enum):
     BRACES = "braces"  # {a, b, c} style
 
 
-class HTMLSet(HTMLObject, frozenset):
-    """A frozenset subclass that renders as styled HTML.
+class HTMLSet(HTMLObject, set):
+    """A set subclass that renders as styled HTML.
 
-    HTMLSet behaves like a regular Python frozenset but includes
+    HTMLSet behaves like a regular Python set but includes
     methods for applying CSS styles and rendering to HTML.
     Items are automatically deduplicated (set behavior).
+    Mutations trigger notifications for reactive updates.
 
     Examples:
         >>> s = HTMLSet({1, 2, 3})
@@ -70,19 +72,7 @@ class HTMLSet(HTMLObject, frozenset):
     _grid_columns: int | None
     _separator: str | None
     _sorted: bool
-
-    def __new__(cls, items: Iterable[Any] = (), **styles: str | CSSValue) -> Self:
-        """Create a new HTMLSet instance.
-
-        Args:
-            items: The set items (any iterable, duplicates removed).
-            **styles: Initial CSS styles.
-
-        Returns:
-            A new HTMLSet instance.
-        """
-        instance = super().__new__(cls, items)
-        return instance
+    _obs_id: str
 
     def __init__(self, items: Iterable[Any] = (), **styles: str | CSSValue) -> None:
         """Initialize an HTMLSet.
@@ -91,7 +81,7 @@ class HTMLSet(HTMLObject, frozenset):
             items: The set items (any iterable, duplicates removed).
             **styles: CSS styles for the container.
         """
-        # Note: frozenset is immutable, so we can't call super().__init__
+        super().__init__(items)
         self._styles = {}
         self._item_styles = {}
         self._css_classes = []
@@ -101,10 +91,19 @@ class HTMLSet(HTMLObject, frozenset):
         self._grid_columns = None
         self._separator = None
         self._sorted = False
+        self._obs_id = str(uuid.uuid4())
 
         for key, value in styles.items():
             css_key = key.replace("_", "-")
             self._styles[css_key] = _to_css(value)
+
+    def _notify(self) -> None:
+        """Publish change notification via pypubsub."""
+        try:
+            from pubsub import pub
+            pub.sendMessage('animaid.changed', obs_id=self._obs_id)
+        except ImportError:
+            pass  # pypubsub not installed
 
     def _copy_with_settings(
         self,
@@ -129,6 +128,7 @@ class HTMLSet(HTMLObject, frozenset):
         result._grid_columns = self._grid_columns
         result._separator = self._separator
         result._sorted = self._sorted
+        result._obs_id = self._obs_id  # Preserve ID so updates still work
 
         if new_styles:
             result._styles.update(new_styles)
@@ -527,12 +527,12 @@ class HTMLSet(HTMLObject, frozenset):
             return self._render_plain()
 
     # -------------------------------------------------------------------------
-    # Set operation overrides
+    # Set operation overrides (non-mutating, return new sets)
     # -------------------------------------------------------------------------
 
     def union(self, *others: Iterable[Any]) -> Self:
         """Return union with other sets, preserving settings."""
-        result = HTMLSet(frozenset.union(self, *others))
+        result = HTMLSet(set.union(self, *others))
         result._styles = self._styles.copy()
         result._item_styles = self._item_styles.copy()
         result._css_classes = self._css_classes.copy()
@@ -542,11 +542,12 @@ class HTMLSet(HTMLObject, frozenset):
         result._grid_columns = self._grid_columns
         result._separator = self._separator
         result._sorted = self._sorted
+        result._obs_id = self._obs_id
         return result  # type: ignore[return-value]
 
     def intersection(self, *others: Iterable[Any]) -> Self:
         """Return intersection with other sets, preserving settings."""
-        result = HTMLSet(frozenset.intersection(self, *others))
+        result = HTMLSet(set.intersection(self, *others))
         result._styles = self._styles.copy()
         result._item_styles = self._item_styles.copy()
         result._css_classes = self._css_classes.copy()
@@ -556,11 +557,12 @@ class HTMLSet(HTMLObject, frozenset):
         result._grid_columns = self._grid_columns
         result._separator = self._separator
         result._sorted = self._sorted
+        result._obs_id = self._obs_id
         return result  # type: ignore[return-value]
 
     def difference(self, *others: Iterable[Any]) -> Self:
         """Return difference with other sets, preserving settings."""
-        result = HTMLSet(frozenset.difference(self, *others))
+        result = HTMLSet(set.difference(self, *others))
         result._styles = self._styles.copy()
         result._item_styles = self._item_styles.copy()
         result._css_classes = self._css_classes.copy()
@@ -570,11 +572,12 @@ class HTMLSet(HTMLObject, frozenset):
         result._grid_columns = self._grid_columns
         result._separator = self._separator
         result._sorted = self._sorted
+        result._obs_id = self._obs_id
         return result  # type: ignore[return-value]
 
     def symmetric_difference(self, other: Iterable[Any]) -> Self:
         """Return symmetric difference with other set, preserving settings."""
-        result = HTMLSet(frozenset.symmetric_difference(self, other))
+        result = HTMLSet(set.symmetric_difference(self, other))
         result._styles = self._styles.copy()
         result._item_styles = self._item_styles.copy()
         result._css_classes = self._css_classes.copy()
@@ -584,6 +587,7 @@ class HTMLSet(HTMLObject, frozenset):
         result._grid_columns = self._grid_columns
         result._separator = self._separator
         result._sorted = self._sorted
+        result._obs_id = self._obs_id
         return result  # type: ignore[return-value]
 
     def __or__(self, other: Iterable[Any]) -> Self:
@@ -601,6 +605,56 @@ class HTMLSet(HTMLObject, frozenset):
     def __xor__(self, other: Iterable[Any]) -> Self:
         """Symmetric difference operator ^."""
         return self.symmetric_difference(other)
+
+    # -------------------------------------------------------------------------
+    # Observable mutating methods
+    # -------------------------------------------------------------------------
+
+    def add(self, item: Any) -> None:
+        """Add item, notifying observers."""
+        super().add(item)
+        self._notify()
+
+    def discard(self, item: Any) -> None:
+        """Discard item, notifying observers."""
+        super().discard(item)
+        self._notify()
+
+    def remove(self, item: Any) -> None:
+        """Remove item, notifying observers."""
+        super().remove(item)
+        self._notify()
+
+    def pop(self) -> Any:
+        """Pop item, notifying observers."""
+        result = super().pop()
+        self._notify()
+        return result
+
+    def clear(self) -> None:
+        """Clear set, notifying observers."""
+        super().clear()
+        self._notify()
+
+    def update(self, *others: Iterable[Any]) -> None:
+        """Update set, notifying observers."""
+        super().update(*others)
+        self._notify()
+
+    def intersection_update(self, *others: Iterable[Any]) -> None:
+        """Intersection update, notifying observers."""
+        super().intersection_update(*others)
+        self._notify()
+
+    def difference_update(self, *others: Iterable[Any]) -> None:
+        """Difference update, notifying observers."""
+        super().difference_update(*others)
+        self._notify()
+
+    def symmetric_difference_update(self, other: Iterable[Any]) -> None:
+        """Symmetric difference update, notifying observers."""
+        super().symmetric_difference_update(other)
+        self._notify()
 
     def __repr__(self) -> str:
         """Return a detailed representation for debugging."""

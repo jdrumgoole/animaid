@@ -95,15 +95,70 @@ class TestAnimateItemManagement:
         result = anim.remove("nonexistent")
         assert result is False
 
-    def test_clear_items(self) -> None:
-        """Clear should remove all items."""
+    def test_clear_all_items(self) -> None:
+        """clear_all should remove all items."""
         anim = Animate()
         anim.add(HTMLString("First"))
         anim.add(HTMLString("Second"))
         anim.add(HTMLString("Third"))
         assert len(anim.items()) == 3
-        anim.clear()
+        anim.clear_all()
         assert len(anim.items()) == 0
+
+    def test_clear_single_item(self) -> None:
+        """clear(id) should remove a single item by ID."""
+        anim = Animate()
+        id1 = anim.add(HTMLString("First"))
+        id2 = anim.add(HTMLString("Second"))
+        assert len(anim.items()) == 2
+        result = anim.clear(id1)
+        assert result is True
+        assert len(anim.items()) == 1
+        assert anim.get(id1) is None
+        assert anim.get(id2) is not None
+
+    def test_clear_nonexistent_item(self) -> None:
+        """clear(id) should return False for nonexistent ID."""
+        anim = Animate()
+        result = anim.clear("nonexistent")
+        assert result is False
+
+    def test_add_stores_anim_id_on_object(self) -> None:
+        """add() should store the animate ID on the object."""
+        anim = Animate()
+        item = HTMLString("Hello")
+        item_id = anim.add(item)
+        assert hasattr(item, '_anim_id')
+        assert item._anim_id == item_id
+
+    def test_remove_by_object(self) -> None:
+        """remove() should accept an object and remove it."""
+        anim = Animate()
+        item1 = HTMLString("First")
+        item2 = HTMLString("Second")
+        anim.add(item1)
+        anim.add(item2)
+        assert len(anim.items()) == 2
+        result = anim.remove(item1)
+        assert result is True
+        assert len(anim.items()) == 1
+        assert item1._anim_id is None  # Should be cleared
+
+    def test_clear_by_object(self) -> None:
+        """clear() should accept an object and remove it."""
+        anim = Animate()
+        item = HTMLString("Hello")
+        anim.add(item)
+        result = anim.clear(item)
+        assert result is True
+        assert len(anim.items()) == 0
+
+    def test_remove_object_not_added(self) -> None:
+        """remove() should return False for object not added."""
+        anim = Animate()
+        item = HTMLString("Not added")
+        result = anim.remove(item)
+        assert result is False
 
     def test_get_item(self) -> None:
         """Get should return item by ID."""

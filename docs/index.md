@@ -266,9 +266,11 @@ anim.add(HTMLList(["Apple", "Banana", "Cherry"]).pills)
 item_id = anim.add(HTMLString("Loading...").muted)
 anim.update(item_id, HTMLString("Done!").success)
 
-# Remove items
-anim.remove(item_id)
-anim.clear()  # Clear all items
+# Remove items - by ID or by object
+anim.remove(item_id)  # By ID
+anim.remove(my_item)  # By object reference
+anim.clear(my_item)   # Alias for remove
+anim.clear_all()      # Clear all items
 
 # Stop the server when done
 anim.stop()
@@ -308,10 +310,13 @@ print(f"Open browser at: {anim.url}")
 | `stop()` | Stop the server |
 | `add(item, id=None)` | Add item, returns ID |
 | `update(id, item)` | Update item by ID |
-| `remove(id)` | Remove item by ID |
-| `clear()` | Remove all items |
+| `remove(item_or_id)` | Remove item by ID or object |
+| `clear(item_or_id)` | Remove item by ID or object (alias for remove) |
+| `clear_all()` | Remove all items |
 | `get(id)` | Get item by ID |
 | `items()` | Get all (id, item) pairs |
+| `refresh(id)` | Re-render and broadcast a single item |
+| `refresh_all()` | Re-render and broadcast all items |
 
 ### Properties
 
@@ -330,6 +335,61 @@ The `Animate` class requires the tutorial dependencies:
 pip install animaid[tutorial]
 # or with uv
 uv pip install animaid[tutorial]
+```
+
+### Reactive Updates
+
+Mutable HTML objects (`HTMLList`, `HTMLDict`, `HTMLSet`) automatically notify the Animate display when their contents change. This means you can mutate these objects directly and the browser will update in real-time without calling `update()`.
+
+```python
+from animaid import Animate, HTMLList, HTMLDict, HTMLSet
+
+anim = Animate()
+anim.run()
+
+# Add a mutable list
+scores = HTMLList([10, 20, 30]).pills
+anim.add(scores)
+
+# Mutate the list - browser updates automatically!
+scores.append(40)      # Browser shows [10, 20, 30, 40]
+scores[0] = 100        # Browser shows [100, 20, 30, 40]
+scores.pop()           # Browser shows [100, 20, 30]
+
+# Same for dicts
+data = HTMLDict({"score": 0, "level": 1}).card
+anim.add(data)
+data["score"] = 500    # Browser updates automatically
+
+# And sets
+tags = HTMLSet({"python", "html"}).pills
+anim.add(tags)
+tags.add("css")        # Browser updates automatically
+```
+
+**Immutable types require manual updates:** `HTMLString`, `HTMLInt`, `HTMLFloat`, and `HTMLTuple` are immutable (they inherit from Python's immutable types). To update them, use the `update()` method:
+
+```python
+from animaid import Animate, HTMLString
+
+anim = Animate()
+anim.run()
+
+message = HTMLString("Loading...").muted
+item_id = anim.add(message)
+
+# Must use update() for immutable types
+anim.update(item_id, HTMLString("Complete!").success)
+```
+
+**Manual refresh:** If you modify an object through a method that bypasses the notification system, use `refresh()` or `refresh_all()`:
+
+```python
+# Force re-render of a specific item
+anim.refresh(item_id)
+
+# Force re-render of all items
+anim.refresh_all()
 ```
 
 ## Tutorial

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import html
+import uuid
 from enum import Enum
 from typing import Any, Self
 
@@ -74,6 +75,7 @@ class HTMLDict(HTMLObject, dict):
     _key_value_separator: str
     _entry_separator: str | None
     _show_keys: bool
+    _obs_id: str
 
     def __init__(self, data: dict[Any, Any] | None = None, **styles: str | CSSValue) -> None:
         """Initialize an HTMLDict.
@@ -96,10 +98,19 @@ class HTMLDict(HTMLObject, dict):
         self._key_value_separator = ""
         self._entry_separator = None
         self._show_keys = True
+        self._obs_id = str(uuid.uuid4())
 
         for key, value in styles.items():
             css_key = key.replace("_", "-")
             self._styles[css_key] = _to_css(value)
+
+    def _notify(self) -> None:
+        """Publish change notification via pypubsub."""
+        try:
+            from pubsub import pub
+            pub.sendMessage('animaid.changed', obs_id=self._obs_id)
+        except ImportError:
+            pass  # pypubsub not installed
 
     def _copy_with_settings(
         self,
@@ -130,6 +141,7 @@ class HTMLDict(HTMLObject, dict):
         result._key_value_separator = self._key_value_separator
         result._entry_separator = self._entry_separator
         result._show_keys = self._show_keys
+        result._obs_id = self._obs_id  # Preserve ID so updates still work
 
         if new_styles:
             result._styles.update(new_styles)
@@ -782,7 +794,50 @@ class HTMLDict(HTMLObject, dict):
         result._key_value_separator = self._key_value_separator
         result._entry_separator = self._entry_separator
         result._show_keys = self._show_keys
+        result._obs_id = self._obs_id
         return result  # type: ignore[return-value]
+
+    # -------------------------------------------------------------------------
+    # Observable mutating methods
+    # -------------------------------------------------------------------------
+
+    def __setitem__(self, key: Any, value: Any) -> None:
+        """Set item, notifying observers."""
+        super().__setitem__(key, value)
+        self._notify()
+
+    def __delitem__(self, key: Any) -> None:
+        """Delete item, notifying observers."""
+        super().__delitem__(key)
+        self._notify()
+
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        """Update dict, notifying observers."""
+        super().update(*args, **kwargs)
+        self._notify()
+
+    def pop(self, key: Any, *default: Any) -> Any:
+        """Pop item, notifying observers."""
+        result = super().pop(key, *default)
+        self._notify()
+        return result
+
+    def popitem(self) -> tuple[Any, Any]:
+        """Pop item, notifying observers."""
+        result = super().popitem()
+        self._notify()
+        return result
+
+    def clear(self) -> None:
+        """Clear dict, notifying observers."""
+        super().clear()
+        self._notify()
+
+    def setdefault(self, key: Any, default: Any = None) -> Any:
+        """Set default, notifying observers."""
+        result = super().setdefault(key, default)
+        self._notify()
+        return result
 
     def __repr__(self) -> str:
         """Return a detailed representation for debugging."""

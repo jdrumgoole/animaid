@@ -61,6 +61,8 @@ class Animate:
         self._running = False
         self._shutdown_event: asyncio.Event | None = None
         self._loop: asyncio.AbstractEventLoop | None = None
+        self._obs_id_to_item_id: dict[str, str] = {}  # Maps obs_id -> item_id
+        self._pubsub_subscribed = False
 
     def run(self) -> "Animate":
         """Start the server in a background thread and open the browser.
@@ -70,6 +72,14 @@ class Animate:
         """
         if self._running:
             return self
+
+        # Subscribe to pypubsub for reactive updates
+        try:
+            from pubsub import pub
+            pub.subscribe(self._on_data_changed, 'animaid.changed')
+            self._pubsub_subscribed = True
+        except ImportError:
+            pass  # pypubsub not installed
 
         from animaid.animate_server import create_animate_app
 
@@ -88,6 +98,7 @@ class Animate:
                 host="127.0.0.1",
                 port=self._port,
                 log_level="warning",
+                ws="wsproto",  # Use wsproto to avoid websockets deprecation warnings
             )
             server = uvicorn.Server(config)
             self._server = server
@@ -113,6 +124,15 @@ class Animate:
             return
 
         self._running = False
+
+        # Unsubscribe from pypubsub
+        if self._pubsub_subscribed:
+            try:
+                from pubsub import pub
+                pub.unsubscribe(self._on_data_changed, 'animaid.changed')
+            except Exception:
+                pass
+            self._pubsub_subscribed = False
 
         if self._server is not None:
             self._server.should_exit = True
@@ -140,6 +160,17 @@ class Animate:
         with self._lock:
             self._items.append((id, item))
 
+            # Track observable ID if present (for reactive updates)
+            obs_id = getattr(item, '_obs_id', None)
+            if obs_id:
+                self._obs_id_to_item_id[obs_id] = id
+
+            # Store the animate ID on the object for easy removal
+            try:
+                item._anim_id = id  # type: ignore[union-attr]
+            except (AttributeError, TypeError):
+                pass  # Can't set attribute on strings or other immutable types
+
         self._broadcast_add(id, item)
         return id
 
@@ -161,27 +192,60 @@ class Animate:
                     return True
         return False
 
-    def remove(self, id: str) -> bool:
-        """Remove an item by ID.
+    def remove(self, item_or_id: "HTMLObject | str") -> bool:
+        """Remove an item by ID or by object reference.
 
         Args:
-            id: The ID of the item to remove.
+            item_or_id: The ID of the item to remove, or the item object itself.
 
         Returns:
             True if the item was found and removed, False otherwise.
         """
+        # Check if passed an object with _anim_id (use that ID)
+        # Must check _anim_id first since HTMLString is a str subclass
+        anim_id = getattr(item_or_id, '_anim_id', None)
+        if anim_id is not None:
+            id = anim_id
+        elif isinstance(item_or_id, str):
+            id = item_or_id
+        else:
+            return False
+
         with self._lock:
-            for i, (item_id, _) in enumerate(self._items):
+            for i, (item_id, item) in enumerate(self._items):
                 if item_id == id:
+                    # Clean up obs_id mapping
+                    obs_id = getattr(item, '_obs_id', None)
+                    if obs_id:
+                        self._obs_id_to_item_id.pop(obs_id, None)
+
+                    # Clean up _anim_id on the item
+                    try:
+                        item._anim_id = None  # type: ignore[union-attr]
+                    except (AttributeError, TypeError):
+                        pass
+
                     self._items.pop(i)
                     self._broadcast_remove(id)
                     return True
         return False
 
-    def clear(self) -> None:
+    def clear(self, item_or_id: "HTMLObject | str") -> bool:
+        """Remove an item by ID or by object reference.
+
+        Args:
+            item_or_id: The ID of the item to remove, or the item object itself.
+
+        Returns:
+            True if the item was found and removed, False otherwise.
+        """
+        return self.remove(item_or_id)
+
+    def clear_all(self) -> None:
         """Remove all items from the display."""
         with self._lock:
             self._items.clear()
+            self._obs_id_to_item_id.clear()
 
         self._broadcast_clear()
 
@@ -293,6 +357,43 @@ class Animate:
                 {"id": id, "html": self._render_item(item)}
                 for id, item in self._items
             ]
+
+    def _on_data_changed(self, obs_id: str) -> None:
+        """Handle pypubsub notification when an observable item changes.
+
+        Args:
+            obs_id: The observable ID of the changed item.
+        """
+        item_id = self._obs_id_to_item_id.get(obs_id)
+        if item_id:
+            self.refresh(item_id)
+
+    def refresh(self, id: str) -> bool:
+        """Re-render and broadcast a single item.
+
+        Use this to manually refresh an item after external changes.
+
+        Args:
+            id: The ID of the item to refresh.
+
+        Returns:
+            True if item was found and refreshed, False otherwise.
+        """
+        with self._lock:
+            for item_id, item in self._items:
+                if item_id == id:
+                    self._broadcast_update(id, item)
+                    return True
+        return False
+
+    def refresh_all(self) -> None:
+        """Re-render and broadcast all items.
+
+        Use this to manually refresh all items after external changes.
+        """
+        with self._lock:
+            for item_id, item in self._items:
+                self._broadcast_update(item_id, item)
 
     def __enter__(self) -> "Animate":
         """Enter context manager - start the server."""

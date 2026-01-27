@@ -78,6 +78,15 @@ Float = HTMLFloat
 Tuple = HTMLTuple
 Set = HTMLSet
 
+# Short h-prefixed aliases
+hstring = HTMLString
+hlist = HTMLList
+hdict = HTMLDict
+hint = HTMLInt
+hfloat = HTMLFloat
+htuple = HTMLTuple
+hset = HTMLSet
+
 __all__ = [
     "__version__",
     # Animation
@@ -99,6 +108,14 @@ __all__ = [
     "Float",
     "Tuple",
     "Set",
+    # HTML types (h-prefixed aliases)
+    "hstring",
+    "hlist",
+    "hdict",
+    "hint",
+    "hfloat",
+    "htuple",
+    "hset",
     # CSS value types
     "CSSValue",
     "Color",

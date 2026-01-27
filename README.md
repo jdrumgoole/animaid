@@ -267,6 +267,32 @@ with Animate() as anim:
 
 **Note:** Animate requires the tutorial dependencies: `pip install animaid[tutorial]`
 
+### Reactive Updates
+
+Mutable HTML objects (`HTMLList`, `HTMLDict`, `HTMLSet`) automatically notify Animate when their contents change. Simply mutate the object and the browser updates in real-time:
+
+```python
+from animaid import Animate, HTMLList, HTMLDict
+
+anim = Animate()
+anim.run()
+
+# Add a mutable list
+scores = HTMLList([10, 20, 30]).pills
+anim.add(scores)
+
+# Mutate the list - browser updates automatically!
+scores.append(40)      # Browser shows [10, 20, 30, 40]
+scores[0] = 100        # Browser shows [100, 20, 30, 40]
+
+# Same for dicts
+data = HTMLDict({"score": 0})
+anim.add(data)
+data["score"] = 500    # Browser updates automatically
+```
+
+**Note:** Immutable types (`HTMLString`, `HTMLInt`, `HTMLFloat`, `HTMLTuple`) require manual updates using `anim.update(item_id, new_value)`.
+
 ## Interactive Tutorial
 
 AnimAID includes a web-based tutorial that lets you experiment with all the features:

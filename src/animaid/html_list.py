@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import html
+import uuid
 from enum import Enum
 from typing import Any, Self
 
@@ -74,6 +75,7 @@ class HTMLList(HTMLObject, list):
     _list_type: ListType
     _grid_columns: int | None
     _separator: str | None
+    _obs_id: str
 
     def __init__(self, items: list[Any] | None = None, **styles: str | CSSValue) -> None:
         """Initialize an HTMLList.
@@ -92,10 +94,19 @@ class HTMLList(HTMLObject, list):
         self._list_type = ListType.UNORDERED
         self._grid_columns = None
         self._separator = None
+        self._obs_id = str(uuid.uuid4())
 
         for key, value in styles.items():
             css_key = key.replace("_", "-")
             self._styles[css_key] = _to_css(value)
+
+    def _notify(self) -> None:
+        """Publish change notification via pypubsub."""
+        try:
+            from pubsub import pub
+            pub.sendMessage('animaid.changed', obs_id=self._obs_id)
+        except ImportError:
+            pass  # pypubsub not installed
 
     def _copy_with_settings(
         self,
@@ -132,6 +143,7 @@ class HTMLList(HTMLObject, list):
         result._list_type = self._list_type
         result._grid_columns = self._grid_columns
         result._separator = self._separator
+        result._obs_id = self._obs_id  # Preserve ID so updates still work
 
         if new_styles:
             result._styles.update(new_styles)
@@ -709,6 +721,7 @@ class HTMLList(HTMLObject, list):
         result._list_type = self._list_type
         result._grid_columns = self._grid_columns
         result._separator = self._separator
+        result._obs_id = self._obs_id
         return result  # type: ignore[return-value]
 
     def __getitem__(self, key: int | slice) -> Any:
@@ -728,8 +741,60 @@ class HTMLList(HTMLObject, list):
             new_list._list_type = self._list_type
             new_list._grid_columns = self._grid_columns
             new_list._separator = self._separator
+            new_list._obs_id = self._obs_id
             return new_list
         return result
+
+    def __setitem__(self, key: int | slice, value: Any) -> None:
+        """Set item, notifying observers."""
+        super().__setitem__(key, value)
+        self._notify()
+
+    def __delitem__(self, key: int | slice) -> None:
+        """Delete item, notifying observers."""
+        super().__delitem__(key)
+        self._notify()
+
+    def append(self, item: Any) -> None:
+        """Append item, notifying observers."""
+        super().append(item)
+        self._notify()
+
+    def extend(self, items: list[Any]) -> None:
+        """Extend list, notifying observers."""
+        super().extend(items)
+        self._notify()
+
+    def insert(self, index: int, item: Any) -> None:
+        """Insert item, notifying observers."""
+        super().insert(index, item)
+        self._notify()
+
+    def remove(self, item: Any) -> None:
+        """Remove item, notifying observers."""
+        super().remove(item)
+        self._notify()
+
+    def pop(self, index: int = -1) -> Any:
+        """Pop item, notifying observers."""
+        result = super().pop(index)
+        self._notify()
+        return result
+
+    def clear(self) -> None:
+        """Clear list, notifying observers."""
+        super().clear()
+        self._notify()
+
+    def sort(self, *, key: Any = None, reverse: bool = False) -> None:
+        """Sort list, notifying observers."""
+        super().sort(key=key, reverse=reverse)
+        self._notify()
+
+    def reverse(self) -> None:
+        """Reverse list, notifying observers."""
+        super().reverse()
+        self._notify()
 
     def __repr__(self) -> str:
         """Return a detailed representation for debugging."""

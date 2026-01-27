@@ -49,6 +49,15 @@
    :show-inheritance:
 ```
 
+### HTMLSet
+
+```{eval-rst}
+.. autoclass:: animaid.HTMLSet
+   :members:
+   :undoc-members:
+   :show-inheritance:
+```
+
 ## CSS Types
 
 ### Size
