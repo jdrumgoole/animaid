@@ -22,7 +22,7 @@ from animaid.html_object import HTMLObject
 def _to_css(value: object) -> str:
     """Convert a value to its CSS string representation."""
     if hasattr(value, "to_css"):
-        return value.to_css()
+        return str(value.to_css())
     return str(value)
 
 

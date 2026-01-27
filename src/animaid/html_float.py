@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import html
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Any, Self
 
 from animaid.css_types import (
     Border,
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 def _to_css(value: object) -> str:
     """Convert a value to its CSS string representation."""
     if hasattr(value, "to_css"):
-        return value.to_css()
+        return str(value.to_css())
     return str(value)
 
 
@@ -549,7 +549,7 @@ class HTMLFloat(HTMLObject, float):
         result = HTMLFloat(float(other) % float(self))
         return self._preserve_settings(result)
 
-    def __pow__(self, other: int | float) -> HTMLFloat:
+    def __pow__(self, other: Any) -> Any:  # type: ignore[override]
         """Power: HTMLFloat ** number."""
         result = HTMLFloat(float(self) ** float(other))
         return self._preserve_settings(result)

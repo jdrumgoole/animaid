@@ -249,7 +249,7 @@ class Animate:
 
         self._broadcast_clear()
 
-    def get(self, id: str) -> "HTMLObject | str | None":
+    def get(self, id: str) -> Any:
         """Get an item by ID.
 
         Args:

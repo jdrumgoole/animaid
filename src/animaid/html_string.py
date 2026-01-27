@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import html
-from typing import Self
+from typing import Any, Self
 
 from animaid.css_types import (
     Border,
@@ -23,7 +23,7 @@ from animaid.html_object import HTMLObject
 def _to_css(value: object) -> str:
     """Convert a value to its CSS string representation."""
     if hasattr(value, "to_css"):
-        return value.to_css()
+        return str(value.to_css())
     return str(value)
 
 
@@ -219,7 +219,7 @@ class HTMLString(HTMLObject, str):
         return self.styled(text_transform="lowercase")
 
     @property
-    def capitalize(self) -> Self:
+    def capitalize(self) -> Self:  # type: ignore[override]
         """Return a copy with capitalized text."""
         return self.styled(text_transform="capitalize")
 
@@ -556,7 +556,7 @@ class HTMLString(HTMLObject, str):
         result._tag = self._tag
         return result  # type: ignore[return-value]
 
-    def __getitem__(self, key: int | slice) -> Self:
+    def __getitem__(self, key: Any) -> Self:  # type: ignore[override]
         """Slice the string, preserving styles."""
         result = HTMLString(str.__getitem__(self, key))
         result._styles = self._styles.copy()

@@ -21,7 +21,7 @@ from animaid.html_object import HTMLObject
 def _to_css(value: object) -> str:
     """Convert a value to its CSS string representation."""
     if hasattr(value, "to_css"):
-        return value.to_css()
+        return str(value.to_css())
     return str(value)
 
 
@@ -121,7 +121,7 @@ class HTMLTuple(HTMLObject, tuple):
 
         # Check for named tuple and store field names
         if _is_namedtuple(items):
-            self._field_names = items._fields
+            self._field_names = items._fields  # type: ignore[attr-defined]
         else:
             self._field_names = None
 
@@ -618,7 +618,7 @@ class HTMLTuple(HTMLObject, tuple):
         result._field_names = None  # Concatenation loses field names
         return result  # type: ignore[return-value]
 
-    def __getitem__(self, key: int | slice) -> Any:
+    def __getitem__(self, key: Any) -> Any:  # type: ignore[override]
         """Get item or slice.
 
         Single index returns the item itself.

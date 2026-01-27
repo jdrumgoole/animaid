@@ -5,4 +5,4 @@ import animaid
 
 def test_version():
     """Test that version is defined."""
-    assert animaid.__version__ == "0.1.0"
+    assert animaid.__version__ == "0.2.0"

@@ -26,7 +26,7 @@ from animaid.html_object import HTMLObject
 def _to_css(value: object) -> str:
     """Convert a value to its CSS string representation."""
     if hasattr(value, "to_css"):
-        return value.to_css()
+        return str(value.to_css())
     return str(value)
 
 
@@ -724,7 +724,7 @@ class HTMLList(HTMLObject, list):
         result._obs_id = self._obs_id
         return result  # type: ignore[return-value]
 
-    def __getitem__(self, key: int | slice) -> Any:
+    def __getitem__(self, key: Any) -> Any:
         """Get item or slice.
 
         Single index returns the item itself.
@@ -745,12 +745,12 @@ class HTMLList(HTMLObject, list):
             return new_list
         return result
 
-    def __setitem__(self, key: int | slice, value: Any) -> None:
+    def __setitem__(self, key: Any, value: Any) -> None:
         """Set item, notifying observers."""
         super().__setitem__(key, value)
         self._notify()
 
-    def __delitem__(self, key: int | slice) -> None:
+    def __delitem__(self, key: Any) -> None:
         """Delete item, notifying observers."""
         super().__delitem__(key)
         self._notify()
@@ -760,12 +760,12 @@ class HTMLList(HTMLObject, list):
         super().append(item)
         self._notify()
 
-    def extend(self, items: list[Any]) -> None:
+    def extend(self, items: Any) -> None:
         """Extend list, notifying observers."""
         super().extend(items)
         self._notify()
 
-    def insert(self, index: int, item: Any) -> None:
+    def insert(self, index: Any, item: Any) -> None:
         """Insert item, notifying observers."""
         super().insert(index, item)
         self._notify()
@@ -775,7 +775,7 @@ class HTMLList(HTMLObject, list):
         super().remove(item)
         self._notify()
 
-    def pop(self, index: int = -1) -> Any:
+    def pop(self, index: Any = -1) -> Any:
         """Pop item, notifying observers."""
         result = super().pop(index)
         self._notify()

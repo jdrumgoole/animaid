@@ -86,8 +86,8 @@ class Size(CSSValue):
                 raise ValueError(
                     f"Invalid unit '{unit}'. Valid units: {', '.join(sorted(self.VALID_UNITS))}"
                 )
-            self._value: float | None = value
-            self._unit: str = unit
+            self._value = value
+            self._unit = unit
 
     def _parse_string(self, s: str) -> tuple[float | None, str]:
         """Parse a CSS size string into value and unit."""
@@ -283,6 +283,38 @@ class Color(CSSValue):
         "olive", "maroon", "aqua", "fuchsia", "lime", "silver", "transparent",
         "currentcolor", "inherit", "initial", "unset"
     }
+
+    # Class-level color instances (set after class definition)
+    transparent: ClassVar[Color]
+    black: ClassVar[Color]
+    white: ClassVar[Color]
+    red: ClassVar[Color]
+    green: ClassVar[Color]
+    blue: ClassVar[Color]
+    yellow: ClassVar[Color]
+    cyan: ClassVar[Color]
+    magenta: ClassVar[Color]
+    gray: ClassVar[Color]
+    grey: ClassVar[Color]
+    orange: ClassVar[Color]
+    pink: ClassVar[Color]
+    purple: ClassVar[Color]
+    brown: ClassVar[Color]
+    navy: ClassVar[Color]
+    teal: ClassVar[Color]
+    olive: ClassVar[Color]
+    maroon: ClassVar[Color]
+    aqua: ClassVar[Color]
+    lime: ClassVar[Color]
+    silver: ClassVar[Color]
+    # Semantic colors
+    success: ClassVar[Color]
+    warning: ClassVar[Color]
+    error: ClassVar[Color]
+    info: ClassVar[Color]
+    muted: ClassVar[Color]
+    light_gray: ClassVar[Color]
+    dark_gray: ClassVar[Color]
 
     def __init__(self, value: str) -> None:
         """Create a Color from a CSS color string.

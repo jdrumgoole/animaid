@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import html
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Any, Self
 
 from animaid.css_types import (
     Border,
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 def _to_css(value: object) -> str:
     """Convert a value to its CSS string representation."""
     if hasattr(value, "to_css"):
-        return value.to_css()
+        return str(value.to_css())
     return str(value)
 
 
@@ -460,9 +460,10 @@ class HTMLInt(HTMLObject, int):
         result._format_options = self._format_options.copy()
         return result
 
-    def __add__(self, other: int | float) -> HTMLInt | HTMLFloat:
+    def __add__(self, other: Any) -> Any:  # type: ignore[override]
         """Add: HTMLInt + number."""
         from animaid.html_float import HTMLFloat
+        result: Any
         if isinstance(other, float) and not isinstance(other, int):
             result = HTMLFloat(int(self) + other)
             return self._preserve_settings(result)
@@ -473,13 +474,14 @@ class HTMLInt(HTMLObject, int):
             result = HTMLInt(int.__add__(self, int(other)))
             return self._preserve_settings(result)
 
-    def __radd__(self, other: int | float) -> HTMLInt | HTMLFloat:
+    def __radd__(self, other: Any) -> Any:  # type: ignore[override]
         """Reverse add: number + HTMLInt."""
         return self.__add__(other)
 
-    def __sub__(self, other: int | float) -> HTMLInt | HTMLFloat:
+    def __sub__(self, other: Any) -> Any:  # type: ignore[override]
         """Subtract: HTMLInt - number."""
         from animaid.html_float import HTMLFloat
+        result: Any
         if isinstance(other, float) and not isinstance(other, int):
             result = HTMLFloat(int(self) - other)
             return self._preserve_settings(result)
@@ -490,9 +492,10 @@ class HTMLInt(HTMLObject, int):
             result = HTMLInt(int.__sub__(self, int(other)))
             return self._preserve_settings(result)
 
-    def __rsub__(self, other: int | float) -> HTMLInt | HTMLFloat:
+    def __rsub__(self, other: Any) -> Any:  # type: ignore[override]
         """Reverse subtract: number - HTMLInt."""
         from animaid.html_float import HTMLFloat
+        result: Any
         if isinstance(other, float):
             result = HTMLFloat(other - int(self))
             return self._preserve_settings(result)
@@ -500,9 +503,10 @@ class HTMLInt(HTMLObject, int):
             result = HTMLInt(other - int(self))
             return self._preserve_settings(result)
 
-    def __mul__(self, other: int | float) -> HTMLInt | HTMLFloat:
+    def __mul__(self, other: Any) -> Any:  # type: ignore[override]
         """Multiply: HTMLInt * number."""
         from animaid.html_float import HTMLFloat
+        result: Any
         if isinstance(other, float) and not isinstance(other, int):
             result = HTMLFloat(int(self) * other)
             return self._preserve_settings(result)
@@ -513,58 +517,58 @@ class HTMLInt(HTMLObject, int):
             result = HTMLInt(int.__mul__(self, int(other)))
             return self._preserve_settings(result)
 
-    def __rmul__(self, other: int | float) -> HTMLInt | HTMLFloat:
+    def __rmul__(self, other: Any) -> Any:  # type: ignore[override]
         """Reverse multiply: number * HTMLInt."""
         return self.__mul__(other)
 
-    def __truediv__(self, other: int | float) -> HTMLFloat:
+    def __truediv__(self, other: Any) -> Any:  # type: ignore[override]
         """True divide: HTMLInt / number (always returns HTMLFloat)."""
         from animaid.html_float import HTMLFloat
         result = HTMLFloat(int(self) / other)
         return self._preserve_settings(result)
 
-    def __rtruediv__(self, other: int | float) -> HTMLFloat:
+    def __rtruediv__(self, other: Any) -> Any:  # type: ignore[override]
         """Reverse true divide: number / HTMLInt."""
         from animaid.html_float import HTMLFloat
         result = HTMLFloat(other / int(self))
         return self._preserve_settings(result)
 
-    def __floordiv__(self, other: int | float) -> HTMLInt:
+    def __floordiv__(self, other: Any) -> Any:  # type: ignore[override]
         """Floor divide: HTMLInt // number."""
         result = HTMLInt(int(self) // int(other))
         return self._preserve_settings(result)
 
-    def __rfloordiv__(self, other: int | float) -> HTMLInt:
+    def __rfloordiv__(self, other: Any) -> Any:  # type: ignore[override]
         """Reverse floor divide: number // HTMLInt."""
         result = HTMLInt(int(other) // int(self))
         return self._preserve_settings(result)
 
-    def __mod__(self, other: int) -> HTMLInt:
+    def __mod__(self, other: Any) -> Any:  # type: ignore[override]
         """Modulo: HTMLInt % number."""
         result = HTMLInt(int.__mod__(self, other))
         return self._preserve_settings(result)
 
-    def __rmod__(self, other: int) -> HTMLInt:
+    def __rmod__(self, other: Any) -> Any:  # type: ignore[override]
         """Reverse modulo: number % HTMLInt."""
         result = HTMLInt(other % int(self))
         return self._preserve_settings(result)
 
-    def __pow__(self, other: int) -> HTMLInt:
+    def __pow__(self, other: Any) -> Any:  # type: ignore[override]
         """Power: HTMLInt ** number."""
         result = HTMLInt(int.__pow__(self, other))
         return self._preserve_settings(result)
 
-    def __neg__(self) -> HTMLInt:
+    def __neg__(self) -> Any:
         """Negate: -HTMLInt."""
         result = HTMLInt(-int(self))
         return self._preserve_settings(result)
 
-    def __pos__(self) -> HTMLInt:
+    def __pos__(self) -> Any:
         """Positive: +HTMLInt."""
         result = HTMLInt(+int(self))
         return self._preserve_settings(result)
 
-    def __abs__(self) -> HTMLInt:
+    def __abs__(self) -> Any:
         """Absolute value: abs(HTMLInt)."""
         result = HTMLInt(abs(int(self)))
         return self._preserve_settings(result)
