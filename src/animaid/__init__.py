@@ -67,7 +67,7 @@ try:
 except ImportError:
     Animate = None  # type: ignore[misc, assignment]
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 # Beginner-friendly aliases (shorter names)
 String = HTMLString
@@ -78,14 +78,14 @@ Float = HTMLFloat
 Tuple = HTMLTuple
 Set = HTMLSet
 
-# Short h-prefixed aliases
-hstring = HTMLString
-hlist = HTMLList
-hdict = HTMLDict
-hint = HTMLInt
-hfloat = HTMLFloat
-htuple = HTMLTuple
-hset = HTMLSet
+# Short h_ prefixed aliases
+h_string = HTMLString
+h_list = HTMLList
+h_dict = HTMLDict
+h_int = HTMLInt
+h_float = HTMLFloat
+h_tuple = HTMLTuple
+h_set = HTMLSet
 
 __all__ = [
     "__version__",
@@ -108,14 +108,14 @@ __all__ = [
     "Float",
     "Tuple",
     "Set",
-    # HTML types (h-prefixed aliases)
-    "hstring",
-    "hlist",
-    "hdict",
-    "hint",
-    "hfloat",
-    "htuple",
-    "hset",
+    # HTML types (h_ prefixed aliases)
+    "h_string",
+    "h_list",
+    "h_dict",
+    "h_int",
+    "h_float",
+    "h_tuple",
+    "h_set",
     # CSS value types
     "CSSValue",
     "Color",

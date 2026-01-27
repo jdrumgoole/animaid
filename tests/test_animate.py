@@ -38,7 +38,7 @@ class TestAnimateItemManagement:
         """Add should return ID and store item."""
         anim = Animate()
         item_id = anim.add(HTMLString("Hello"))
-        assert item_id == "item_0"
+        assert item_id == "string_1"
         assert anim.get(item_id) is not None
 
     def test_add_item_with_custom_id(self) -> None:
@@ -49,14 +49,31 @@ class TestAnimateItemManagement:
         assert anim.get("custom_id") is not None
 
     def test_add_multiple_items(self) -> None:
-        """Add should generate sequential IDs."""
+        """Add should generate sequential IDs per type."""
         anim = Animate()
         id1 = anim.add(HTMLString("First"))
         id2 = anim.add(HTMLString("Second"))
         id3 = anim.add(HTMLString("Third"))
-        assert id1 == "item_0"
-        assert id2 == "item_1"
-        assert id3 == "item_2"
+        assert id1 == "string_1"
+        assert id2 == "string_2"
+        assert id3 == "string_3"
+
+    def test_add_mixed_types(self) -> None:
+        """Add should generate type-specific IDs."""
+        from animaid import HTMLList, HTMLDict, HTMLInt
+
+        anim = Animate()
+        str_id = anim.add(HTMLString("Hello"))
+        list_id = anim.add(HTMLList([1, 2, 3]))
+        dict_id = anim.add(HTMLDict({"a": 1}))
+        int_id = anim.add(HTMLInt(42))
+        str_id2 = anim.add(HTMLString("World"))
+
+        assert str_id == "string_1"
+        assert list_id == "list_1"
+        assert dict_id == "dict_1"
+        assert int_id == "int_1"
+        assert str_id2 == "string_2"
 
     def test_add_string_item(self) -> None:
         """Add should accept plain strings."""
@@ -200,9 +217,9 @@ class TestAnimateFullState:
         anim.add(HTMLString("World").italic)
         state = anim.get_full_state()
         assert len(state) == 2
-        assert state[0]["id"] == "item_0"
+        assert state[0]["id"] == "string_1"
         assert "font-weight: bold" in state[0]["html"]
-        assert state[1]["id"] == "item_1"
+        assert state[1]["id"] == "string_2"
         assert "font-style: italic" in state[1]["html"]
 
     def test_get_full_state_plain_string(self) -> None:

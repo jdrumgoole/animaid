@@ -57,7 +57,7 @@ class Animate:
         self._server_thread: threading.Thread | None = None
         self._server: Any = None
         self._lock = threading.Lock()
-        self._next_id = 0
+        self._type_counters: dict[str, int] = {}  # Counters per type name
         self._running = False
         self._shutdown_event: asyncio.Event | None = None
         self._loop: asyncio.AbstractEventLoop | None = None
@@ -155,7 +155,7 @@ class Animate:
             The ID of the added item.
         """
         if id is None:
-            id = self._generate_id()
+            id = self._generate_id(item)
 
         with self._lock:
             self._items.append((id, item))
@@ -293,12 +293,28 @@ class Animate:
         """Get the server port."""
         return self._port
 
-    def _generate_id(self) -> str:
-        """Generate a unique ID for an item."""
+    def _generate_id(self, item: "HTMLObject | str") -> str:
+        """Generate a unique ID for an item based on its type.
+
+        Args:
+            item: The item to generate an ID for.
+
+        Returns:
+            A type-based ID like 'string_1', 'list_2', etc.
+        """
+        # Get the type name
+        type_name = type(item).__name__
+        # Strip 'HTML' prefix if present (HTMLString -> String)
+        if type_name.startswith("HTML"):
+            type_name = type_name[4:]
+        # Convert to lowercase
+        type_name = type_name.lower()
+
         with self._lock:
-            id = f"item_{self._next_id}"
-            self._next_id += 1
-            return id
+            # Get and increment counter for this type
+            count = self._type_counters.get(type_name, 0) + 1
+            self._type_counters[type_name] = count
+            return f"{type_name}_{count}"
 
     def _render_item(self, item: "HTMLObject | str") -> str:
         """Render an item to HTML string."""

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "animaid"
-version = "0.1.0"
+version = "0.2.0"
 description = "A GUI toolkit for animating Python data structures"
 readme = "README.md"
 license = "MIT"
