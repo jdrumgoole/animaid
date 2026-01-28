@@ -578,34 +578,34 @@ uv run python demos/countdown_timer.py
 
 ### Available Demos
 
-| Demo | Description |
-|------|-------------|
-| `countdown_timer` | Real-time countdown with color transitions (green → yellow → red) |
-| `live_list` | Reactive shopping cart showing `.append()` and `.pop()` |
-| `score_tracker` | Game score tracking with automatic dict updates |
-| `sorting_visualizer` | Bubble sort algorithm with step-by-step visualization |
-| `dashboard` | Multi-type dashboard with HTMLString, HTMLDict, HTMLList, HTMLSet |
-| `typewriter` | Typewriter effect with progressive styling |
-| `todo_app` | Interactive todo list with CRUD operations |
-| `data_pipeline` | ETL pipeline progress tracking |
+| Demo | Description | Source |
+|------|-------------|--------|
+| `countdown_timer` | Real-time countdown with color transitions (green → yellow → red) | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/countdown_timer.py) |
+| `live_list` | Reactive shopping cart showing `.append()` and `.pop()` | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/live_list.py) |
+| `score_tracker` | Game score tracking with automatic dict updates | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/score_tracker.py) |
+| `sorting_visualizer` | Bubble sort algorithm with step-by-step visualization | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/sorting_visualizer.py) |
+| `dashboard` | Multi-type dashboard with HTMLString, HTMLDict, HTMLList, HTMLSet | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/dashboard.py) |
+| `typewriter` | Typewriter effect with progressive styling | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/typewriter.py) |
+| `todo_app` | Interactive todo list with CRUD operations | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/todo_app.py) |
+| `data_pipeline` | ETL pipeline progress tracking | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/data_pipeline.py) |
 
 Each demo opens a browser window and shows real-time updates as Python code executes.
 
 ### Demo Gallery
 
-**Countdown Timer** - Color transitions from green to yellow to red
+**Countdown Timer** - Color transitions from green to yellow to red ([source](https://github.com/jdrumgoole/animaid/blob/main/demos/countdown_timer.py))
 
 ![Countdown Timer Demo](images/demos/countdown_timer.gif)
 
-**Sorting Visualizer** - Bubble sort with step-by-step animation
+**Sorting Visualizer** - Bubble sort with step-by-step animation ([source](https://github.com/jdrumgoole/animaid/blob/main/demos/sorting_visualizer.py))
 
 ![Sorting Visualizer Demo](images/demos/sorting_visualizer.gif)
 
-**Dashboard** - Multiple HTML types updating together
+**Dashboard** - Multiple HTML types updating together ([source](https://github.com/jdrumgoole/animaid/blob/main/demos/dashboard.py))
 
 ![Dashboard Demo](images/demos/dashboard.gif)
 
-**Todo App** - Interactive task management
+**Todo App** - Interactive task management ([source](https://github.com/jdrumgoole/animaid/blob/main/demos/todo_app.py))
 
 ![Todo App Demo](images/demos/todo_app.gif)
 

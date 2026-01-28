@@ -319,24 +319,24 @@ uv run invoke demo countdown_timer
 ```
 
 Available demos:
-- **countdown_timer** - Real-time countdown with color transitions
-- **live_list** - Reactive shopping cart with `.append()` and `.pop()`
-- **score_tracker** - Game score tracking with automatic dict updates
-- **sorting_visualizer** - Bubble sort algorithm visualization
-- **dashboard** - Multi-type dashboard with all HTML types
-- **typewriter** - Typewriter effect with progressive styling
-- **todo_app** - Interactive todo list with CRUD operations
-- **data_pipeline** - ETL pipeline progress tracking
+- **[countdown_timer](https://github.com/jdrumgoole/animaid/blob/main/demos/countdown_timer.py)** - Real-time countdown with color transitions
+- **[live_list](https://github.com/jdrumgoole/animaid/blob/main/demos/live_list.py)** - Reactive shopping cart with `.append()` and `.pop()`
+- **[score_tracker](https://github.com/jdrumgoole/animaid/blob/main/demos/score_tracker.py)** - Game score tracking with automatic dict updates
+- **[sorting_visualizer](https://github.com/jdrumgoole/animaid/blob/main/demos/sorting_visualizer.py)** - Bubble sort algorithm visualization
+- **[dashboard](https://github.com/jdrumgoole/animaid/blob/main/demos/dashboard.py)** - Multi-type dashboard with all HTML types
+- **[typewriter](https://github.com/jdrumgoole/animaid/blob/main/demos/typewriter.py)** - Typewriter effect with progressive styling
+- **[todo_app](https://github.com/jdrumgoole/animaid/blob/main/demos/todo_app.py)** - Interactive todo list with CRUD operations
+- **[data_pipeline](https://github.com/jdrumgoole/animaid/blob/main/demos/data_pipeline.py)** - ETL pipeline progress tracking
 
 Each demo opens a browser and shows real-time updates as the Python code runs.
 
 ### Demo Previews
 
-**Sorting Visualizer** - Watch bubble sort in action:
+**Sorting Visualizer** - Watch bubble sort in action ([source](https://github.com/jdrumgoole/animaid/blob/main/demos/sorting_visualizer.py)):
 
 ![Sorting Visualizer](https://raw.githubusercontent.com/jdrumgoole/animaid/main/docs/images/demos/sorting_visualizer.gif)
 
-**Dashboard** - Multiple HTML types updating together:
+**Dashboard** - Multiple HTML types updating together ([source](https://github.com/jdrumgoole/animaid/blob/main/demos/dashboard.py)):
 
 ![Dashboard](https://raw.githubusercontent.com/jdrumgoole/animaid/main/docs/images/demos/dashboard.gif)
 
