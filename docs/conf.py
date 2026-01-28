@@ -12,7 +12,7 @@ author = "Joe Drumgoole"
 # License info for footer
 html_show_sphinx = True
 html_show_copyright = True
-release = "0.4.8"
+release = "0.4.9"
 
 extensions = [
     "sphinx.ext.autodoc",
