@@ -61,13 +61,25 @@ from animaid.html_set import HTMLSet
 from animaid.html_string import HTMLString
 from animaid.html_tuple import HTMLTuple
 
-# Conditional import for Animate (requires tutorial dependencies)
+# Conditional import for Animate and input widgets (requires tutorial dependencies)
 try:
     from animaid.animate import Animate
+    from animaid.html_button import HTMLButton
+    from animaid.html_checkbox import HTMLCheckbox
+    from animaid.html_select import HTMLSelect
+    from animaid.html_slider import HTMLSlider
+    from animaid.html_text_input import HTMLTextInput
+    from animaid.input_event import InputEvent
 except ImportError:
     Animate = None  # type: ignore[misc, assignment]
+    HTMLButton = None  # type: ignore[misc, assignment]
+    HTMLCheckbox = None  # type: ignore[misc, assignment]
+    HTMLSelect = None  # type: ignore[misc, assignment]
+    HTMLSlider = None  # type: ignore[misc, assignment]
+    HTMLTextInput = None  # type: ignore[misc, assignment]
+    InputEvent = None  # type: ignore[misc, assignment]
 
-__version__ = "0.4.5"
+__version__ = "0.4.6"
 
 # Beginner-friendly aliases (shorter names)
 String = HTMLString
@@ -87,10 +99,30 @@ h_float = HTMLFloat
 h_tuple = HTMLTuple
 h_set = HTMLSet
 
+# Input widget aliases (for when tutorial dependencies are available)
+Button = HTMLButton
+TextInput = HTMLTextInput
+Checkbox = HTMLCheckbox
+Slider = HTMLSlider
+Select = HTMLSelect
+
 __all__ = [
     "__version__",
     # Animation
     "Animate",
+    # Input widgets (full names)
+    "HTMLButton",
+    "HTMLCheckbox",
+    "HTMLSelect",
+    "HTMLSlider",
+    "HTMLTextInput",
+    "InputEvent",
+    # Input widgets (short aliases)
+    "Button",
+    "Checkbox",
+    "Select",
+    "Slider",
+    "TextInput",
     # HTML types (full names)
     "HTMLDict",
     "HTMLFloat",

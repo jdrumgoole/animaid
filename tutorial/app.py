@@ -681,6 +681,36 @@ class ListOfDictsRequest(BaseModel):
     key_bold: bool = True
 
 
+class InputWidgetRequest(BaseModel):
+    """Request model for input widget rendering."""
+
+    widget_type: str = "button"  # button, text, checkbox, slider, select
+    # Button settings
+    button_label: str = "Click Me"
+    button_style: str = "default"  # default, primary, success, danger, warning
+    button_size: str = "default"  # default, large, small
+    # Text input settings
+    text_value: str = ""
+    text_placeholder: str = "Enter text..."
+    text_size: str = "default"  # default, large, small, wide
+    # Checkbox settings
+    checkbox_label: str = "Accept terms"
+    checkbox_checked: bool = False
+    checkbox_size: str = "default"  # default, large, small
+    # Slider settings
+    slider_min: float = 0
+    slider_max: float = 100
+    slider_value: float = 50
+    slider_step: float = 1
+    slider_width: str = "default"  # default, wide, thin, thick
+    # Select settings
+    select_options: str = "Red\nGreen\nBlue"  # newline-separated
+    select_value: str = "Red"
+    select_size: str = "default"  # default, large, small, wide
+    # Common settings
+    show_callback: bool = True
+
+
 # -------------------------------------------------------------------------
 # Routes
 # -------------------------------------------------------------------------
@@ -699,17 +729,17 @@ async def render_string(req: HTMLStringRequest) -> str:
 
     # Apply boolean properties
     if req.bold:
-        s = s.bold
+        s = s.bold()
     if req.italic:
-        s = s.italic
+        s = s.italic()
     if req.underline:
-        s = s.underline
+        s = s.underline()
     if req.strikethrough:
-        s = s.strikethrough
+        s = s.strikethrough()
     if req.monospace:
-        s = s.monospace
+        s = s.monospace()
     if req.uppercase:
-        s = s.uppercase
+        s = s.uppercase()
 
     # Apply value properties
     if req.color:
@@ -739,19 +769,19 @@ async def render_list(req: HTMLListRequest) -> str:
 
     # Apply direction
     if req.direction == "horizontal":
-        lst = lst.horizontal
+        lst = lst.horizontal()
     elif req.direction == "horizontal_reverse":
-        lst = lst.horizontal_reverse
+        lst = lst.horizontal_reverse()
     elif req.direction == "vertical_reverse":
-        lst = lst.vertical_reverse
+        lst = lst.vertical_reverse()
     elif req.direction == "grid":
         lst = lst.grid(req.grid_columns)
 
     # Apply list type
     if req.list_type == "ordered":
-        lst = lst.ordered
+        lst = lst.ordered()
     elif req.list_type == "plain":
-        lst = lst.plain
+        lst = lst.plain()
 
     # Apply spacing
     if req.gap:
@@ -974,13 +1004,13 @@ async def render_int(req: HTMLIntRequest) -> str:
 
     # Apply boolean properties
     if req.bold:
-        n = n.bold
+        n = n.bold()
     if req.italic:
-        n = n.italic
+        n = n.italic()
     if req.underline:
-        n = n.underline
+        n = n.underline()
     if req.monospace:
-        n = n.monospace
+        n = n.monospace()
 
     # Apply value properties
     if req.color:
@@ -1090,13 +1120,13 @@ async def render_float(req: HTMLFloatRequest) -> str:
 
     # Apply boolean properties
     if req.bold:
-        n = n.bold
+        n = n.bold()
     if req.italic:
-        n = n.italic
+        n = n.italic()
     if req.underline:
-        n = n.underline
+        n = n.underline()
     if req.monospace:
-        n = n.monospace
+        n = n.monospace()
 
     # Apply value properties
     if req.color:
@@ -1204,20 +1234,20 @@ def build_tuple(req: HTMLTupleRequest) -> HTMLTuple:
 
     # Apply format
     if req.format == "plain":
-        t = t.plain
+        t = t.plain()
     elif req.format == "labeled":
-        t = t.labeled
+        t = t.labeled()
     # parentheses is the default
 
     # Apply direction
     if req.direction == "horizontal":
-        t = t.horizontal
+        t = t.horizontal()
     elif req.direction == "vertical":
-        t = t.vertical
+        t = t.vertical()
     elif req.direction == "horizontal_reverse":
-        t = t.horizontal_reverse
+        t = t.horizontal_reverse()
     elif req.direction == "vertical_reverse":
-        t = t.vertical_reverse
+        t = t.vertical_reverse()
     elif req.direction == "grid":
         t = t.grid(req.grid_columns)
 
@@ -1366,22 +1396,22 @@ def build_set(req: HTMLSetRequest) -> HTMLSet:
 
     # Apply sorted
     if req.sorted:
-        s = s.sorted
+        s = s.sorted()
 
     # Apply format
     if req.format == "plain":
-        s = s.plain
+        s = s.plain()
     # braces is the default
 
     # Apply direction
     if req.direction == "horizontal":
-        s = s.horizontal
+        s = s.horizontal()
     elif req.direction == "vertical":
-        s = s.vertical
+        s = s.vertical()
     elif req.direction == "horizontal_reverse":
-        s = s.horizontal_reverse
+        s = s.horizontal_reverse()
     elif req.direction == "vertical_reverse":
-        s = s.vertical_reverse
+        s = s.vertical_reverse()
     elif req.direction == "grid":
         s = s.grid(req.grid_columns)
 
@@ -1625,21 +1655,21 @@ async def render_dict(req: HTMLDictRequest) -> str:
 
     # Apply format
     if req.format == "table":
-        d = d.as_table
+        d = d.as_table()
     elif req.format == "divs":
-        d = d.as_divs
+        d = d.as_divs()
 
     # Apply layout
     if req.layout == "horizontal":
-        d = d.horizontal
+        d = d.horizontal()
     elif req.layout == "grid":
         d = d.grid(req.grid_columns)
 
     # Apply key styles
     if req.key_bold:
-        d = d.key_bold
+        d = d.key_bold()
     if req.key_italic:
-        d = d.key_italic
+        d = d.key_italic()
     if req.key_color:
         d = d.key_color(req.key_color)
     if req.key_background:
@@ -1651,9 +1681,9 @@ async def render_dict(req: HTMLDictRequest) -> str:
 
     # Apply value styles
     if req.value_bold:
-        d = d.value_bold
+        d = d.value_bold()
     if req.value_italic:
-        d = d.value_italic
+        d = d.value_italic()
     if req.value_color:
         d = d.value_color(req.value_color)
     if req.value_background:
@@ -1795,9 +1825,9 @@ def build_dict_of_lists(req: DictOfListsRequest) -> HTMLDict:
 
     def make_list(items_str: str) -> HTMLList:
         items = [item.strip() for item in items_str.split(",") if item.strip()]
-        lst = HTMLList(items).plain
+        lst = HTMLList(items).plain()
         if req.list_direction == "horizontal":
-            lst = lst.horizontal
+            lst = lst.horizontal()
         if req.list_gap:
             lst = lst.gap(req.list_gap)
         if req.item_background:
@@ -1817,12 +1847,12 @@ def build_dict_of_lists(req: DictOfListsRequest) -> HTMLDict:
     )
 
     if req.dict_format == "table":
-        d = d.as_table
+        d = d.as_table()
     elif req.dict_format == "divs":
-        d = d.as_divs
+        d = d.as_divs()
 
     if req.key_bold:
-        d = d.key_bold
+        d = d.key_bold()
     if req.key_color:
         d = d.key_color(req.key_color)
 
@@ -1925,11 +1955,11 @@ def build_list_of_dicts(req: ListOfDictsRequest) -> HTMLList:
     for record in records:
         d = HTMLDict(record)
         if req.card_format == "table":
-            d = d.as_table
+            d = d.as_table()
         elif req.card_format == "divs":
-            d = d.as_divs
+            d = d.as_divs()
         if req.key_bold:
-            d = d.key_bold
+            d = d.key_bold()
         if req.card_padding:
             d = d.padding(req.card_padding)
         if req.card_border:
@@ -1940,9 +1970,9 @@ def build_list_of_dicts(req: ListOfDictsRequest) -> HTMLList:
             d = d.background(req.card_background)
         cards.append(d)
 
-    lst = HTMLList(cards).plain
+    lst = HTMLList(cards).plain()
     if req.list_direction == "horizontal":
-        lst = lst.horizontal
+        lst = lst.horizontal()
     elif req.list_direction == "grid":
         lst = lst.grid(3)
     if req.list_gap:
@@ -2031,6 +2061,219 @@ async def get_list_of_dicts_code(req: ListOfDictsRequest) -> dict[str, str]:
 
     lines.append("")
     lines.append("html = lst.render()")
+
+    return {"code": "\n".join(lines)}
+
+
+# -------------------------------------------------------------------------
+# Input Widget Routes
+# -------------------------------------------------------------------------
+
+
+@app.post("/api/render/input", response_class=HTMLResponse)
+async def render_input(req: InputWidgetRequest) -> str:
+    """Render an input widget with the given properties."""
+    from animaid import HTMLButton, HTMLCheckbox, HTMLSelect, HTMLSlider, HTMLTextInput
+
+    if req.widget_type == "button":
+        widget = HTMLButton(req.button_label)
+        if req.button_style == "primary":
+            widget = widget.primary()
+        elif req.button_style == "success":
+            widget = widget.success()
+        elif req.button_style == "danger":
+            widget = widget.danger()
+        elif req.button_style == "warning":
+            widget = widget.warning()
+        if req.button_size == "large":
+            widget = widget.large()
+        elif req.button_size == "small":
+            widget = widget.small()
+        return widget.render()
+
+    elif req.widget_type == "text":
+        widget = HTMLTextInput(value=req.text_value, placeholder=req.text_placeholder)
+        if req.text_size == "large":
+            widget = widget.large()
+        elif req.text_size == "small":
+            widget = widget.small()
+        elif req.text_size == "wide":
+            widget = widget.wide()
+        return widget.render()
+
+    elif req.widget_type == "checkbox":
+        widget = HTMLCheckbox(req.checkbox_label, checked=req.checkbox_checked)
+        if req.checkbox_size == "large":
+            widget = widget.large()
+        elif req.checkbox_size == "small":
+            widget = widget.small()
+        return widget.render()
+
+    elif req.widget_type == "slider":
+        widget = HTMLSlider(
+            min=req.slider_min,
+            max=req.slider_max,
+            value=req.slider_value,
+            step=req.slider_step,
+        )
+        if req.slider_width == "wide":
+            widget = widget.wide()
+        elif req.slider_width == "thin":
+            widget = widget.thin()
+        elif req.slider_width == "thick":
+            widget = widget.thick()
+        return widget.render()
+
+    elif req.widget_type == "select":
+        options = [opt.strip() for opt in req.select_options.split("\n") if opt.strip()]
+        widget = HTMLSelect(options=options, value=req.select_value)
+        if req.select_size == "large":
+            widget = widget.large()
+        elif req.select_size == "small":
+            widget = widget.small()
+        elif req.select_size == "wide":
+            widget = widget.wide()
+        return widget.render()
+
+    return "<p>Unknown widget type</p>"
+
+
+@app.post("/api/html/input")
+async def get_input_html(req: InputWidgetRequest) -> dict[str, str]:
+    """Get the pretty-printed HTML for an input widget."""
+    html = await render_input(req)
+    return {"html": pretty_print_html(html)}
+
+
+@app.post("/api/code/input")
+async def get_input_code(req: InputWidgetRequest) -> dict[str, str]:
+    """Generate Python code for the current input widget configuration."""
+    lines: list[str] = []
+
+    if req.widget_type == "button":
+        lines.append("from animaid import HTMLButton")
+        lines.append("")
+        lines.append(f'button = HTMLButton("{req.button_label}")')
+
+        if req.button_style != "default":
+            lines.append(f"button = button.{req.button_style}()")
+        if req.button_size != "default":
+            lines.append(f"button = button.{req.button_size}()")
+
+        if req.show_callback:
+            lines.append("")
+            lines.append("# With Animate for interactivity:")
+            lines.append("# def on_click():")
+            lines.append('#     print("Button clicked!")')
+            lines.append("# button = button.on_click(on_click)")
+
+        lines.append("")
+        lines.append("html = button.render()")
+
+    elif req.widget_type == "text":
+        lines.append("from animaid import HTMLTextInput")
+        lines.append("")
+        if req.text_value:
+            lines.append(
+                f'text_input = HTMLTextInput(value="{req.text_value}", '
+                f'placeholder="{req.text_placeholder}")'
+            )
+        else:
+            lines.append(
+                f'text_input = HTMLTextInput(placeholder="{req.text_placeholder}")'
+            )
+
+        if req.text_size != "default":
+            lines.append(f"text_input = text_input.{req.text_size}()")
+
+        if req.show_callback:
+            lines.append("")
+            lines.append("# With Animate for interactivity:")
+            lines.append("# def on_change(value):")
+            lines.append('#     print(f"Value changed to: {value}")')
+            lines.append("# text_input = text_input.on_change(on_change)")
+            lines.append("")
+            lines.append("# Read the current value:")
+            lines.append("# current_value = text_input.value")
+
+        lines.append("")
+        lines.append("html = text_input.render()")
+
+    elif req.widget_type == "checkbox":
+        lines.append("from animaid import HTMLCheckbox")
+        lines.append("")
+        checked_str = "True" if req.checkbox_checked else "False"
+        lines.append(
+            f'checkbox = HTMLCheckbox("{req.checkbox_label}", checked={checked_str})'
+        )
+
+        if req.checkbox_size != "default":
+            lines.append(f"checkbox = checkbox.{req.checkbox_size}()")
+
+        if req.show_callback:
+            lines.append("")
+            lines.append("# With Animate for interactivity:")
+            lines.append("# def on_change(checked):")
+            lines.append('#     print(f"Checkbox is now: {checked}")')
+            lines.append("# checkbox = checkbox.on_change(on_change)")
+            lines.append("")
+            lines.append("# Read the current state:")
+            lines.append("# is_checked = checkbox.checked")
+
+        lines.append("")
+        lines.append("html = checkbox.render()")
+
+    elif req.widget_type == "slider":
+        lines.append("from animaid import HTMLSlider")
+        lines.append("")
+        lines.append(
+            f"slider = HTMLSlider(min={req.slider_min}, max={req.slider_max}, "
+            f"value={req.slider_value}, step={req.slider_step})"
+        )
+
+        if req.slider_width != "default":
+            lines.append(f"slider = slider.{req.slider_width}()")
+
+        if req.show_callback:
+            lines.append("")
+            lines.append("# With Animate for interactivity:")
+            lines.append("# def on_change(value):")
+            lines.append('#     print(f"Slider value: {value}")')
+            lines.append("# slider = slider.on_change(on_change)")
+            lines.append("")
+            lines.append("# Read the current value:")
+            lines.append("# current_value = slider.value")
+
+        lines.append("")
+        lines.append("html = slider.render()")
+
+    elif req.widget_type == "select":
+        lines.append("from animaid import HTMLSelect")
+        lines.append("")
+        options = [
+            opt.strip() for opt in req.select_options.split("\n") if opt.strip()
+        ]
+        options_str = ", ".join(f'"{opt}"' for opt in options)
+        lines.append(
+            f'select = HTMLSelect(options=[{options_str}], '
+            f'value="{req.select_value}")'
+        )
+
+        if req.select_size != "default":
+            lines.append(f"select = select.{req.select_size}()")
+
+        if req.show_callback:
+            lines.append("")
+            lines.append("# With Animate for interactivity:")
+            lines.append("# def on_change(value):")
+            lines.append('#     print(f"Selected: {value}")')
+            lines.append("# select = select.on_change(on_change)")
+            lines.append("")
+            lines.append("# Read the current value:")
+            lines.append("# current_value = select.value")
+
+        lines.append("")
+        lines.append("html = select.render()")
 
     return {"code": "\n".join(lines)}
 

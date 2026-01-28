@@ -357,6 +357,15 @@ AVAILABLE_DEMOS = [
     "typewriter",
     "todo_app",
     "data_pipeline",
+    # Input widget demos
+    "input_greeter",
+    "input_counter",
+    "input_slider",
+    "input_form",
+    "input_button",
+    "input_text",
+    "input_checkbox",
+    "input_select",
 ]
 
 
@@ -373,6 +382,14 @@ def demo(c: Context, name: str = "") -> None:
     - typewriter: Typewriter effect with styling animation
     - todo_app: Interactive todo list mini app
     - data_pipeline: ETL pipeline progress tracking
+    - input_greeter: Interactive greeter with text input and button
+    - input_counter: Counter with increment/decrement buttons
+    - input_slider: RGB color mixer with sliders
+    - input_form: Registration form with multiple input types
+    - input_button: Button styles, sizes, and click event handling
+    - input_text: Text input with live typing feedback and validation
+    - input_checkbox: Checkbox toggles and multi-checkbox patterns
+    - input_select: Select dropdowns with dynamic updates
 
     Example: invoke demo countdown_timer
     """
@@ -397,6 +414,34 @@ def demo(c: Context, name: str = "") -> None:
 
 
 @task
+def demo_record(c: Context, name: str = "", duration: float = 0, fps: int = 8) -> None:
+    """Record an animated GIF of a demo program.
+
+    Args:
+        name: Demo name to record, or 'all' for all input widget demos
+        duration: Recording duration in seconds (0 = use default)
+        fps: Frames per second (default: 8)
+
+    Example: invoke demo-record input_button
+    Example: invoke demo-record all
+    """
+    if not name:
+        print("Usage: invoke demo-record <name>")
+        print("       invoke demo-record all")
+        print()
+        print("Available demos for recording:")
+        for demo_name in AVAILABLE_DEMOS:
+            if demo_name.startswith("input_"):
+                print(f"  - {demo_name}")
+        return
+
+    cmd = f"uv run python scripts/record_demo_gif.py {name} --fps {fps}"
+    if duration > 0:
+        cmd += f" --duration {duration}"
+    c.run(cmd, pty=True)
+
+
+@task
 def demo_list(c: Context) -> None:
     """List all available demo programs."""
     print("Available AnimAID demos:")
@@ -410,6 +455,14 @@ def demo_list(c: Context) -> None:
         "typewriter": "Typewriter effect with styling animation",
         "todo_app": "Interactive todo list mini app",
         "data_pipeline": "ETL pipeline progress tracking",
+        "input_greeter": "Interactive greeter with text input and button",
+        "input_counter": "Counter with increment/decrement buttons",
+        "input_slider": "RGB color mixer with sliders",
+        "input_form": "Registration form with multiple input types",
+        "input_button": "Button styles, sizes, and click event handling",
+        "input_text": "Text input with live typing feedback and validation",
+        "input_checkbox": "Checkbox toggles and multi-checkbox patterns",
+        "input_select": "Select dropdowns with dynamic updates",
     }
     for demo_name in AVAILABLE_DEMOS:
         desc = descriptions.get(demo_name, "")

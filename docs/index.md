@@ -589,6 +589,19 @@ uv run python demos/countdown_timer.py
 | `todo_app` | Interactive todo list with CRUD operations | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/todo_app.py) |
 | `data_pipeline` | ETL pipeline progress tracking | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/data_pipeline.py) |
 
+### Input Widget Demos
+
+| Demo | Description | Source |
+|------|-------------|--------|
+| `input_button` | Button styles, sizes, and click event handling | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/input_button.py) |
+| `input_text` | Text input with live typing feedback and validation | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/input_text.py) |
+| `input_checkbox` | Checkbox toggles and multi-checkbox patterns | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/input_checkbox.py) |
+| `input_select` | Select dropdowns with dynamic updates | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/input_select.py) |
+| `input_slider` | RGB color mixer with sliders | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/input_slider.py) |
+| `input_greeter` | Interactive greeter with text input and button | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/input_greeter.py) |
+| `input_counter` | Counter with increment/decrement buttons | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/input_counter.py) |
+| `input_form` | Registration form with multiple input types | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/input_form.py) |
+
 Each demo opens a browser window and shows real-time updates as Python code executes.
 
 ### Demo Gallery
@@ -608,6 +621,32 @@ Each demo opens a browser window and shows real-time updates as Python code exec
 **Todo App** - Interactive task management ([source](https://github.com/jdrumgoole/animaid/blob/main/demos/todo_app.py))
 
 ![Todo App Demo](images/demos/todo_app.gif)
+
+### Input Widget Gallery
+
+**Button Showcase** - Button styles, sizes, and click events ([source](https://github.com/jdrumgoole/animaid/blob/main/demos/input_button.py))
+
+![Button Demo](images/demos/input_button.gif)
+
+**Text Input** - Live character counting and validation ([source](https://github.com/jdrumgoole/animaid/blob/main/demos/input_text.py))
+
+![Text Input Demo](images/demos/input_text.gif)
+
+**Checkbox Showcase** - Toggle handling and preferences panel ([source](https://github.com/jdrumgoole/animaid/blob/main/demos/input_checkbox.py))
+
+![Checkbox Demo](images/demos/input_checkbox.gif)
+
+**Select Dropdown** - Dynamic selection with live updates ([source](https://github.com/jdrumgoole/animaid/blob/main/demos/input_select.py))
+
+![Select Demo](images/demos/input_select.gif)
+
+**RGB Color Mixer** - Sliders for real-time color mixing ([source](https://github.com/jdrumgoole/animaid/blob/main/demos/input_slider.py))
+
+![Slider Demo](images/demos/input_slider.gif)
+
+**Interactive Counter** - Increment/decrement with buttons ([source](https://github.com/jdrumgoole/animaid/blob/main/demos/input_counter.py))
+
+![Counter Demo](images/demos/input_counter.gif)
 
 ## Tutorial
 

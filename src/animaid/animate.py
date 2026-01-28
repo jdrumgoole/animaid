@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 import asyncio
+import queue
 import threading
 import time
 import webbrowser
+from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
+
+from animaid.input_event import InputEvent
 
 if TYPE_CHECKING:
     from animaid.html_object import HTMLObject
@@ -62,6 +66,9 @@ class Animate:
         self._loop: asyncio.AbstractEventLoop | None = None
         self._obs_id_to_item_id: dict[str, str] = {}  # Maps obs_id -> item_id
         self._pubsub_subscribed = False
+        # Input event handling
+        self._event_queue: queue.Queue[InputEvent] = queue.Queue()
+        self._input_handlers: dict[str, Callable[..., Any]] = {}
 
     def run(self) -> Animate:
         """Start the server in a background thread and open the browser.
@@ -428,6 +435,96 @@ class Animate:
         with self._lock:
             for item_id, item in self._items:
                 self._broadcast_update(item_id, item)
+
+    def wait_for_event(self, timeout: float | None = None) -> InputEvent | None:
+        """Block until an input event occurs.
+
+        Args:
+            timeout: Maximum time to wait in seconds. None means wait forever.
+
+        Returns:
+            The InputEvent if one occurred, None if timeout expired.
+
+        Examples:
+            >>> event = anim.wait_for_event(timeout=1.0)
+            >>> if event and event.event_type == "click":
+            ...     print(f"Button {event.id} was clicked!")
+        """
+        try:
+            return self._event_queue.get(timeout=timeout)
+        except queue.Empty:
+            return None
+
+    def get_events(self) -> list[InputEvent]:
+        """Get all pending events without blocking.
+
+        Returns:
+            A list of all pending InputEvent objects. Empty list if none.
+
+        Examples:
+            >>> events = anim.get_events()
+            >>> for event in events:
+            ...     print(f"Event: {event.event_type} on {event.id}")
+        """
+        events = []
+        while True:
+            try:
+                events.append(self._event_queue.get_nowait())
+            except queue.Empty:
+                break
+        return events
+
+    def handle_input_event(self, message: dict[str, Any]) -> None:
+        """Handle an input event from the browser.
+
+        This is called by the server when an input event is received.
+        It updates the item's internal value, calls registered callbacks,
+        and queues the event for polling.
+
+        Args:
+            message: The event message containing id, event type, and value.
+        """
+        import time
+
+        item_id = message.get("id", "")
+        event_type = message.get("event", "")
+        value = message.get("value")
+
+        # Get the item
+        item = self.get(item_id)
+
+        # Update item's internal value if it has one
+        if item is not None and hasattr(item, "_value") and value is not None:
+            if hasattr(item, "_lock"):
+                with item._lock:
+                    item._value = value
+            else:
+                item._value = value
+
+        # Call registered callbacks on the item
+        if item is not None:
+            if event_type == "change" and hasattr(item, "_on_change"):
+                callback = item._on_change
+                if callback is not None:
+                    callback(value)
+            elif event_type == "click" and hasattr(item, "_on_click"):
+                callback = item._on_click
+                if callback is not None:
+                    callback()
+            elif event_type == "submit" and hasattr(item, "_on_submit"):
+                callback = item._on_submit
+                if callback is not None:
+                    callback(value)
+
+        # Queue event for polling
+        self._event_queue.put(
+            InputEvent(
+                id=item_id,
+                event_type=event_type,
+                value=value,
+                timestamp=time.time(),
+            )
+        )
 
     def __enter__(self) -> Animate:
         """Enter context manager - start the server."""

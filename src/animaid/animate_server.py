@@ -50,6 +50,9 @@ def create_animate_app(animate: Animate) -> FastAPI:
                     # Client requested server shutdown
                     animate.stop()
                     break
+                elif message.get("type") == "input":
+                    # Handle input event from browser
+                    animate.handle_input_event(message)
 
         except WebSocketDisconnect:
             pass
@@ -193,6 +196,98 @@ def get_html_page(title: str) -> str:
             color: #757575;
             padding: 40px;
             font-style: italic;
+        }}
+
+        /* Input widget styles */
+        .anim-button {{
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: #e0e0e0;
+            color: #333;
+        }}
+
+        .anim-button:hover {{
+            filter: brightness(0.95);
+        }}
+
+        .anim-button:active {{
+            transform: scale(0.98);
+        }}
+
+        .anim-button.primary {{
+            background: #2196F3;
+            color: white;
+        }}
+
+        .anim-button.success {{
+            background: #4CAF50;
+            color: white;
+        }}
+
+        .anim-button.danger {{
+            background: #f44336;
+            color: white;
+        }}
+
+        .anim-button.warning {{
+            background: #ff9800;
+            color: white;
+        }}
+
+        .anim-text-input {{
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            width: 100%;
+            max-width: 300px;
+        }}
+
+        .anim-text-input:focus {{
+            outline: none;
+            border-color: #2196F3;
+        }}
+
+        .anim-checkbox-container {{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }}
+
+        .anim-checkbox {{
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }}
+
+        .anim-slider {{
+            width: 100%;
+            max-width: 300px;
+            height: 6px;
+            border-radius: 3px;
+            cursor: pointer;
+        }}
+
+        .anim-select {{
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            min-width: 150px;
+        }}
+
+        .anim-select:focus {{
+            outline: none;
+            border-color: #2196F3;
         }}
     </style>
 </head>
@@ -340,6 +435,60 @@ def get_html_page(title: str) -> str:
                 window.close();
             }}, 500);
         }}
+
+        // Input event handlers
+        function sendInputEvent(id, eventType, value) {{
+            if (ws && ws.readyState === WebSocket.OPEN) {{
+                const message = {{
+                    type: 'input',
+                    id: id,
+                    event: eventType
+                }};
+                if (value !== undefined) {{
+                    message.value = value;
+                }}
+                ws.send(JSON.stringify(message));
+            }}
+        }}
+
+        // Global event delegation for input widgets
+        document.addEventListener('click', function(e) {{
+            const button = e.target.closest('.anim-button');
+            if (button && button.dataset.animId) {{
+                sendInputEvent(button.dataset.animId, 'click');
+            }}
+        }});
+
+        document.addEventListener('input', function(e) {{
+            const t = e.target;
+            const id = t.dataset.animId;
+            if (t.classList.contains('anim-text-input') && id) {{
+                sendInputEvent(id, 'change', t.value);
+            }}
+            if (t.classList.contains('anim-slider') && id) {{
+                sendInputEvent(id, 'change', parseFloat(t.value));
+            }}
+        }});
+
+        document.addEventListener('change', function(e) {{
+            const target = e.target;
+            if (target.classList.contains('anim-checkbox') && target.dataset.animId) {{
+                sendInputEvent(target.dataset.animId, 'change', target.checked);
+            }}
+            if (target.classList.contains('anim-select') && target.dataset.animId) {{
+                sendInputEvent(target.dataset.animId, 'change', target.value);
+            }}
+        }});
+
+        document.addEventListener('keydown', function(e) {{
+            if (e.key === 'Enter') {{
+                const t = e.target;
+                const id = t.dataset.animId;
+                if (t.classList.contains('anim-text-input') && id) {{
+                    sendInputEvent(id, 'submit', t.value);
+                }}
+            }}
+        }});
 
         // Start connection
         connect();

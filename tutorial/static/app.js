@@ -25,6 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Python Objects tab controls
+    setupObjectTypeControls();
+
     // HTMLString controls
     setupStringControls();
 
@@ -52,19 +55,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // List of Dicts controls
     setupListOfDictsControls();
 
+    // Input Widget controls
+    setupInputControls();
+
     // Setup preset buttons
     setupPresetButtons();
 
-    // Initial render
-    updateStringPreview();
-    updateIntPreview();
-    updateFloatPreview();
-    updateTuplePreview();
-    updateSetPreview();
-    updateListPreview();
-    updateDictPreview();
+    // Initial render for Python Objects tab
+    updateObjectPreview();
+
+    // Initial render for other tabs
     updateDictOfListsPreview();
     updateListOfDictsPreview();
+    updateInputPreview();
 });
 
 // -------------------------------------------------------------------------
@@ -80,13 +83,131 @@ function setupPresetButtons() {
     });
 }
 
+// -------------------------------------------------------------------------
+// Python Objects Tab - Type Switching
+// -------------------------------------------------------------------------
+
+function setupObjectTypeControls() {
+    const typeSelect = document.getElementById('object-type');
+    if (!typeSelect) return;
+
+    typeSelect.addEventListener('change', () => {
+        showObjectTypeControls(typeSelect.value);
+        updateObjectPreview();
+    });
+
+    // Initial state
+    showObjectTypeControls(typeSelect.value);
+}
+
+function showObjectTypeControls(objectType) {
+    // Hide all object type controls
+    document.querySelectorAll('.object-type-controls').forEach(el => {
+        el.style.display = 'none';
+    });
+
+    // Show the selected type's controls
+    const controlsId = objectType + '-controls';
+    const controls = document.getElementById(controlsId);
+    if (controls) {
+        controls.style.display = 'block';
+    }
+
+    // Hide all preset button groups
+    const presetTypes = ['string', 'int', 'float', 'tuple', 'set', 'list', 'dict'];
+    presetTypes.forEach(type => {
+        const presets = document.getElementById(type + '-presets');
+        if (presets) {
+            presets.style.display = 'none';
+        }
+    });
+
+    // Show the correct preset buttons
+    const presetsId = objectType + '-presets';
+    const presets = document.getElementById(presetsId);
+    if (presets) {
+        presets.style.display = 'flex';
+    }
+}
+
+async function updateObjectPreview() {
+    const objectType = document.getElementById('object-type').value;
+
+    // Call the appropriate data getter and API based on type
+    let data, apiEndpoint;
+
+    switch (objectType) {
+        case 'string':
+            data = getStringData();
+            apiEndpoint = 'string';
+            break;
+        case 'int':
+            data = getIntData();
+            apiEndpoint = 'int';
+            break;
+        case 'float':
+            data = getFloatData();
+            apiEndpoint = 'float';
+            break;
+        case 'tuple':
+            data = getTupleData();
+            apiEndpoint = 'tuple';
+            break;
+        case 'set':
+            data = getSetData();
+            apiEndpoint = 'set';
+            break;
+        case 'list':
+            data = getListData();
+            apiEndpoint = 'list';
+            break;
+        case 'dict':
+            data = getDictData();
+            apiEndpoint = 'dict';
+            break;
+        default:
+            return;
+    }
+
+    try {
+        // Render HTML for preview
+        const renderResponse = await fetch(`/api/render/${apiEndpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        const html = await renderResponse.text();
+        document.getElementById('object-preview').innerHTML = html;
+
+        // Get pretty-printed HTML
+        const htmlResponse = await fetch(`/api/html/${apiEndpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        const htmlData = await htmlResponse.json();
+        document.getElementById('object-html').textContent = htmlData.html;
+
+        // Get code
+        const codeResponse = await fetch(`/api/code/${apiEndpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        const codeData = await codeResponse.json();
+        document.getElementById('object-code').textContent = codeData.code;
+    } catch (error) {
+        console.error('Error updating object preview:', error);
+    }
+}
+
 function applyPreset(preset) {
     // String presets
     if (preset === 'string-highlight') {
         resetStringControls();
         document.getElementById('string-background').value = '#fff59d';
         document.getElementById('string-padding').value = '2px 4px';
-        updateStringPreview();
+        updateObjectPreview();
     } else if (preset === 'string-code') {
         resetStringControls();
         document.getElementById('string-monospace').checked = true;
@@ -94,38 +215,38 @@ function applyPreset(preset) {
         document.getElementById('string-padding').value = '2px 6px';
         document.getElementById('string-border-radius').value = '4px';
         document.getElementById('string-font-size').value = '0.9em';
-        updateStringPreview();
+        updateObjectPreview();
     } else if (preset === 'string-badge') {
         resetStringControls();
         document.getElementById('string-background').value = '#e0e0e0';
         document.getElementById('string-padding').value = '4px 10px';
         document.getElementById('string-border-radius').value = '12px';
         document.getElementById('string-font-size').value = '0.85em';
-        updateStringPreview();
+        updateObjectPreview();
     } else if (preset === 'string-success') {
         resetStringControls();
         document.getElementById('string-color').value = '#2e7d32';
         document.getElementById('string-background').value = '#e8f5e9';
         document.getElementById('string-padding').value = '2px 6px';
         document.getElementById('string-border-radius').value = '4px';
-        updateStringPreview();
+        updateObjectPreview();
     } else if (preset === 'string-warning') {
         resetStringControls();
         document.getElementById('string-color').value = '#e65100';
         document.getElementById('string-background').value = '#fff3e0';
         document.getElementById('string-padding').value = '2px 6px';
         document.getElementById('string-border-radius').value = '4px';
-        updateStringPreview();
+        updateObjectPreview();
     } else if (preset === 'string-error') {
         resetStringControls();
         document.getElementById('string-color').value = '#c62828';
         document.getElementById('string-background').value = '#ffebee';
         document.getElementById('string-padding').value = '2px 6px';
         document.getElementById('string-border-radius').value = '4px';
-        updateStringPreview();
+        updateObjectPreview();
     } else if (preset === 'string-reset') {
         resetStringControls();
-        updateStringPreview();
+        updateObjectPreview();
     }
 
     // List presets
@@ -137,7 +258,7 @@ function applyPreset(preset) {
         document.getElementById('list-item-padding').value = '6px 14px';
         document.getElementById('list-item-border-radius').value = '20px';
         document.getElementById('list-item-background').value = '#e0e0e0';
-        updateListPreview();
+        updateObjectPreview();
     } else if (preset === 'list-cards') {
         resetListControls();
         document.getElementById('list-direction').value = 'horizontal';
@@ -147,7 +268,7 @@ function applyPreset(preset) {
         document.getElementById('list-item-border').value = '1px solid #e0e0e0';
         document.getElementById('list-item-border-radius').value = '8px';
         document.getElementById('list-item-background').value = 'white';
-        updateListPreview();
+        updateObjectPreview();
     } else if (preset === 'list-tags') {
         resetListControls();
         document.getElementById('list-direction').value = 'horizontal';
@@ -156,23 +277,23 @@ function applyPreset(preset) {
         document.getElementById('list-item-padding').value = '4px 10px';
         document.getElementById('list-item-border-radius').value = '4px';
         document.getElementById('list-item-background').value = '#f5f5f5';
-        updateListPreview();
+        updateObjectPreview();
     } else if (preset === 'list-menu') {
         resetListControls();
         document.getElementById('list-direction').value = 'vertical';
         document.getElementById('list-type').value = 'plain';
         document.getElementById('list-item-padding').value = '12px 16px';
         document.getElementById('list-separator').value = '1px solid #e0e0e0';
-        updateListPreview();
+        updateObjectPreview();
     } else if (preset === 'list-numbered') {
         resetListControls();
         document.getElementById('list-type').value = 'ordered';
         document.getElementById('list-padding').value = '0 0 0 24px';
         document.getElementById('list-item-padding').value = '4px 0';
-        updateListPreview();
+        updateObjectPreview();
     } else if (preset === 'list-reset') {
         resetListControls();
-        updateListPreview();
+        updateObjectPreview();
     }
 
     // Dict presets
@@ -186,13 +307,13 @@ function applyPreset(preset) {
         document.getElementById('dict-gap').value = '8px';
         document.getElementById('dict-key-bold').checked = true;
         document.getElementById('dict-separator').value = ': ';
-        updateDictPreview();
+        updateObjectPreview();
     } else if (preset === 'dict-simple') {
         resetDictControls();
         document.getElementById('dict-separator').value = ': ';
         document.getElementById('dict-key-bold').checked = true;
         document.getElementById('dict-gap').value = '4px';
-        updateDictPreview();
+        updateObjectPreview();
     } else if (preset === 'dict-striped') {
         resetDictControls();
         document.getElementById('dict-format').value = 'table';
@@ -201,23 +322,23 @@ function applyPreset(preset) {
         document.getElementById('dict-value-padding').value = '8px 12px';
         document.getElementById('dict-key-background').value = '#f5f5f5';
         document.getElementById('dict-key-bold').checked = true;
-        updateDictPreview();
+        updateObjectPreview();
     } else if (preset === 'dict-labeled') {
         resetDictControls();
         document.getElementById('dict-format').value = 'divs';
         document.getElementById('dict-layout').value = 'vertical';
         document.getElementById('dict-gap').value = '16px';
-        updateDictPreview();
+        updateObjectPreview();
     } else if (preset === 'dict-bordered') {
         resetDictControls();
         document.getElementById('dict-format').value = 'table';
         document.getElementById('dict-border').value = '1px solid #e0e0e0';
         document.getElementById('dict-key-padding').value = '8px';
         document.getElementById('dict-value-padding').value = '8px';
-        updateDictPreview();
+        updateObjectPreview();
     } else if (preset === 'dict-reset') {
         resetDictControls();
-        updateDictPreview();
+        updateObjectPreview();
     }
 
     // Int presets
@@ -227,33 +348,33 @@ function applyPreset(preset) {
         document.getElementById('int-currency-symbol-group').style.display = 'block';
         document.getElementById('int-bold').checked = true;
         document.getElementById('int-color').value = '#2e7d32';
-        updateIntPreview();
+        updateObjectPreview();
     } else if (preset === 'int-comma') {
         resetIntControls();
         document.getElementById('int-format').value = 'comma';
         document.getElementById('int-monospace').checked = true;
-        updateIntPreview();
+        updateObjectPreview();
     } else if (preset === 'int-percent') {
         resetIntControls();
         document.getElementById('int-value').value = '85';
         document.getElementById('int-format').value = 'percent';
         document.getElementById('int-bold').checked = true;
-        updateIntPreview();
+        updateObjectPreview();
     } else if (preset === 'int-ordinal') {
         resetIntControls();
         document.getElementById('int-value').value = '1';
         document.getElementById('int-format').value = 'ordinal';
-        updateIntPreview();
+        updateObjectPreview();
     } else if (preset === 'int-badge') {
         resetIntControls();
         document.getElementById('int-format').value = 'comma';
         document.getElementById('int-background').value = '#e0e0e0';
         document.getElementById('int-padding').value = '4px 10px';
         document.getElementById('int-border-radius').value = '12px';
-        updateIntPreview();
+        updateObjectPreview();
     } else if (preset === 'int-reset') {
         resetIntControls();
-        updateIntPreview();
+        updateObjectPreview();
     }
 
     // Float presets
@@ -265,27 +386,27 @@ function applyPreset(preset) {
         document.getElementById('float-decimals-group').style.display = 'block';
         document.getElementById('float-bold').checked = true;
         document.getElementById('float-color').value = '#2e7d32';
-        updateFloatPreview();
+        updateObjectPreview();
     } else if (preset === 'float-percent') {
         resetFloatControls();
         document.getElementById('float-value').value = '0.856';
         document.getElementById('float-format').value = 'percent';
         document.getElementById('float-decimals-group').style.display = 'block';
         document.getElementById('float-bold').checked = true;
-        updateFloatPreview();
+        updateObjectPreview();
     } else if (preset === 'float-decimal') {
         resetFloatControls();
         document.getElementById('float-format').value = 'decimal';
         document.getElementById('float-decimals-group').style.display = 'block';
         document.getElementById('float-monospace').checked = true;
-        updateFloatPreview();
+        updateObjectPreview();
     } else if (preset === 'float-scientific') {
         resetFloatControls();
         document.getElementById('float-value').value = '1234567.89';
         document.getElementById('float-format').value = 'scientific';
         document.getElementById('float-precision-group').style.display = 'block';
         document.getElementById('float-monospace').checked = true;
-        updateFloatPreview();
+        updateObjectPreview();
     } else if (preset === 'float-badge') {
         resetFloatControls();
         document.getElementById('float-format').value = 'decimal';
@@ -293,17 +414,17 @@ function applyPreset(preset) {
         document.getElementById('float-background').value = '#e0e0e0';
         document.getElementById('float-padding').value = '4px 10px';
         document.getElementById('float-border-radius').value = '12px';
-        updateFloatPreview();
+        updateObjectPreview();
     } else if (preset === 'float-reset') {
         resetFloatControls();
-        updateFloatPreview();
+        updateObjectPreview();
     }
 
     // Tuple presets
     else if (preset === 'tuple-parentheses') {
         resetTupleControls();
         document.getElementById('tuple-format').value = 'parentheses';
-        updateTuplePreview();
+        updateObjectPreview();
     } else if (preset === 'tuple-pills') {
         resetTupleControls();
         document.getElementById('tuple-format').value = 'plain';
@@ -312,7 +433,7 @@ function applyPreset(preset) {
         document.getElementById('tuple-item-padding').value = '6px 14px';
         document.getElementById('tuple-item-border-radius').value = '20px';
         document.getElementById('tuple-item-background').value = '#e0e0e0';
-        updateTuplePreview();
+        updateObjectPreview();
     } else if (preset === 'tuple-tags') {
         resetTupleControls();
         document.getElementById('tuple-format').value = 'plain';
@@ -321,11 +442,11 @@ function applyPreset(preset) {
         document.getElementById('tuple-item-padding').value = '4px 10px';
         document.getElementById('tuple-item-border-radius').value = '4px';
         document.getElementById('tuple-item-background').value = '#f5f5f5';
-        updateTuplePreview();
+        updateObjectPreview();
     } else if (preset === 'tuple-labeled') {
         resetTupleControls();
         document.getElementById('tuple-format').value = 'labeled';
-        updateTuplePreview();
+        updateObjectPreview();
     } else if (preset === 'tuple-card') {
         resetTupleControls();
         document.getElementById('tuple-format').value = 'labeled';
@@ -333,17 +454,17 @@ function applyPreset(preset) {
         document.getElementById('tuple-border').value = '1px solid #e0e0e0';
         document.getElementById('tuple-border-radius').value = '8px';
         document.getElementById('tuple-background').value = 'white';
-        updateTuplePreview();
+        updateObjectPreview();
     } else if (preset === 'tuple-reset') {
         resetTupleControls();
-        updateTuplePreview();
+        updateObjectPreview();
     }
 
     // Set presets
     else if (preset === 'set-braces') {
         resetSetControls();
         document.getElementById('set-format').value = 'braces';
-        updateSetPreview();
+        updateObjectPreview();
     } else if (preset === 'set-pills') {
         resetSetControls();
         document.getElementById('set-format').value = 'plain';
@@ -352,7 +473,7 @@ function applyPreset(preset) {
         document.getElementById('set-item-padding').value = '6px 14px';
         document.getElementById('set-item-border-radius').value = '20px';
         document.getElementById('set-item-background').value = '#e0e0e0';
-        updateSetPreview();
+        updateObjectPreview();
     } else if (preset === 'set-tags') {
         resetSetControls();
         document.getElementById('set-format').value = 'plain';
@@ -361,17 +482,130 @@ function applyPreset(preset) {
         document.getElementById('set-item-padding').value = '4px 10px';
         document.getElementById('set-item-border-radius').value = '4px';
         document.getElementById('set-item-background').value = '#f5f5f5';
-        updateSetPreview();
+        updateObjectPreview();
     } else if (preset === 'set-inline') {
         resetSetControls();
         document.getElementById('set-format').value = 'plain';
         document.getElementById('set-direction').value = 'horizontal';
         document.getElementById('set-gap').value = '8px';
-        updateSetPreview();
+        updateObjectPreview();
     } else if (preset === 'set-reset') {
         resetSetControls();
-        updateSetPreview();
+        updateObjectPreview();
     }
+
+    // Button presets
+    else if (preset === 'input-btn-primary') {
+        document.getElementById('button-style').value = 'primary';
+        document.getElementById('button-size').value = 'default';
+        updateInputPreview();
+    } else if (preset === 'input-btn-success') {
+        document.getElementById('button-style').value = 'success';
+        document.getElementById('button-size').value = 'default';
+        updateInputPreview();
+    } else if (preset === 'input-btn-danger') {
+        document.getElementById('button-style').value = 'danger';
+        document.getElementById('button-size').value = 'default';
+        updateInputPreview();
+    } else if (preset === 'input-btn-warning') {
+        document.getElementById('button-style').value = 'warning';
+        document.getElementById('button-size').value = 'default';
+        updateInputPreview();
+    } else if (preset === 'input-btn-large') {
+        document.getElementById('button-size').value = 'large';
+        updateInputPreview();
+    } else if (preset === 'input-btn-reset') {
+        document.getElementById('button-label').value = 'Click Me';
+        document.getElementById('button-style').value = 'default';
+        document.getElementById('button-size').value = 'default';
+        updateInputPreview();
+    }
+    // Text input presets
+    else if (preset === 'input-text-wide') {
+        document.getElementById('text-size').value = 'wide';
+        updateInputPreview();
+    } else if (preset === 'input-text-large') {
+        document.getElementById('text-size').value = 'large';
+        updateInputPreview();
+    } else if (preset === 'input-text-small') {
+        document.getElementById('text-size').value = 'small';
+        updateInputPreview();
+    } else if (preset === 'input-text-reset') {
+        document.getElementById('text-value').value = '';
+        document.getElementById('text-placeholder').value = 'Enter text...';
+        document.getElementById('text-size').value = 'default';
+        updateInputPreview();
+    }
+    // Checkbox presets
+    else if (preset === 'input-checkbox-large') {
+        document.getElementById('checkbox-size').value = 'large';
+        updateInputPreview();
+    } else if (preset === 'input-checkbox-small') {
+        document.getElementById('checkbox-size').value = 'small';
+        updateInputPreview();
+    } else if (preset === 'input-checkbox-reset') {
+        document.getElementById('checkbox-label').value = 'Accept terms';
+        document.getElementById('checkbox-checked').checked = false;
+        document.getElementById('checkbox-size').value = 'default';
+        updateInputPreview();
+    }
+    // Slider presets
+    else if (preset === 'input-slider-wide') {
+        document.getElementById('slider-width').value = 'wide';
+        updateInputPreview();
+    } else if (preset === 'input-slider-thin') {
+        document.getElementById('slider-width').value = 'thin';
+        updateInputPreview();
+    } else if (preset === 'input-slider-thick') {
+        document.getElementById('slider-width').value = 'thick';
+        updateInputPreview();
+    } else if (preset === 'input-slider-reset') {
+        document.getElementById('slider-min').value = '0';
+        document.getElementById('slider-max').value = '100';
+        document.getElementById('slider-value').value = '50';
+        document.getElementById('slider-step').value = '1';
+        document.getElementById('slider-width').value = 'default';
+        updateInputPreview();
+    }
+    // Select presets
+    else if (preset === 'input-select-wide') {
+        document.getElementById('select-size').value = 'wide';
+        updateInputPreview();
+    } else if (preset === 'input-select-large') {
+        document.getElementById('select-size').value = 'large';
+        updateInputPreview();
+    } else if (preset === 'input-select-small') {
+        document.getElementById('select-size').value = 'small';
+        updateInputPreview();
+    } else if (preset === 'input-select-reset') {
+        document.getElementById('select-options').value = 'Red\nGreen\nBlue';
+        document.getElementById('select-value').value = 'Red';
+        document.getElementById('select-size').value = 'default';
+        updateInputPreview();
+    }
+}
+
+function resetInputControls() {
+    const currentType = document.getElementById('input-type').value;
+    document.getElementById('button-label').value = 'Click Me';
+    document.getElementById('button-style').value = 'default';
+    document.getElementById('button-size').value = 'default';
+    document.getElementById('text-value').value = '';
+    document.getElementById('text-placeholder').value = 'Enter text...';
+    document.getElementById('text-size').value = 'default';
+    document.getElementById('checkbox-label').value = 'Accept terms';
+    document.getElementById('checkbox-checked').checked = false;
+    document.getElementById('checkbox-size').value = 'default';
+    document.getElementById('slider-min').value = '0';
+    document.getElementById('slider-max').value = '100';
+    document.getElementById('slider-value').value = '50';
+    document.getElementById('slider-step').value = '1';
+    document.getElementById('slider-width').value = 'default';
+    document.getElementById('select-options').value = 'Red\nGreen\nBlue';
+    document.getElementById('select-value').value = 'Red';
+    document.getElementById('select-size').value = 'default';
+    document.getElementById('input-show-callback').checked = true;
+    showWidgetControls(currentType);
 }
 
 function resetStringControls() {
@@ -524,8 +758,8 @@ function resetSetControls() {
 function setupStringControls() {
     const controls = document.querySelectorAll('.string-control');
     controls.forEach(control => {
-        control.addEventListener('input', debounce(updateStringPreview, 150));
-        control.addEventListener('change', updateStringPreview);
+        control.addEventListener('input', debounce(updateObjectPreview, 150));
+        control.addEventListener('change', updateObjectPreview);
     });
 
     // Color picker sync
@@ -533,14 +767,14 @@ function setupStringControls() {
     const colorInput = document.getElementById('string-color');
     colorPicker.addEventListener('input', () => {
         colorInput.value = colorPicker.value;
-        updateStringPreview();
+        updateObjectPreview();
     });
 
     const bgPicker = document.getElementById('string-background-picker');
     const bgInput = document.getElementById('string-background');
     bgPicker.addEventListener('input', () => {
         bgInput.value = bgPicker.value;
-        updateStringPreview();
+        updateObjectPreview();
     });
 }
 
@@ -605,8 +839,8 @@ async function updateStringPreview() {
 function setupIntControls() {
     const controls = document.querySelectorAll('.int-control');
     controls.forEach(control => {
-        control.addEventListener('input', debounce(updateIntPreview, 150));
-        control.addEventListener('change', updateIntPreview);
+        control.addEventListener('input', debounce(updateObjectPreview, 150));
+        control.addEventListener('change', updateObjectPreview);
     });
 
     // Show/hide format options based on format selection
@@ -616,7 +850,7 @@ function setupIntControls() {
             formatSelect.value === 'currency' ? 'block' : 'none';
         document.getElementById('int-padded-width-group').style.display =
             formatSelect.value === 'padded' ? 'block' : 'none';
-        updateIntPreview();
+        updateObjectPreview();
     });
 
     // Color picker sync
@@ -624,14 +858,14 @@ function setupIntControls() {
     const colorInput = document.getElementById('int-color');
     colorPicker.addEventListener('input', () => {
         colorInput.value = colorPicker.value;
-        updateIntPreview();
+        updateObjectPreview();
     });
 
     const bgPicker = document.getElementById('int-background-picker');
     const bgInput = document.getElementById('int-background');
     bgPicker.addEventListener('input', () => {
         bgInput.value = bgPicker.value;
-        updateIntPreview();
+        updateObjectPreview();
     });
 }
 
@@ -696,8 +930,8 @@ async function updateIntPreview() {
 function setupFloatControls() {
     const controls = document.querySelectorAll('.float-control');
     controls.forEach(control => {
-        control.addEventListener('input', debounce(updateFloatPreview, 150));
-        control.addEventListener('change', updateFloatPreview);
+        control.addEventListener('input', debounce(updateObjectPreview, 150));
+        control.addEventListener('change', updateObjectPreview);
     });
 
     // Show/hide format options based on format selection
@@ -712,7 +946,7 @@ function setupFloatControls() {
             format === 'scientific' ? 'block' : 'none';
         document.getElementById('float-figures-group').style.display =
             format === 'significant' ? 'block' : 'none';
-        updateFloatPreview();
+        updateObjectPreview();
     });
 
     // Color picker sync
@@ -720,14 +954,14 @@ function setupFloatControls() {
     const colorInput = document.getElementById('float-color');
     colorPicker.addEventListener('input', () => {
         colorInput.value = colorPicker.value;
-        updateFloatPreview();
+        updateObjectPreview();
     });
 
     const bgPicker = document.getElementById('float-background-picker');
     const bgInput = document.getElementById('float-background');
     bgPicker.addEventListener('input', () => {
         bgInput.value = bgPicker.value;
-        updateFloatPreview();
+        updateObjectPreview();
     });
 }
 
@@ -794,8 +1028,8 @@ async function updateFloatPreview() {
 function setupTupleControls() {
     const controls = document.querySelectorAll('.tuple-control');
     controls.forEach(control => {
-        control.addEventListener('input', debounce(updateTuplePreview, 150));
-        control.addEventListener('change', updateTuplePreview);
+        control.addEventListener('input', debounce(updateObjectPreview, 150));
+        control.addEventListener('change', updateObjectPreview);
     });
 
     // Show/hide grid columns based on direction
@@ -803,7 +1037,7 @@ function setupTupleControls() {
     directionSelect.addEventListener('change', () => {
         document.getElementById('tuple-grid-columns-group').style.display =
             directionSelect.value === 'grid' ? 'block' : 'none';
-        updateTuplePreview();
+        updateObjectPreview();
     });
 
     // Color picker sync
@@ -811,21 +1045,21 @@ function setupTupleControls() {
     const bgInput = document.getElementById('tuple-background');
     bgPicker.addEventListener('input', () => {
         bgInput.value = bgPicker.value;
-        updateTuplePreview();
+        updateObjectPreview();
     });
 
     const itemBgPicker = document.getElementById('tuple-item-background-picker');
     const itemBgInput = document.getElementById('tuple-item-background');
     itemBgPicker.addEventListener('input', () => {
         itemBgInput.value = itemBgPicker.value;
-        updateTuplePreview();
+        updateObjectPreview();
     });
 
     const colorPicker = document.getElementById('tuple-color-picker');
     const colorInput = document.getElementById('tuple-color');
     colorPicker.addEventListener('input', () => {
         colorInput.value = colorPicker.value;
-        updateTuplePreview();
+        updateObjectPreview();
     });
 }
 
@@ -891,8 +1125,8 @@ async function updateTuplePreview() {
 function setupSetControls() {
     const controls = document.querySelectorAll('.set-control');
     controls.forEach(control => {
-        control.addEventListener('input', debounce(updateSetPreview, 150));
-        control.addEventListener('change', updateSetPreview);
+        control.addEventListener('input', debounce(updateObjectPreview, 150));
+        control.addEventListener('change', updateObjectPreview);
     });
 
     // Show/hide grid columns based on direction
@@ -900,7 +1134,7 @@ function setupSetControls() {
     directionSelect.addEventListener('change', () => {
         document.getElementById('set-grid-columns-group').style.display =
             directionSelect.value === 'grid' ? 'block' : 'none';
-        updateSetPreview();
+        updateObjectPreview();
     });
 
     // Color picker sync
@@ -908,21 +1142,21 @@ function setupSetControls() {
     const bgInput = document.getElementById('set-background');
     bgPicker.addEventListener('input', () => {
         bgInput.value = bgPicker.value;
-        updateSetPreview();
+        updateObjectPreview();
     });
 
     const itemBgPicker = document.getElementById('set-item-background-picker');
     const itemBgInput = document.getElementById('set-item-background');
     itemBgPicker.addEventListener('input', () => {
         itemBgInput.value = itemBgPicker.value;
-        updateSetPreview();
+        updateObjectPreview();
     });
 
     const colorPicker = document.getElementById('set-color-picker');
     const colorInput = document.getElementById('set-color');
     colorPicker.addEventListener('input', () => {
         colorInput.value = colorPicker.value;
-        updateSetPreview();
+        updateObjectPreview();
     });
 }
 
@@ -988,8 +1222,8 @@ async function updateSetPreview() {
 function setupListControls() {
     const controls = document.querySelectorAll('.list-control');
     controls.forEach(control => {
-        control.addEventListener('input', debounce(updateListPreview, 150));
-        control.addEventListener('change', updateListPreview);
+        control.addEventListener('input', debounce(updateObjectPreview, 150));
+        control.addEventListener('change', updateObjectPreview);
     });
 
     // Show/hide grid columns based on direction
@@ -997,13 +1231,13 @@ function setupListControls() {
     const gridColumnsGroup = document.getElementById('grid-columns-group');
     directionSelect.addEventListener('change', () => {
         gridColumnsGroup.style.display = directionSelect.value === 'grid' ? 'block' : 'none';
-        updateListPreview();
+        updateObjectPreview();
     });
 
     // Color picker sync
-    setupColorPicker('list-background');
-    setupColorPicker('list-item-background');
-    setupColorPicker('list-color');
+    setupColorPickerForObject('list-background');
+    setupColorPickerForObject('list-item-background');
+    setupColorPickerForObject('list-color');
 }
 
 function setupColorPicker(baseName) {
@@ -1012,7 +1246,18 @@ function setupColorPicker(baseName) {
     if (picker && input) {
         picker.addEventListener('input', () => {
             input.value = picker.value;
-            updateListPreview();
+            updateObjectPreview();
+        });
+    }
+}
+
+function setupColorPickerForObject(baseName) {
+    const picker = document.getElementById(`${baseName}-picker`);
+    const input = document.getElementById(baseName);
+    if (picker && input) {
+        picker.addEventListener('input', () => {
+            input.value = picker.value;
+            updateObjectPreview();
         });
     }
 }
@@ -1082,8 +1327,8 @@ async function updateListPreview() {
 function setupDictControls() {
     const controls = document.querySelectorAll('.dict-control');
     controls.forEach(control => {
-        control.addEventListener('input', debounce(updateDictPreview, 150));
-        control.addEventListener('change', updateDictPreview);
+        control.addEventListener('input', debounce(updateObjectPreview, 150));
+        control.addEventListener('change', updateObjectPreview);
     });
 
     // Show/hide grid columns based on layout
@@ -1091,15 +1336,15 @@ function setupDictControls() {
     const gridColumnsGroup = document.getElementById('dict-grid-columns-group');
     layoutSelect.addEventListener('change', () => {
         gridColumnsGroup.style.display = layoutSelect.value === 'grid' ? 'block' : 'none';
-        updateDictPreview();
+        updateObjectPreview();
     });
 
     // Color picker sync
-    setupColorPicker('dict-key-color');
-    setupColorPicker('dict-key-background');
-    setupColorPicker('dict-value-color');
-    setupColorPicker('dict-value-background');
-    setupColorPicker('dict-background');
+    setupColorPickerForObject('dict-key-color');
+    setupColorPickerForObject('dict-key-background');
+    setupColorPickerForObject('dict-value-color');
+    setupColorPickerForObject('dict-value-background');
+    setupColorPickerForObject('dict-background');
 }
 
 function getDictData() {
@@ -1309,4 +1554,188 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
+}
+
+// -------------------------------------------------------------------------
+// Input Widget Controls
+// -------------------------------------------------------------------------
+
+function setupInputControls() {
+    // Widget type selector
+    const typeSelect = document.getElementById('input-type');
+    typeSelect.addEventListener('change', () => {
+        showWidgetControls(typeSelect.value);
+        updateInputPreview();
+    });
+
+    // All input controls
+    const controls = document.querySelectorAll('.input-control');
+    controls.forEach(control => {
+        control.addEventListener('input', debounce(updateInputPreview, 150));
+        control.addEventListener('change', updateInputPreview);
+    });
+}
+
+function showWidgetControls(widgetType) {
+    // Hide all widget-specific controls
+    document.querySelectorAll('.widget-controls').forEach(el => {
+        el.style.display = 'none';
+    });
+
+    // Show the selected widget's controls
+    const controlsId = widgetType + '-controls';
+    const controls = document.getElementById(controlsId);
+    if (controls) {
+        controls.style.display = 'block';
+    }
+
+    // Hide all preset button groups
+    document.getElementById('button-presets').style.display = 'none';
+    document.getElementById('text-presets').style.display = 'none';
+    document.getElementById('checkbox-presets').style.display = 'none';
+    document.getElementById('slider-presets').style.display = 'none';
+    document.getElementById('select-presets').style.display = 'none';
+
+    // Show the correct preset buttons
+    const presetsId = widgetType + '-presets';
+    const presets = document.getElementById(presetsId);
+    if (presets) {
+        presets.style.display = 'flex';
+    }
+}
+
+function getInputData() {
+    return {
+        widget_type: document.getElementById('input-type').value,
+        // Button settings
+        button_label: document.getElementById('button-label').value,
+        button_style: document.getElementById('button-style').value,
+        button_size: document.getElementById('button-size').value,
+        // Text input settings
+        text_value: document.getElementById('text-value').value,
+        text_placeholder: document.getElementById('text-placeholder').value,
+        text_size: document.getElementById('text-size').value,
+        // Checkbox settings
+        checkbox_label: document.getElementById('checkbox-label').value,
+        checkbox_checked: document.getElementById('checkbox-checked').checked,
+        checkbox_size: document.getElementById('checkbox-size').value,
+        // Slider settings
+        slider_min: parseFloat(document.getElementById('slider-min').value) || 0,
+        slider_max: parseFloat(document.getElementById('slider-max').value) || 100,
+        slider_value: parseFloat(document.getElementById('slider-value').value) || 50,
+        slider_step: parseFloat(document.getElementById('slider-step').value) || 1,
+        slider_width: document.getElementById('slider-width').value,
+        // Select settings
+        select_options: document.getElementById('select-options').value,
+        select_value: document.getElementById('select-value').value,
+        select_size: document.getElementById('select-size').value,
+        // Common settings
+        show_callback: document.getElementById('input-show-callback').checked,
+    };
+}
+
+async function updateInputPreview() {
+    const data = getInputData();
+
+    try {
+        const renderResponse = await fetch('/api/render/input', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        const html = await renderResponse.text();
+        document.getElementById('input-preview').innerHTML = html;
+
+        // Setup interactive feedback for the rendered widget
+        setupInputFeedback(data.widget_type);
+
+        const htmlResponse = await fetch('/api/html/input', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        const htmlData = await htmlResponse.json();
+        document.getElementById('input-html').textContent = htmlData.html;
+
+        const codeResponse = await fetch('/api/code/input', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        const codeData = await codeResponse.json();
+        document.getElementById('input-code').textContent = codeData.code;
+    } catch (error) {
+        console.error('Error updating input preview:', error);
+    }
+}
+
+function setupInputFeedback(widgetType) {
+    const preview = document.getElementById('input-preview');
+    const feedbackValue = document.getElementById('feedback-value');
+
+    // Reset feedback
+    feedbackValue.textContent = 'Interact with the widget above...';
+    feedbackValue.classList.remove('clicked');
+
+    if (widgetType === 'button') {
+        const button = preview.querySelector('.anim-button');
+        if (button) {
+            let clickCount = 0;
+            button.addEventListener('click', () => {
+                clickCount++;
+                feedbackValue.classList.remove('clicked');
+                void feedbackValue.offsetWidth; // Trigger reflow
+                feedbackValue.classList.add('clicked');
+                feedbackValue.textContent = `Button clicked! (${clickCount} time${clickCount > 1 ? 's' : ''})`;
+            });
+            feedbackValue.textContent = 'Click the button...';
+        }
+    } else if (widgetType === 'text') {
+        const input = preview.querySelector('.anim-text-input');
+        if (input) {
+            input.addEventListener('input', (e) => {
+                const val = e.target.value;
+                feedbackValue.textContent = val ? `Value: "${val}"` : '(empty)';
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    feedbackValue.classList.remove('clicked');
+                    void feedbackValue.offsetWidth;
+                    feedbackValue.classList.add('clicked');
+                    feedbackValue.textContent = `Submitted: "${e.target.value}"`;
+                }
+            });
+            feedbackValue.textContent = 'Type something...';
+        }
+    } else if (widgetType === 'checkbox') {
+        const checkbox = preview.querySelector('.anim-checkbox');
+        if (checkbox) {
+            checkbox.addEventListener('change', (e) => {
+                feedbackValue.classList.remove('clicked');
+                void feedbackValue.offsetWidth;
+                feedbackValue.classList.add('clicked');
+                feedbackValue.textContent = e.target.checked ? '✓ Checked (true)' : '✗ Unchecked (false)';
+            });
+            feedbackValue.textContent = 'Toggle the checkbox...';
+        }
+    } else if (widgetType === 'slider') {
+        const slider = preview.querySelector('.anim-slider');
+        if (slider) {
+            slider.addEventListener('input', (e) => {
+                feedbackValue.textContent = `Value: ${e.target.value}`;
+            });
+            feedbackValue.textContent = `Value: ${slider.value}`;
+        }
+    } else if (widgetType === 'select') {
+        const select = preview.querySelector('.anim-select');
+        if (select) {
+            select.addEventListener('change', (e) => {
+                feedbackValue.classList.remove('clicked');
+                void feedbackValue.offsetWidth;
+                feedbackValue.classList.add('clicked');
+                feedbackValue.textContent = `Selected: "${e.target.value}"`;
+            });
+            feedbackValue.textContent = `Selected: "${select.value}"`;
+        }
+    }
 }
