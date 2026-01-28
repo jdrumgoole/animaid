@@ -79,7 +79,7 @@ except ImportError:
     HTMLTextInput = None  # type: ignore[misc, assignment]
     InputEvent = None  # type: ignore[misc, assignment]
 
-__version__ = "0.4.7"
+__version__ = "0.4.8"
 
 # Beginner-friendly aliases (shorter names)
 String = HTMLString
