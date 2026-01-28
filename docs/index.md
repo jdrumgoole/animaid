@@ -15,7 +15,7 @@ Animaid provides tools to visualize and render Python data structures as styled 
 - **HTMLSet** - A `set` subclass for rendering unique items as tags or pills
 - **Animate** - A Tkinter-like interactive GUI environment using HTML
 
-All classes support a fluent API for chaining style methods and are compatible with Jinja2 templates via the `__html__()` protocol.
+All classes support a fluent API for chaining style methods and are compatible with [Jinja2](https://jinja.palletsprojects.com/) templates via the `__html__()` protocol.
 
 The `Animate` class provides a real-time browser-based display where you can add, update, and remove AnimAID objects programmatically with live updates via WebSocket.
 
