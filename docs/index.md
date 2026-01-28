@@ -411,6 +411,42 @@ anim.refresh(item_id)
 anim.refresh_all()
 ```
 
+## Demo Programs
+
+AnimAID includes several demo programs that showcase its interactive capabilities. Run them to see real-time updates in action!
+
+### Running Demos
+
+List all available demos:
+```bash
+uv run invoke demo-list
+```
+
+Run a specific demo:
+```bash
+uv run invoke demo countdown_timer
+```
+
+Or run directly with Python:
+```bash
+uv run python demos/countdown_timer.py
+```
+
+### Available Demos
+
+| Demo | Description |
+|------|-------------|
+| `countdown_timer` | Real-time countdown with color transitions (green → yellow → red) |
+| `live_list` | Reactive shopping cart showing `.append()` and `.pop()` |
+| `score_tracker` | Game score tracking with automatic dict updates |
+| `sorting_visualizer` | Bubble sort algorithm with step-by-step visualization |
+| `dashboard` | Multi-type dashboard with HTMLString, HTMLDict, HTMLList, HTMLSet |
+| `typewriter` | Typewriter effect with progressive styling |
+| `todo_app` | Interactive todo list with CRUD operations |
+| `data_pipeline` | ETL pipeline progress tracking |
+
+Each demo opens a browser window and shows real-time updates as Python code executes.
+
 ## Tutorial
 
 Run the interactive tutorial to explore all features:

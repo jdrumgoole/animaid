@@ -342,3 +342,77 @@ def tutorial(c: Context, host: str = "127.0.0.1", port: int = 8200) -> None:
     # Open in browser
     print(f"Opening {url} in browser...")
     webbrowser.open(url)
+
+
+# -------------------------------------------------------------------------
+# Demo Tasks
+# -------------------------------------------------------------------------
+
+AVAILABLE_DEMOS = [
+    "countdown_timer",
+    "live_list",
+    "score_tracker",
+    "sorting_visualizer",
+    "dashboard",
+    "typewriter",
+    "todo_app",
+    "data_pipeline",
+]
+
+
+@task
+def demo(c: Context, name: str = "") -> None:
+    """Run a demo program by name.
+
+    Available demos:
+    - countdown_timer: Real-time countdown with color transitions
+    - live_list: Reactive shopping cart list
+    - score_tracker: Game score tracking with dict updates
+    - sorting_visualizer: Bubble sort algorithm visualization
+    - dashboard: Multi-type dashboard with all HTML types
+    - typewriter: Typewriter effect with styling animation
+    - todo_app: Interactive todo list mini app
+    - data_pipeline: ETL pipeline progress tracking
+
+    Example: invoke demo countdown_timer
+    """
+    if not name:
+        print("Available demos:")
+        for demo_name in AVAILABLE_DEMOS:
+            print(f"  - {demo_name}")
+        print()
+        print("Run a demo with: invoke demo <name>")
+        print("Example: invoke demo countdown_timer")
+        return
+
+    if name not in AVAILABLE_DEMOS:
+        print(f"Unknown demo: {name}")
+        print()
+        print("Available demos:")
+        for demo_name in AVAILABLE_DEMOS:
+            print(f"  - {demo_name}")
+        sys.exit(1)
+
+    c.run(f"uv run python demos/{name}.py", pty=True)
+
+
+@task
+def demo_list(c: Context) -> None:
+    """List all available demo programs."""
+    print("Available AnimAID demos:")
+    print()
+    descriptions = {
+        "countdown_timer": "Real-time countdown with color transitions",
+        "live_list": "Reactive shopping cart list",
+        "score_tracker": "Game score tracking with dict updates",
+        "sorting_visualizer": "Bubble sort algorithm visualization",
+        "dashboard": "Multi-type dashboard with all HTML types",
+        "typewriter": "Typewriter effect with styling animation",
+        "todo_app": "Interactive todo list mini app",
+        "data_pipeline": "ETL pipeline progress tracking",
+    }
+    for demo_name in AVAILABLE_DEMOS:
+        desc = descriptions.get(demo_name, "")
+        print(f"  {demo_name:20} - {desc}")
+    print()
+    print("Run a demo with: invoke demo <name>")

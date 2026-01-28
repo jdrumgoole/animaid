@@ -299,17 +299,40 @@ data["score"] = 500    # Browser updates automatically
 
 **Note:** Immutable types (`HTMLString`, `HTMLInt`, `HTMLFloat`, `HTMLTuple`) can have their styles changed in-place, but to change their underlying data/content, use `anim.update(item_id, new_value)`.
 
+## Demo Programs
+
+AnimAID includes demo programs that showcase its interactive capabilities:
+
+```bash
+# List available demos
+uv run invoke demo-list
+
+# Run a specific demo
+uv run invoke demo countdown_timer
+```
+
+Available demos:
+- **countdown_timer** - Real-time countdown with color transitions
+- **live_list** - Reactive shopping cart with `.append()` and `.pop()`
+- **score_tracker** - Game score tracking with automatic dict updates
+- **sorting_visualizer** - Bubble sort algorithm visualization
+- **dashboard** - Multi-type dashboard with all HTML types
+- **typewriter** - Typewriter effect with progressive styling
+- **todo_app** - Interactive todo list with CRUD operations
+- **data_pipeline** - ETL pipeline progress tracking
+
+Each demo opens a browser and shows real-time updates as the Python code runs.
+
 ## Interactive Tutorial
 
 AnimAID includes a web-based tutorial that lets you experiment with all the features:
 
 ```bash
 # Start the tutorial server
-cd tutorial
-uv run uvicorn app:app --reload
+uv run invoke tutorial
 ```
 
-Then open http://localhost:8000 in your browser.
+Then open http://localhost:8200 in your browser.
 
 The tutorial provides:
 - Live preview of styled output

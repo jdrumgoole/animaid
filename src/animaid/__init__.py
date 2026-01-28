@@ -67,7 +67,7 @@ try:
 except ImportError:
     Animate = None  # type: ignore[misc, assignment]
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 # Beginner-friendly aliases (shorter names)
 String = HTMLString
