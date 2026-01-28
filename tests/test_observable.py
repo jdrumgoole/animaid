@@ -443,7 +443,7 @@ class TestAnimateWithObservable:
 
 
 class TestImmutableTypesObservable:
-    """Test observable mechanism for immutable types (HTMLString, HTMLInt, HTMLFloat, HTMLTuple)."""
+    """Test observable mechanism for immutable types."""
 
     def test_html_string_has_obs_id(self) -> None:
         """HTMLString should have a unique _obs_id."""

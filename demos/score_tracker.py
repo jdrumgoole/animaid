@@ -47,7 +47,8 @@ def main() -> None:
             scores[player] = scores[player] + points  # Triggers automatic update!
 
             print(f"  Round {round_num}: {player} scores {points} points!")
-            print(f"           Current: Player 1: {scores['Player 1']}, Player 2: {scores['Player 2']}")
+            p1, p2 = scores["Player 1"], scores["Player 2"]
+            print(f"           Current: Player 1: {p1}, Player 2: {p2}")
             time.sleep(0.6)
 
         print()

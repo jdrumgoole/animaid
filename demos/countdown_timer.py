@@ -25,7 +25,7 @@ def main() -> None:
         title = HTMLString("Countdown Timer").bold().xxl()
         counter = HTMLString("10").xxl().green()
 
-        title_id = anim.add(title)
+        anim.add(title)
         counter_id = anim.add(counter)
 
         time.sleep(1)
