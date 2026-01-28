@@ -4,11 +4,15 @@ A GUI toolkit for animating Python data structures.
 
 ## Overview
 
-Animaid provides tools to visualize and render Python data structures as styled HTML for educational and presentation purposes. It includes three main classes that subclass Python's built-in types:
+Animaid provides tools to visualize and render Python data structures as styled HTML for educational and presentation purposes. It includes classes that subclass Python's built-in types:
 
 - **HTMLString** - A `str` subclass for rendering styled text
+- **HTMLInt** - An `int` subclass for formatted numbers (currency, percentages, ordinals)
+- **HTMLFloat** - A `float` subclass for decimal formatting and units
 - **HTMLList** - A `list` subclass for rendering lists with layout options
 - **HTMLDict** - A `dict` subclass for rendering key-value pairs
+- **HTMLTuple** - A `tuple` subclass with support for named tuples
+- **HTMLSet** - A `set` subclass for rendering unique items as tags or pills
 - **Animate** - A Tkinter-like interactive GUI environment using HTML
 
 All classes support a fluent API for chaining style methods and are compatible with Jinja2 templates via the `__html__()` protocol.
@@ -98,6 +102,146 @@ card = (
     .border(Border().solid().color(Color.hex("#ccc")))
     .border_radius(Size.px(8))
 )
+```
+
+### HTMLInt
+
+Format integers with various display options:
+
+```python
+from animaid import HTMLInt
+
+# Basic integer with styling
+n = HTMLInt(42).bold().blue()
+print(n.render())
+# <span style="font-weight: bold; color: blue">42</span>
+
+# Thousand separators
+HTMLInt(1234567).comma().render()
+# <span>1,234,567</span>
+
+# Currency formatting
+HTMLInt(1999).currency("$").bold().green()
+# <span style="font-weight: bold; color: green">$1,999</span>
+
+# Percentage
+HTMLInt(85).percent().render()
+# <span>85%</span>
+
+# Ordinal numbers
+HTMLInt(1).ordinal().render()   # "1st"
+HTMLInt(2).ordinal().render()   # "2nd"
+HTMLInt(3).ordinal().render()   # "3rd"
+
+# Badge preset (circular number badge)
+HTMLInt(42).badge()
+```
+
+### HTMLFloat
+
+Format floating-point numbers with precision control:
+
+```python
+from animaid import HTMLFloat
+
+# Basic float with styling
+f = HTMLFloat(3.14159).bold().render()
+# <span style="font-weight: bold">3.14159</span>
+
+# Control decimal places
+HTMLFloat(3.14159).decimal(2).render()
+# <span>3.14</span>
+
+# Thousand separators
+HTMLFloat(1234567.89).comma().render()
+# <span>1,234,567.89</span>
+
+# Percentage (multiplies by 100)
+HTMLFloat(0.856).percent().render()
+# <span>85.60%</span>
+
+# Currency
+HTMLFloat(19.99).currency("$").render()
+# <span>$19.99</span>
+
+# Scientific notation
+HTMLFloat(0.000123).scientific().render()
+# <span>1.23e-04</span>
+
+# Add units
+HTMLFloat(72.5).unit("kg").render()
+# <span>72.5 kg</span>
+```
+
+### HTMLTuple
+
+Render tuples with flexible layouts and named tuple support:
+
+```python
+from animaid import HTMLTuple
+from collections import namedtuple
+
+# Basic tuple
+t = HTMLTuple((1, 2, 3))
+t.render()
+# <div>(1, 2, 3)</div>
+
+# Horizontal layout with pills
+HTMLTuple(("Red", "Green", "Blue")).horizontal().pills()
+
+# Vertical layout
+HTMLTuple(("First", "Second", "Third")).vertical().gap("8px")
+
+# Named tuple support with labels
+Point = namedtuple('Point', ['x', 'y'])
+HTMLTuple(Point(10, 20)).labeled()
+# Renders as: x: 10, y: 20
+
+# Custom separator
+HTMLTuple((1, 2, 3)).separator(" | ")
+# <div>1 | 2 | 3</div>
+
+# Without parentheses
+HTMLTuple((1, 2, 3)).plain()
+# <div>1, 2, 3</div>
+```
+
+### HTMLSet
+
+Render unique items as tags or pills:
+
+```python
+from animaid import HTMLSet
+
+# Basic set (duplicates automatically removed)
+tags = HTMLSet(["Python", "Web", "Python", "HTML"])
+# Only contains: Python, Web, HTML
+
+# Pills preset (rounded pill-style items)
+HTMLSet({"python", "javascript", "rust"}).pills()
+
+# Tags preset
+HTMLSet({"urgent", "bug", "help-wanted"}).tags()
+
+# Horizontal layout with gap
+HTMLSet({"A", "B", "C"}).horizontal().gap("10px")
+
+# Custom item styling
+HTMLSet({"one", "two", "three"}).item_background("#e3f2fd").item_padding("8px 12px")
+```
+
+HTMLSet is reactive - when used with Animate, adding or removing items automatically updates the browser:
+
+```python
+from animaid import Animate, HTMLSet
+
+with Animate() as anim:
+    tags = HTMLSet({"python"}).pills()
+    anim.add(tags)
+
+    tags.add("javascript")  # Browser updates automatically
+    tags.add("rust")        # Browser updates automatically
+    tags.discard("python")  # Browser updates automatically
 ```
 
 ### Nested Structures
