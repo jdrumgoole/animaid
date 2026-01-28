@@ -708,6 +708,9 @@ The tutorial provides four main sections:
 :maxdepth: 2
 :caption: Contents
 
+tutorial
+demos
+input-widgets
 api
 ```
 
