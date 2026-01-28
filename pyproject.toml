@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "animaid"
-version = "0.4.6"
+version = "0.4.7"
 description = "A GUI toolkit for animating Python data structures"
 readme = "README.md"
 license = "MIT"
@@ -47,6 +47,10 @@ tutorial = [
     "wsproto>=1.2.0",
     "pypubsub>=4.0.3",
 ]
+
+[project.scripts]
+animaid-tutorial = "animaid.cli.tutorial:main"
+animaid-demo = "animaid.cli.demo:main"
 
 [project.urls]
 Homepage = "https://github.com/jdrumgoole/animaid"

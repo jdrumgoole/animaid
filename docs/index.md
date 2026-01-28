@@ -563,17 +563,17 @@ AnimAID includes several demo programs that showcase its interactive capabilitie
 
 List all available demos:
 ```bash
-uv run invoke demo-list
+animaid-demo --list
 ```
 
 Run a specific demo:
 ```bash
-uv run invoke demo countdown_timer
+animaid-demo countdown_timer
 ```
 
 Or run directly with Python:
 ```bash
-uv run python demos/countdown_timer.py
+python demos/countdown_timer.py
 ```
 
 ### Available Demos
@@ -648,15 +648,59 @@ Each demo opens a browser window and shows real-time updates as Python code exec
 
 ![Counter Demo](images/demos/input_counter.gif)
 
-## Tutorial
+## Interactive Tutorial
 
-Run the interactive tutorial to explore all features:
+AnimAID includes a comprehensive web-based tutorial that lets you explore all features interactively.
+
+### Starting the Tutorial
 
 ```bash
-uv run invoke tutorial
+# Install with tutorial dependencies
+pip install animaid[tutorial]
+
+# Start the tutorial (opens browser automatically)
+animaid-tutorial
+
+# Or specify a custom port
+animaid-tutorial --port 8300
 ```
 
-This opens a web app at http://127.0.0.1:8200 with tabs for each type, allowing you to experiment with different properties and see the generated Python code and HTML.
+### Tutorial Features
+
+The tutorial provides four main sections:
+
+**Python Objects Tab**
+- Unified interface for all HTML types (HTMLString, HTMLList, HTMLDict, HTMLInt, HTMLFloat, HTMLTuple, HTMLSet)
+- Dropdown selector to switch between object types
+- Type-specific controls and presets
+- Live preview, Python code, and HTML output
+
+![Python Objects Tab](images/tutorial-python-objects.png)
+
+**Input Widgets Tab**
+- Interactive input widgets: Button, TextInput, Checkbox, Slider, Select
+- Widget-specific controls and presets
+- Live demonstration of event handling
+- Generated Python code for each widget
+
+![Input Widgets Tab](images/tutorial-input-widgets.png)
+
+**Dict of Lists Tab**
+- Visualize nested dictionaries containing lists
+- Configure list styling (horizontal, vertical, pills, cards)
+- See how nested structures render
+
+**List of Dicts Tab**
+- Visualize lists of dictionaries as cards
+- Configure card styling and layout
+- Perfect for displaying collections of records
+
+### What You Can Do
+
+- **Experiment**: Adjust any property and see instant results
+- **Copy Code**: Generated Python code is ready to use in your projects
+- **Learn**: See how each style method affects the HTML output
+- **Explore Presets**: Quick buttons for common styling patterns
 
 ## Contents
 

@@ -312,13 +312,15 @@ AnimAID includes demo programs that showcase its interactive capabilities:
 
 ```bash
 # List available demos
-uv run invoke demo-list
+animaid-demo --list
 
 # Run a specific demo
-uv run invoke demo countdown_timer
+animaid-demo countdown_timer
 ```
 
 Available demos:
+
+**Core Demos:**
 - **[countdown_timer](https://github.com/jdrumgoole/animaid/blob/main/demos/countdown_timer.py)** - Real-time countdown with color transitions
 - **[live_list](https://github.com/jdrumgoole/animaid/blob/main/demos/live_list.py)** - Reactive shopping cart with `.append()` and `.pop()`
 - **[score_tracker](https://github.com/jdrumgoole/animaid/blob/main/demos/score_tracker.py)** - Game score tracking with automatic dict updates
@@ -327,6 +329,13 @@ Available demos:
 - **[typewriter](https://github.com/jdrumgoole/animaid/blob/main/demos/typewriter.py)** - Typewriter effect with progressive styling
 - **[todo_app](https://github.com/jdrumgoole/animaid/blob/main/demos/todo_app.py)** - Interactive todo list with CRUD operations
 - **[data_pipeline](https://github.com/jdrumgoole/animaid/blob/main/demos/data_pipeline.py)** - ETL pipeline progress tracking
+
+**Input Widget Demos:**
+- **[input_button](https://github.com/jdrumgoole/animaid/blob/main/demos/input_button.py)** - Button styles, sizes, and click events
+- **[input_text](https://github.com/jdrumgoole/animaid/blob/main/demos/input_text.py)** - Text input with live feedback
+- **[input_checkbox](https://github.com/jdrumgoole/animaid/blob/main/demos/input_checkbox.py)** - Checkbox toggles and preferences
+- **[input_select](https://github.com/jdrumgoole/animaid/blob/main/demos/input_select.py)** - Select dropdowns with dynamic updates
+- **[input_slider](https://github.com/jdrumgoole/animaid/blob/main/demos/input_slider.py)** - RGB color mixer with sliders
 
 Each demo opens a browser and shows real-time updates as the Python code runs.
 
@@ -355,17 +364,29 @@ The documentation includes:
 AnimAID includes a web-based tutorial that lets you experiment with all the features:
 
 ```bash
-# Start the tutorial server
-uv run invoke tutorial
+# Install with tutorial dependencies
+pip install animaid[tutorial]
+
+# Start the tutorial (opens browser automatically)
+animaid-tutorial
 ```
 
-Then open http://localhost:8200 in your browser.
-
 The tutorial provides:
+- **Python Objects Tab**: Explore all HTML types (HTMLString, HTMLList, HTMLDict, etc.) with a unified interface
+- **Input Widgets Tab**: Interactive input widgets (buttons, text inputs, checkboxes, sliders, selects)
+- **Dict of Lists / List of Dicts**: Nested data structure visualizations
 - Live preview of styled output
 - Generated Python code you can copy
 - Generated HTML output
-- Quick preset buttons
+- Quick preset buttons for common styles
+
+![AnimAID Tutorial](https://raw.githubusercontent.com/jdrumgoole/animaid/main/docs/images/tutorial-app-main.png)
+
+### Input Widgets
+
+The tutorial also demonstrates interactive input widgets that work with the `Animate` class:
+
+![Input Widgets](https://raw.githubusercontent.com/jdrumgoole/animaid/main/docs/images/tutorial-app-inputs.png)
 
 ## Type Aliases
 
@@ -403,19 +424,26 @@ git clone https://github.com/jdrumgoole/animaid.git
 cd animaid
 
 # Install with development dependencies
-uv pip install -e ".[dev,docs]"
+pip install -e ".[dev,docs,tutorial]"
 
 # Run tests
-invoke test
+pytest
 
-# Run all checks (tests, linting, type checking)
-invoke check
+# Run linting
+ruff check src tests
 
 # Build documentation
-invoke docs
+sphinx-build -b html docs docs/_build/html
 
 # Start the tutorial server
-invoke tutorial-start
+animaid-tutorial
+```
+
+For development with [uv](https://docs.astral.sh/uv/):
+```bash
+uv pip install -e ".[dev,docs,tutorial]"
+uv run pytest
+uv run invoke check  # Run all checks
 ```
 
 ## Requirements

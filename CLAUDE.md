@@ -10,3 +10,4 @@
 ## Allowed commands with full permissions
 - uv run pytest (all commands and flags)
 - uv run invoke (all tasks)
+- uv run shot-scraper (all commands and flags)
