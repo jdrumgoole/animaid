@@ -3,7 +3,7 @@
 [![Documentation Status](https://readthedocs.org/projects/animaid/badge/?version=latest)](https://animaid.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/animaid.svg)](https://badge.fury.io/py/animaid)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 **Turn Python data structures into beautiful HTML with zero effort.**
 
@@ -453,7 +453,9 @@ uv run invoke check  # Run all checks
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+**Code:** Apache License 2.0 - see [LICENSE](LICENSE) for details.
+
+**Documentation:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)
 
 ## Contributing
 

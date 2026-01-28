@@ -17,7 +17,7 @@ wheels = [
 
 [[package]]
 name = "animaid"
-version = "0.4.6"
+version = "0.4.7"
 source = { editable = "." }
 
 [package.optional-dependencies]

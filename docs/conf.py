@@ -6,8 +6,12 @@ import sys
 sys.path.insert(0, os.path.abspath("../src"))
 
 project = "animaid"
-copyright = "2024, Joe Drumgoole"
+copyright = "2024 Joe Drumgoole. Documentation licensed under CC BY 4.0"
 author = "Joe Drumgoole"
+
+# License info for footer
+html_show_sphinx = True
+html_show_copyright = True
 release = "0.4.8"
 
 extensions = [
