@@ -26,10 +26,17 @@ def main() -> None:
         anim.add(title)
 
         # Initialize scores
-        scores = HTMLDict({
-            "Player 1": 0,
-            "Player 2": 0,
-        }).card().key_bold().value_color("#1565c0")
+        scores = (
+            HTMLDict(
+                {
+                    "Player 1": 0,
+                    "Player 2": 0,
+                }
+            )
+            .card()
+            .key_bold()
+            .value_color("#1565c0")
+        )
 
         anim.add(scores)
 

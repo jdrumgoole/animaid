@@ -35,11 +35,18 @@ def main() -> None:
         stages = ["Extract", "Transform", "Load"]
 
         # Create status dict
-        pipeline_status = HTMLDict({
-            "Extract": "Pending",
-            "Transform": "Pending",
-            "Load": "Pending",
-        }).card().key_bold().key_width("120px")
+        pipeline_status = (
+            HTMLDict(
+                {
+                    "Extract": "Pending",
+                    "Transform": "Pending",
+                    "Load": "Pending",
+                }
+            )
+            .card()
+            .key_bold()
+            .key_width("120px")
+        )
         anim.add(pipeline_status)
 
         # Overall progress

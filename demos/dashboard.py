@@ -32,12 +32,18 @@ def main() -> None:
         stats_label = HTMLString("System Stats").bold().large()
         anim.add(stats_label)
 
-        stats = HTMLDict({
-            "Requests": 0,
-            "Users": 42,
-            "CPU": "23%",
-            "Memory": "1.2 GB",
-        }).card().key_width("100px")
+        stats = (
+            HTMLDict(
+                {
+                    "Requests": 0,
+                    "Users": 42,
+                    "CPU": "23%",
+                    "Memory": "1.2 GB",
+                }
+            )
+            .card()
+            .key_width("100px")
+        )
         anim.add(stats)
 
         # Activity Log (List)

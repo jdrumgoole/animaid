@@ -75,7 +75,7 @@ def main() -> None:
                 comparisons += 1
 
                 # Highlight comparison
-                status = HTMLString(f"Comparing {arr[j]} and {arr[j+1]}...").info()
+                status = HTMLString(f"Comparing {arr[j]} and {arr[j + 1]}...").info()
                 anim.update(status_id, status)
                 array_list = create_styled_list(arr, j, j + 1)
                 anim.update(array_id, array_list)
@@ -87,28 +87,25 @@ def main() -> None:
                     swaps += 1
 
                     # Show swap
-                    status = HTMLString(f"Swapped! {arr[j]} <-> {arr[j+1]}").success()
+                    status = HTMLString(f"Swapped! {arr[j]} <-> {arr[j + 1]}").success()
                     anim.update(status_id, status)
                     array_list = create_styled_list(arr, j, j + 1, swapped=True)
                     anim.update(array_id, array_list)
-                    print(f"  Swap: {arr[j]} <-> {arr[j+1]} -> {arr}")
+                    print(f"  Swap: {arr[j]} <-> {arr[j + 1]} -> {arr}")
                     time.sleep(0.3)
 
         # Final sorted display
-        status = HTMLString(
-            f"Sorted! ({comparisons} comparisons, {swaps} swaps)"
-        ).success().bold()
+        status = (
+            HTMLString(f"Sorted! ({comparisons} comparisons, {swaps} swaps)")
+            .success()
+            .bold()
+        )
         anim.update(status_id, status)
 
         # Create final display with all green
         final_items = []
         for num in arr:
-            item = (
-                HTMLString(str(num))
-                .padding("12px 16px")
-                .monospace()
-                .success()
-            )
+            item = HTMLString(str(num)).padding("12px 16px").monospace().success()
             final_items.append(item)
 
         array_list = HTMLList(final_items).horizontal().gap("8px")
