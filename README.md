@@ -323,6 +323,16 @@ Available demos:
 
 Each demo opens a browser and shows real-time updates as the Python code runs.
 
+### Demo Previews
+
+**Sorting Visualizer** - Watch bubble sort in action:
+
+![Sorting Visualizer](docs/images/demos/sorting_visualizer.gif)
+
+**Dashboard** - Multiple HTML types updating together:
+
+![Dashboard](docs/images/demos/dashboard.gif)
+
 ## Interactive Tutorial
 
 AnimAID includes a web-based tutorial that lets you experiment with all the features:

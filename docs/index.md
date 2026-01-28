@@ -447,6 +447,24 @@ uv run python demos/countdown_timer.py
 
 Each demo opens a browser window and shows real-time updates as Python code executes.
 
+### Demo Gallery
+
+**Countdown Timer** - Color transitions from green to yellow to red
+
+![Countdown Timer Demo](images/demos/countdown_timer.gif)
+
+**Sorting Visualizer** - Bubble sort with step-by-step animation
+
+![Sorting Visualizer Demo](images/demos/sorting_visualizer.gif)
+
+**Dashboard** - Multiple HTML types updating together
+
+![Dashboard Demo](images/demos/dashboard.gif)
+
+**Todo App** - Interactive task management
+
+![Todo App Demo](images/demos/todo_app.gif)
+
 ## Tutorial
 
 Run the interactive tutorial to explore all features:
