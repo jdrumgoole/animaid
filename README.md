@@ -81,7 +81,7 @@ badge = (HTMLString("NEW")
     .border_radius("4px"))
 ```
 
-![HTMLString Example](docs/images/tutorial-string-highlight.png)
+![HTMLString Example](https://raw.githubusercontent.com/jdrumgoole/animaid/main/docs/images/tutorial-string-highlight.png)
 
 ### Formatting Numbers (HTMLInt)
 
@@ -101,7 +101,7 @@ Common number formats:
 - `.percent()` - Show as percentage: 85%
 - `.ordinal()` - Show as ordinal: 1st, 2nd, 3rd
 
-![HTMLInt Example](docs/images/tutorial-int-currency.png)
+![HTMLInt Example](https://raw.githubusercontent.com/jdrumgoole/animaid/main/docs/images/tutorial-int-currency.png)
 
 ### Creating Lists (HTMLList)
 
@@ -122,7 +122,7 @@ cards = (HTMLList(["Apple", "Banana", "Cherry", "Date"])
     .item_border_radius("8px"))
 ```
 
-![HTMLList Example](docs/images/tutorial-list-cards.png)
+![HTMLList Example](https://raw.githubusercontent.com/jdrumgoole/animaid/main/docs/images/tutorial-list-cards.png)
 
 ### Displaying Dictionaries (HTMLDict)
 
@@ -145,7 +145,7 @@ styled = (profile
     .background("white"))
 ```
 
-![HTMLDict Example](docs/images/tutorial-dict-card.png)
+![HTMLDict Example](https://raw.githubusercontent.com/jdrumgoole/animaid/main/docs/images/tutorial-dict-card.png)
 
 ### Working with Sets (HTMLSet)
 
@@ -162,7 +162,7 @@ tags = HTMLSet(["Python", "Web", "Python", "HTML"])
 pills = tags.pills()  # Rounded pill-style items
 ```
 
-![HTMLSet Example](docs/images/tutorial-set-pills.png)
+![HTMLSet Example](https://raw.githubusercontent.com/jdrumgoole/animaid/main/docs/images/tutorial-set-pills.png)
 
 ## The Fluent API
 
@@ -334,11 +334,11 @@ Each demo opens a browser and shows real-time updates as the Python code runs.
 
 **Sorting Visualizer** - Watch bubble sort in action:
 
-![Sorting Visualizer](docs/images/demos/sorting_visualizer.gif)
+![Sorting Visualizer](https://raw.githubusercontent.com/jdrumgoole/animaid/main/docs/images/demos/sorting_visualizer.gif)
 
 **Dashboard** - Multiple HTML types updating together:
 
-![Dashboard](docs/images/demos/dashboard.gif)
+![Dashboard](https://raw.githubusercontent.com/jdrumgoole/animaid/main/docs/images/demos/dashboard.gif)
 
 ## Documentation
 
