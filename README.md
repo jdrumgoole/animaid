@@ -1,6 +1,13 @@
 # AnimAID
 
+[![Documentation Status](https://readthedocs.org/projects/animaid/badge/?version=latest)](https://animaid.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/animaid.svg)](https://badge.fury.io/py/animaid)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 **Turn Python data structures into beautiful HTML with zero effort.**
+
+📖 **[Documentation](https://animaid.readthedocs.io)** | 🚀 **[PyPI](https://pypi.org/project/animaid/)** | 💻 **[GitHub](https://github.com/jdrumgoole/animaid)**
 
 AnimAID is a Python library that wraps common data types (strings, numbers, lists, dicts, tuples, sets) and gives them the ability to render themselves as styled HTML. It's perfect for:
 
@@ -332,6 +339,16 @@ Each demo opens a browser and shows real-time updates as the Python code runs.
 **Dashboard** - Multiple HTML types updating together:
 
 ![Dashboard](docs/images/demos/dashboard.gif)
+
+## Documentation
+
+Full documentation is available at **[animaid.readthedocs.io](https://animaid.readthedocs.io)**
+
+The documentation includes:
+- Complete API reference
+- CSS helper types guide
+- Animate class usage
+- Demo program gallery
 
 ## Interactive Tutorial
 
