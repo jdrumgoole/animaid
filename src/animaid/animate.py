@@ -294,6 +294,26 @@ class Animate:
         """Get the server port."""
         return self._port
 
+    def register_connection(self, websocket: Any) -> None:
+        """Register a WebSocket connection.
+
+        This is called by the server when a new client connects.
+
+        Args:
+            websocket: The WebSocket connection to register.
+        """
+        self._connections.add(websocket)
+
+    def unregister_connection(self, websocket: Any) -> None:
+        """Unregister a WebSocket connection.
+
+        This is called by the server when a client disconnects.
+
+        Args:
+            websocket: The WebSocket connection to unregister.
+        """
+        self._connections.discard(websocket)
+
     def _generate_id(self, item: HTMLObject | str) -> str:
         """Generate a unique ID for an item based on its type.
 

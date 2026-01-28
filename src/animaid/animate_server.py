@@ -32,7 +32,7 @@ def create_animate_app(animate: Animate) -> FastAPI:
     async def websocket_endpoint(websocket: WebSocket) -> None:
         """Handle WebSocket connections."""
         await websocket.accept()
-        animate._connections.add(websocket)
+        animate.register_connection(websocket)
 
         try:
             # Send full state on connection
@@ -54,7 +54,7 @@ def create_animate_app(animate: Animate) -> FastAPI:
         except WebSocketDisconnect:
             pass
         finally:
-            animate._connections.discard(websocket)
+            animate.unregister_connection(websocket)
 
     return app
 
