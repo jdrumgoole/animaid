@@ -12,7 +12,7 @@ import time
 
 from animaid import (
     AlignItems,
-    Animate,
+    App,
     HTMLButton,
     HTMLCard,
     HTMLColumn,
@@ -25,24 +25,24 @@ from animaid import (
 
 
 def main() -> None:
-    with Animate(title="Container Layout Demo") as anim:
+    with App(title="Container Layout Demo") as app:
         # Title
         title = HTMLString("Container Layout Demo").bold().styled(font_size="24px")
-        anim.add(title)
+        app.add(title)
 
         # Horizontal row of buttons
-        anim.add(HTMLString("Button Row:").styled(margin_top="20px"))
+        app.add(HTMLString("Button Row:").styled(margin_top="20px"))
         button_row = HTMLRow([
             HTMLButton("Save").primary(),
             HTMLButton("Cancel"),
             HTMLButton("Delete").danger(),
         ]).gap(10).align(AlignItems.CENTER)
-        anim.add(button_row)
+        app.add(button_row)
 
         time.sleep(1)
 
         # Spaced row (items pushed apart)
-        anim.add(HTMLString("Spaced Row:").styled(margin_top="20px"))
+        app.add(HTMLString("Spaced Row:").styled(margin_top="20px"))
         spaced_row = HTMLRow([
             HTMLString("Left").bold(),
             HTMLString("Center"),
@@ -52,12 +52,12 @@ def main() -> None:
             background_color="#f0f0f0",
             border_radius="8px",
         )
-        anim.add(spaced_row)
+        app.add(spaced_row)
 
         time.sleep(1)
 
         # Vertical column
-        anim.add(HTMLString("Vertical Column:").styled(margin_top="20px"))
+        app.add(HTMLString("Vertical Column:").styled(margin_top="20px"))
         column = HTMLColumn([
             HTMLString("Title").bold().styled(font_size="18px"),
             HTMLString("Subtitle").styled(color="gray"),
@@ -67,12 +67,12 @@ def main() -> None:
             background_color="#e8f4fc",
             border_radius="8px",
         )
-        anim.add(column)
+        app.add(column)
 
         time.sleep(1)
 
         # Nested layout: Row containing Columns
-        anim.add(HTMLString("Nested Layout (Row with Columns):").styled(margin_top="20px"))
+        app.add(HTMLString("Nested Layout (Row with Columns):").styled(margin_top="20px"))
 
         left_column = HTMLColumn([
             HTMLString("Left Panel").bold(),
@@ -98,17 +98,17 @@ def main() -> None:
         )
 
         nested_row = HTMLRow([left_column, right_column]).gap(16)
-        anim.add(nested_row)
+        app.add(nested_row)
 
         time.sleep(1)
 
         # Divider example
-        anim.add(HTMLDivider("Container Widgets"))
+        app.add(HTMLDivider("Container Widgets"))
 
         time.sleep(1)
 
         # Card examples
-        anim.add(HTMLString("HTMLCard Examples:").styled(margin_top="10px"))
+        app.add(HTMLString("HTMLCard Examples:").styled(margin_top="10px"))
         card_row = HTMLRow([
             HTMLCard(
                 title="Default Card",
@@ -123,12 +123,12 @@ def main() -> None:
                 children=[HTMLString("Border only, no shadow.")],
             ).outlined(),
         ]).gap(16)
-        anim.add(card_row)
+        app.add(card_row)
 
         time.sleep(1)
 
         # Spacer example
-        anim.add(HTMLString("HTMLSpacer Example (flex spacer):").styled(margin_top="20px"))
+        app.add(HTMLString("HTMLSpacer Example (flex spacer):").styled(margin_top="20px"))
         spacer_row = HTMLRow([
             HTMLButton("Left"),
             HTMLSpacer().flex(),  # Takes remaining space
@@ -138,12 +138,12 @@ def main() -> None:
             background_color="#f0f0f0",
             border_radius="8px",
         )
-        anim.add(spacer_row)
+        app.add(spacer_row)
 
         time.sleep(1)
 
         # Toolbar with divider
-        anim.add(HTMLString("Toolbar with Vertical Divider:").styled(margin_top="20px"))
+        app.add(HTMLString("Toolbar with Vertical Divider:").styled(margin_top="20px"))
         toolbar = HTMLRow([
             HTMLButton("New").primary(),
             HTMLButton("Open"),
@@ -158,12 +158,12 @@ def main() -> None:
             background_color="#333",
             border_radius="4px",
         )
-        anim.add(toolbar)
+        app.add(toolbar)
 
         time.sleep(1)
 
         # Form in a card
-        anim.add(HTMLString("Form Layout in Card:").styled(margin_top="20px"))
+        app.add(HTMLString("Form Layout in Card:").styled(margin_top="20px"))
         form = HTMLCard(
             title="Create Account",
             children=[
@@ -192,7 +192,7 @@ def main() -> None:
                 ]).form(),
             ],
         ).shadow().max_width(300)
-        anim.add(form)
+        app.add(form)
 
         print("\nContainer layout demo complete!")
         print("The browser shows various container layouts.")

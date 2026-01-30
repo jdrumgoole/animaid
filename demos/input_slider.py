@@ -6,15 +6,15 @@ Demonstrates: HTMLSlider, on_change callbacks, real-time updates
 
 import time
 
-from animaid import Animate, HTMLSlider, HTMLString
+from animaid import App, HTMLSlider, HTMLString
 
 
 def main() -> None:
     """Run the color mixer demo with sliders."""
-    with Animate(title="Demo: RGB Color Mixer") as anim:
+    with App(title="Demo: RGB Color Mixer") as app:
         # Title
         title = HTMLString("RGB Color Mixer").bold().xl()
-        anim.add(title)
+        app.add(title)
 
         # Color preview box
         color_preview = HTMLString("Color Preview").styled(
@@ -25,7 +25,7 @@ def main() -> None:
             color="white",
             font_weight="bold",
         )
-        anim.add(color_preview, id="preview")
+        app.add(color_preview, id="preview")
 
         # RGB values
         r_value, g_value, b_value = 128, 128, 128
@@ -39,10 +39,10 @@ def main() -> None:
             color_preview._value = f"RGB({r_value}, {g_value}, {b_value})"
             color_preview._styles["background-color"] = color
             color_preview._styles["color"] = text_color
-            anim.refresh("preview")
+            app.refresh("preview")
 
         # Red slider
-        anim.add(HTMLString("Red:").bold().red())
+        app.add(HTMLString("Red:").bold().red())
 
         def on_red_change(value: float) -> None:
             nonlocal r_value
@@ -52,10 +52,10 @@ def main() -> None:
         red_slider = HTMLSlider(min=0, max=255, value=128).wide().on_change(
             on_red_change
         )
-        anim.add(red_slider)
+        app.add(red_slider)
 
         # Green slider
-        anim.add(HTMLString("Green:").bold().green())
+        app.add(HTMLString("Green:").bold().green())
 
         def on_green_change(value: float) -> None:
             nonlocal g_value
@@ -65,10 +65,10 @@ def main() -> None:
         green_slider = HTMLSlider(min=0, max=255, value=128).wide().on_change(
             on_green_change
         )
-        anim.add(green_slider)
+        app.add(green_slider)
 
         # Blue slider
-        anim.add(HTMLString("Blue:").bold().blue())
+        app.add(HTMLString("Blue:").bold().blue())
 
         def on_blue_change(value: float) -> None:
             nonlocal b_value
@@ -78,7 +78,7 @@ def main() -> None:
         blue_slider = HTMLSlider(min=0, max=255, value=128).wide().on_change(
             on_blue_change
         )
-        anim.add(blue_slider)
+        app.add(blue_slider)
 
         print("RGB Color Mixer Demo")
         print("=" * 40)

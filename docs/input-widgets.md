@@ -1,6 +1,6 @@
 # Input Widgets
 
-AnimAID provides interactive input widgets that work with the `Animate` class for building interactive browser-based applications.
+AnimAID provides interactive input widgets that work with the `App` class for building interactive browser-based applications.
 
 ## Installation
 
@@ -17,14 +17,14 @@ pip install animaid[tutorial]
 A clickable button with style presets.
 
 ```python
-from animaid import Animate, HTMLButton
+from animaid import App, HTMLButton
 
-with Animate() as anim:
+with App() as app:
     def on_click():
         print("Button clicked!")
 
     button = HTMLButton("Click Me").primary().on_click(on_click)
-    anim.add(button)
+    app.add(button)
 ```
 
 **Style Presets:**
@@ -42,16 +42,16 @@ with Animate() as anim:
 A text input field with two-way binding.
 
 ```python
-from animaid import Animate, HTMLTextInput
+from animaid import App, HTMLTextInput
 
-with Animate() as anim:
+with App() as app:
     def on_change(value: str):
         print(f"Input changed to: {value}")
 
     text_input = HTMLTextInput(
         placeholder="Enter text..."
     ).wide().on_change(on_change)
-    anim.add(text_input)
+    app.add(text_input)
 
     # Read the current value
     print(text_input.value)
@@ -72,14 +72,14 @@ with Animate() as anim:
 A checkbox with a label and two-way binding.
 
 ```python
-from animaid import Animate, HTMLCheckbox
+from animaid import App, HTMLCheckbox
 
-with Animate() as anim:
+with App() as app:
     def on_change(checked: bool):
         print(f"Checkbox is now: {'checked' if checked else 'unchecked'}")
 
     checkbox = HTMLCheckbox("Enable feature").on_change(on_change)
-    anim.add(checkbox)
+    app.add(checkbox)
 
     # Read the current state
     print(checkbox.checked)
@@ -99,9 +99,9 @@ with Animate() as anim:
 A range slider with two-way binding.
 
 ```python
-from animaid import Animate, HTMLSlider
+from animaid import App, HTMLSlider
 
-with Animate() as anim:
+with App() as app:
     def on_change(value: float):
         print(f"Slider value: {value}")
 
@@ -111,7 +111,7 @@ with Animate() as anim:
         value=50,
         step=1
     ).wide().on_change(on_change)
-    anim.add(slider)
+    app.add(slider)
 
     # Read the current value
     print(slider.value)
@@ -133,9 +133,9 @@ with Animate() as anim:
 A dropdown select menu with two-way binding.
 
 ```python
-from animaid import Animate, HTMLSelect
+from animaid import App, HTMLSelect
 
-with Animate() as anim:
+with App() as app:
     def on_change(value: str):
         print(f"Selected: {value}")
 
@@ -143,7 +143,7 @@ with Animate() as anim:
         options=["Red", "Green", "Blue"],
         value="Green"
     ).wide().on_change(on_change)
-    anim.add(select)
+    app.add(select)
 
     # Read the current value
     print(select.value)
@@ -160,25 +160,25 @@ with Animate() as anim:
 
 ## Two-Way Binding
 
-All input widgets support two-way binding with the `Animate` class:
+All input widgets support two-way binding with the `App` class:
 
 1. **User → Python**: When the user interacts with a widget in the browser, the widget's value/state is automatically updated and any registered callbacks are called.
 
 2. **Python → Browser**: You can read the current value at any time using the widget's properties (`value`, `checked`).
 
 ```python
-from animaid import Animate, HTMLTextInput, HTMLButton
+from animaid import App, HTMLTextInput, HTMLButton
 
-with Animate() as anim:
+with App() as app:
     text_input = HTMLTextInput(placeholder="Enter your name")
-    anim.add(text_input)
+    app.add(text_input)
 
     def greet():
         name = text_input.value  # Read current value
         print(f"Hello, {name}!")
 
     button = HTMLButton("Greet").primary().on_click(greet)
-    anim.add(button)
+    app.add(button)
 ```
 
 ## Event Handlers
@@ -242,19 +242,19 @@ button = HTMLButton("Styled").add_class("my-custom-class")
 ## Complete Example
 
 ```python
-from animaid import Animate, HTMLString, HTMLButton, HTMLTextInput, HTMLCheckbox
+from animaid import App, HTMLString, HTMLButton, HTMLTextInput, HTMLCheckbox
 
-with Animate(title="User Form") as anim:
-    anim.add(HTMLString("User Registration").bold().xl())
+with App(title="User Form") as app:
+    app.add(HTMLString("User Registration").bold().xl())
 
     name_input = HTMLTextInput(placeholder="Enter your name").wide()
-    anim.add(name_input)
+    app.add(name_input)
 
     agree_checkbox = HTMLCheckbox("I agree to the terms")
-    anim.add(agree_checkbox)
+    app.add(agree_checkbox)
 
     status = HTMLString("").muted()
-    anim.add(status, id="status")
+    app.add(status, id="status")
 
     def submit():
         if not name_input.value:
@@ -266,10 +266,10 @@ with Animate(title="User Form") as anim:
         else:
             status._value = f"Welcome, {name_input.value}!"
             status._styles = {"color": "green"}
-        anim.refresh("status")
+        app.refresh("status")
 
     submit_btn = HTMLButton("Submit").primary().on_click(submit)
-    anim.add(submit_btn)
+    app.add(submit_btn)
 
     input("Press Enter to exit...")
 ```

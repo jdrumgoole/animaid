@@ -1,6 +1,6 @@
 # Container Widgets
 
-AnimAID provides container widgets for organizing and laying out content. These containers work with the `Animate` class and can be nested to create complex layouts.
+AnimAID provides container widgets for organizing and laying out content. These containers work with the `App` class and can be nested to create complex layouts.
 
 ## Available Containers
 
@@ -9,15 +9,15 @@ AnimAID provides container widgets for organizing and laying out content. These 
 A horizontal flexbox container for laying out children in a row.
 
 ```python
-from animaid import Animate, HTMLRow, HTMLString
+from animaid import App, HTMLRow, HTMLString
 
-with Animate() as anim:
+with App() as app:
     row = HTMLRow([
         HTMLString("Item 1"),
         HTMLString("Item 2"),
         HTMLString("Item 3"),
     ]).gap(12)
-    anim.add(row)
+    app.add(row)
 ```
 
 **Alignment Methods:**
@@ -39,15 +39,15 @@ with Animate() as anim:
 A vertical flexbox container for laying out children in a column.
 
 ```python
-from animaid import Animate, HTMLColumn, HTMLString
+from animaid import App, HTMLColumn, HTMLString
 
-with Animate() as anim:
+with App() as app:
     column = HTMLColumn([
         HTMLString("Title").bold(),
         HTMLString("Subtitle").muted(),
         HTMLString("Content goes here"),
     ]).gap(8).max_width("400px")
-    anim.add(column)
+    app.add(column)
 ```
 
 **Methods:**
@@ -69,9 +69,9 @@ with Animate() as anim:
 A visual container with optional title, shadows, and borders.
 
 ```python
-from animaid import Animate, HTMLCard, HTMLString
+from animaid import App, HTMLCard, HTMLString
 
-with Animate() as anim:
+with App() as app:
     card = HTMLCard(
         title="User Profile",
         children=[
@@ -79,7 +79,7 @@ with Animate() as anim:
             HTMLString("Email: john@example.com"),
         ],
     ).elevated()
-    anim.add(card)
+    app.add(card)
 ```
 
 **Shadow Methods:**
@@ -103,12 +103,12 @@ with Animate() as anim:
 A visual separator for content.
 
 ```python
-from animaid import Animate, HTMLDivider, HTMLString
+from animaid import App, HTMLDivider, HTMLString
 
-with Animate() as anim:
-    anim.add(HTMLString("Section 1"))
-    anim.add(HTMLDivider("OR"))  # With label
-    anim.add(HTMLString("Section 2"))
+with App() as app:
+    app.add(HTMLString("Section 1"))
+    app.add(HTMLDivider("OR"))  # With label
+    app.add(HTMLString("Section 2"))
 ```
 
 **Style Methods:**
@@ -131,15 +131,15 @@ with Animate() as anim:
 An empty element for layout control.
 
 ```python
-from animaid import Animate, HTMLRow, HTMLButton, HTMLSpacer
+from animaid import App, HTMLRow, HTMLButton, HTMLSpacer
 
-with Animate() as anim:
+with App() as app:
     row = HTMLRow([
         HTMLButton("Left"),
         HTMLSpacer().flex(),  # Pushes Right to the end
         HTMLButton("Right"),
     ])
-    anim.add(row)
+    app.add(row)
 ```
 
 **Fixed Size Methods:**
@@ -164,9 +164,9 @@ with Animate() as anim:
 Containers can be nested to create complex layouts:
 
 ```python
-from animaid import Animate, HTMLCard, HTMLRow, HTMLColumn, HTMLString, HTMLButton
+from animaid import App, HTMLCard, HTMLRow, HTMLColumn, HTMLString, HTMLButton
 
-with Animate() as anim:
+with App() as app:
     dashboard = HTMLCard(
         title="Dashboard",
         children=[
@@ -190,7 +190,7 @@ with Animate() as anim:
             ]).gap(16),
         ],
     ).elevated()
-    anim.add(dashboard)
+    app.add(dashboard)
 ```
 
 ## Full-Window Layouts

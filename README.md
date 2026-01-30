@@ -53,7 +53,7 @@ AnimAID provides HTML-renderable versions of Python's built-in types:
 | `dict` | `HTMLDict` | Display as tables, cards, or definition lists |
 | `tuple` | `HTMLTuple` | Show tuples with labels or custom separators |
 | `set` | `HTMLSet` | Render unique items as tags or pills |
-| - | `Animate` | Interactive browser display with real-time updates |
+| - | `App` | Interactive browser display with real-time updates |
 
 ## Learning by Example
 
@@ -240,71 +240,71 @@ Border.solid(1, Color.gray)  # 1px solid gray
 Border.dashed(2, Color.red)  # 2px dashed red
 ```
 
-## Interactive Display (Animate)
+## Interactive Display (App)
 
-The `Animate` class provides a Tkinter-like interactive environment using HTML. The browser becomes the display surface where you can add, update, and remove AnimAID objects in real-time.
+The `App` class provides a Tkinter-like interactive environment using HTML. The browser becomes the display surface where you can add, update, and remove AnimAID objects in real-time.
 
 ```python
-from animaid import Animate, HTMLString, HTMLList
+from animaid import App, HTMLString, HTMLList
 
 # Create and start (opens browser automatically)
-anim = Animate()
-anim.run()
+app = App()
+app.run()
 
 # Add items - browser updates in real-time
-anim.add(HTMLString("Hello World!").bold().xl())
-anim.add(HTMLList(["Apple", "Banana", "Cherry"]).pills())
+app.add(HTMLString("Hello World!").bold().xl())
+app.add(HTMLList(["Apple", "Banana", "Cherry"]).pills())
 
 # Update existing items
-item_id = anim.add(HTMLString("Loading..."))
-anim.update(item_id, HTMLString("Done!").success())
+item_id = app.add(HTMLString("Loading..."))
+app.update(item_id, HTMLString("Done!").success())
 
 # Clean up
-anim.stop()
+app.stop()
 ```
 
 Or use the context manager:
 
 ```python
-with Animate() as anim:
-    anim.add(HTMLString("Temporary display").bold())
+with App() as app:
+    app.add(HTMLString("Temporary display").bold())
     input("Press Enter to exit...")
 # Server stops automatically
 ```
 
-**Note:** Animate requires the tutorial dependencies: `pip install animaid[tutorial]`
+**Note:** App requires the tutorial dependencies: `pip install animaid[tutorial]`
 
 ### Reactive Updates
 
-All HTML objects automatically notify Animate when their styles change. The browser updates in real-time:
+All HTML objects automatically notify App when their styles change. The browser updates in real-time:
 
 ```python
-from animaid import Animate, HTMLList, HTMLDict, HTMLString, HTMLInt
+from animaid import App, HTMLList, HTMLDict, HTMLString, HTMLInt
 
-anim = Animate()
-anim.run()
+app = App()
+app.run()
 
 # Styling changes trigger automatic updates for ALL types
 message = HTMLString("Hello")
-anim.add(message)
+app.add(message)
 message.bold().red()   # Browser updates automatically
 
 number = HTMLInt(42)
-anim.add(number)
+app.add(number)
 number.badge()         # Browser updates automatically
 
 # Mutable types also update on data changes
 scores = HTMLList([10, 20, 30]).pills()
-anim.add(scores)
+app.add(scores)
 scores.append(40)      # Browser shows [10, 20, 30, 40]
 scores[0] = 100        # Browser shows [100, 20, 30, 40]
 
 data = HTMLDict({"score": 0})
-anim.add(data)
+app.add(data)
 data["score"] = 500    # Browser updates automatically
 ```
 
-**Note:** Immutable types (`HTMLString`, `HTMLInt`, `HTMLFloat`, `HTMLTuple`) can have their styles changed in-place, but to change their underlying data/content, use `anim.update(item_id, new_value)`.
+**Note:** Immutable types (`HTMLString`, `HTMLInt`, `HTMLFloat`, `HTMLTuple`) can have their styles changed in-place, but to change their underlying data/content, use `app.update(item_id, new_value)`.
 
 ## Demo Programs
 
@@ -356,7 +356,7 @@ Full documentation is available at **[animaid.readthedocs.io](https://animaid.re
 The documentation includes:
 - Complete API reference
 - CSS helper types guide
-- Animate class usage
+- App class usage
 - Demo program gallery
 
 ## Interactive Tutorial
@@ -384,7 +384,7 @@ The tutorial provides:
 
 ### Input Widgets
 
-The tutorial also demonstrates interactive input widgets that work with the `Animate` class:
+The tutorial also demonstrates interactive input widgets that work with the `App` class:
 
 ![Input Widgets](https://raw.githubusercontent.com/jdrumgoole/animaid/main/docs/images/tutorial-app-inputs.png)
 

@@ -9,7 +9,7 @@ from typing import Self
 
 
 class HTMLButton:
-    """A clickable button widget for use with Animate.
+    """A clickable button widget for use with App.
 
     Buttons support click callbacks and styled presets for common use cases.
 
@@ -18,11 +18,11 @@ class HTMLButton:
         >>> button = HTMLButton("Submit").primary()
         >>> button = HTMLButton("Delete").danger().on_click(handle_delete)
 
-        # With Animate
-        >>> with Animate() as anim:
+        # With App
+        >>> with App() as app:
         ...     def on_click():
         ...         print("Button clicked!")
-        ...     anim.add(HTMLButton("Click").on_click(on_click))
+        ...     app.add(HTMLButton("Click").on_click(on_click))
     """
 
     def __init__(self, label: str) -> None:

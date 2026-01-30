@@ -16,7 +16,7 @@ from animaid.css_types import (
 from animaid.html_object import HTMLObject
 
 if TYPE_CHECKING:
-    from animaid.animate import Animate
+    from animaid.animate import App
 
 
 def _to_css(value: object) -> str:
@@ -42,7 +42,7 @@ class HTMLContainer(HTMLObject):
     _css_classes: list[str]
     _children: list[Any]
     _anim_id: str | None
-    _anim: "Animate | None"
+    _anim: "App | None"
     _obs_id: str
 
     def __init__(

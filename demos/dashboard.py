@@ -15,7 +15,7 @@ All updating in real-time!
 import random
 import time
 
-from animaid import Animate, HTMLDict, HTMLList, HTMLSet, HTMLString
+from animaid import App, HTMLDict, HTMLList, HTMLSet, HTMLString
 
 
 def main() -> None:
@@ -23,14 +23,14 @@ def main() -> None:
     print("Watch all components update together in real-time!")
     print()
 
-    with Animate(title="Demo: Dashboard") as anim:
+    with App(title="Demo: Dashboard") as app:
         # Dashboard Title
         title = HTMLString("System Dashboard").bold().xxl()
-        anim.add(title)
+        app.add(title)
 
         # Stats Panel (Dict)
         stats_label = HTMLString("System Stats").bold().large()
-        anim.add(stats_label)
+        app.add(stats_label)
 
         stats = (
             HTMLDict(
@@ -44,21 +44,21 @@ def main() -> None:
             .card()
             .key_width("100px")
         )
-        anim.add(stats)
+        app.add(stats)
 
         # Activity Log (List)
         log_label = HTMLString("Recent Activity").bold().large()
-        anim.add(log_label)
+        app.add(log_label)
 
         activity_log = HTMLList([]).menu().max_width("400px")
-        anim.add(activity_log)
+        app.add(activity_log)
 
         # Active Tags (Set)
         tags_label = HTMLString("Active Services").bold().large()
-        anim.add(tags_label)
+        app.add(tags_label)
 
         tags = HTMLSet({"web", "api"}).pills()
-        anim.add(tags)
+        app.add(tags)
 
         time.sleep(1)
 

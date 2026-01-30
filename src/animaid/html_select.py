@@ -21,10 +21,10 @@ class HTMLSelect:
         ...     value="Medium"
         ... ).on_change(handle_change)
 
-        # With Animate - two-way binding
-        >>> with Animate() as anim:
+        # With App - two-way binding
+        >>> with App() as app:
         ...     color = HTMLSelect(options=["Red", "Green", "Blue"])
-        ...     anim.add(color)
+        ...     app.add(color)
         ...     # Later, read the current value:
         ...     print(color.value)  # Selected option synced from browser
     """

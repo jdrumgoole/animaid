@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Demo: Countdown Timer
 
-Demonstrates: Real-time updates with anim.update(), color presets, size changes.
+Demonstrates: Real-time updates with app.update(), color presets, size changes.
 
 A countdown from 10 to 0 with color transitions:
 - Green (10-7): Safe zone
@@ -12,7 +12,7 @@ A countdown from 10 to 0 with color transitions:
 
 import time
 
-from animaid import Animate, HTMLString
+from animaid import App, HTMLString
 
 
 def main() -> None:
@@ -20,13 +20,13 @@ def main() -> None:
     print("Watch the browser for a countdown with color transitions!")
     print()
 
-    with Animate(title="Demo: Countdown Timer") as anim:
+    with App(title="Demo: Countdown Timer") as app:
         # Create the initial display
         title = HTMLString("Countdown Timer").bold().xxl()
         counter = HTMLString("10").xxl().green()
 
-        anim.add(title)
-        counter_id = anim.add(counter)
+        app.add(title)
+        counter_id = app.add(counter)
 
         time.sleep(1)
 
@@ -46,14 +46,14 @@ def main() -> None:
                 counter = HTMLString(str(i)).xxl().red()
                 print(f"  {i} - Red zone")
 
-            anim.update(counter_id, counter)
+            app.update(counter_id, counter)
             time.sleep(0.5)
 
         # Final blastoff message
         print()
         print("  BLASTOFF!")
         blastoff = HTMLString("BLASTOFF!").xxl().success().bold()
-        anim.update(counter_id, blastoff)
+        app.update(counter_id, blastoff)
 
         print()
         input("Press Enter to exit...")

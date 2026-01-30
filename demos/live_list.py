@@ -13,7 +13,7 @@ No manual refresh needed - mutations trigger automatic updates!
 
 import time
 
-from animaid import Animate, HTMLList, HTMLString
+from animaid import App, HTMLList, HTMLString
 
 
 def main() -> None:
@@ -21,13 +21,13 @@ def main() -> None:
     print("Watch items appear and disappear in real-time!")
     print()
 
-    with Animate(title="Demo: Shopping Cart") as anim:
+    with App(title="Demo: Shopping Cart") as app:
         # Create title and empty cart
         title = HTMLString("Shopping Cart").bold().xxl()
         cart = HTMLList([]).pills()
 
-        anim.add(title)
-        anim.add(cart)
+        app.add(title)
+        app.add(cart)
 
         time.sleep(1)
 

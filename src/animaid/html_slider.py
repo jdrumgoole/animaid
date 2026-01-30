@@ -18,10 +18,10 @@ class HTMLSlider:
         >>> slider = HTMLSlider(min=0, max=100, value=50)
         >>> slider = HTMLSlider(min=0, max=1, step=0.1).on_change(handle_change)
 
-        # With Animate - two-way binding
-        >>> with Animate() as anim:
+        # With App - two-way binding
+        >>> with App() as app:
         ...     volume = HTMLSlider(min=0, max=100, value=75)
-        ...     anim.add(volume)
+        ...     app.add(volume)
         ...     # Later, read the current value:
         ...     print(volume.value)  # Numeric value synced from browser
     """

@@ -13,11 +13,13 @@ Animaid provides tools to visualize and render Python data structures as styled 
 - **HTMLDict** - A `dict` subclass for rendering key-value pairs
 - **HTMLTuple** - A `tuple` subclass with support for named tuples
 - **HTMLSet** - A `set` subclass for rendering unique items as tags or pills
-- **Animate** - A Tkinter-like interactive GUI environment using HTML
+- **App** - A Tkinter-like interactive GUI environment using HTML
+- **Window** - Runtime window control for theming, title, and size
+- **WindowConfig** - Configuration for window initialization
 
 All classes support a fluent API for chaining style methods and are compatible with [Jinja2](https://jinja.palletsprojects.com/) templates via the `__html__()` protocol.
 
-The `Animate` class provides a real-time browser-based display where you can add, update, and remove AnimAID objects programmatically with live updates via WebSocket.
+The `App` class provides a real-time browser-based display where you can add, update, and remove AnimAID objects programmatically with live updates via WebSocket.
 
 ## Installation
 
@@ -230,14 +232,14 @@ HTMLSet({"A", "B", "C"}).horizontal().gap("10px")
 HTMLSet({"one", "two", "three"}).item_background("#e3f2fd").item_padding("8px 12px")
 ```
 
-HTMLSet is reactive - when used with Animate, adding or removing items automatically updates the browser:
+HTMLSet is reactive - when used with App, adding or removing items automatically updates the browser:
 
 ```python
-from animaid import Animate, HTMLSet
+from animaid import App, HTMLSet
 
-with Animate() as anim:
+with App() as app:
     tags = HTMLSet({"python"}).pills()
-    anim.add(tags)
+    app.add(tags)
 
     tags.add("javascript")  # Browser updates automatically
     tags.add("rust")        # Browser updates automatically
@@ -388,36 +390,36 @@ HTMLString("Hello").font_size("16px")   # Using string
 HTMLString("Hello").font_size(Size.px(16))  # Using CSS type
 ```
 
-## Animate - Interactive Display
+## App - Interactive Display
 
-The `Animate` class provides a Tkinter-like interactive GUI environment using HTML. The browser becomes the display surface, and AnimAID objects become widgets that can be added, updated, and removed programmatically with real-time visual feedback.
+The `App` class provides a Tkinter-like interactive GUI environment using HTML. The browser becomes the display surface, and AnimAID objects become widgets that can be added, updated, and removed programmatically with real-time visual feedback.
 
 ### Basic Usage
 
 ```python
-from animaid import Animate, HTMLString, HTMLList
+from animaid import App, HTMLString, HTMLList
 
 # Create and start the server (opens browser automatically)
-anim = Animate()
-anim.run()
+app = App()
+app.run()
 
 # Add items - browser updates in real-time
-anim.add(HTMLString("Hello World!").bold().xl())
-anim.add(HTMLString("This updates live").italic().blue())
-anim.add(HTMLList(["Apple", "Banana", "Cherry"]).pills())
+app.add(HTMLString("Hello World!").bold().xl())
+app.add(HTMLString("This updates live").italic().blue())
+app.add(HTMLList(["Apple", "Banana", "Cherry"]).pills())
 
 # Update an existing item
-item_id = anim.add(HTMLString("Loading...").muted())
-anim.update(item_id, HTMLString("Done!").success())
+item_id = app.add(HTMLString("Loading...").muted())
+app.update(item_id, HTMLString("Done!").success())
 
 # Remove items - by ID or by object
-anim.remove(item_id)  # By ID
-anim.remove(my_item)  # By object reference
-anim.clear(my_item)   # Alias for remove
-anim.clear_all()      # Clear all items
+app.remove(item_id)  # By ID
+app.remove(my_item)  # By object reference
+app.clear(my_item)   # Alias for remove
+app.clear_all()      # Clear all items
 
 # Stop the server when done
-anim.stop()
+app.stop()
 ```
 
 ### Context Manager
@@ -425,11 +427,11 @@ anim.stop()
 Use the context manager for automatic cleanup:
 
 ```python
-from animaid import Animate, HTMLString
+from animaid import App, HTMLString
 
-with Animate() as anim:
-    anim.add(HTMLString("Temporary display").bold())
-    anim.add(HTMLString("Server stops when context exits").muted())
+with App() as app:
+    app.add(HTMLString("Temporary display").bold())
+    app.add(HTMLString("Server stops when context exits").muted())
     input("Press Enter to exit...")
 # Server stops automatically when context exits
 ```
@@ -438,12 +440,98 @@ with Animate() as anim:
 
 ```python
 # Custom port and title
-anim = Animate(port=8300, title="My App")
+app = App(port=8300, title="My App")
+
+# With theme
+app = App(theme="dark")
+
+# With window size
+app = App(width=1280, height=720)
+
+# Using WindowConfig for presets
+from animaid import WindowConfig
+app = App(window=WindowConfig.compact(title="Tool"))
 
 # Disable auto-opening browser
-anim = Animate(auto_open=False)
-anim.run()
-print(f"Open browser at: {anim.url}")
+app = App(auto_open=False)
+app.run()
+print(f"Open browser at: {app.url}")
+```
+
+### Window Controls
+
+Access the `window` property to control the browser window at runtime:
+
+```python
+from animaid import App, HTMLString
+
+with App() as app:
+    # Switch to dark theme
+    app.window.dark()
+
+    # Update the title dynamically
+    for i in range(100):
+        app.window.set_title(f"Processing... {i}%")
+    app.window.set_title("Complete!")
+
+    # Resize the window
+    app.window.resize(1280, 720)
+
+    # Switch themes
+    app.window.set_theme("light")  # or "dark" or "auto"
+
+    # Set background color
+    app.window.set_background("#1a1a2e")
+
+    # Request fullscreen (browser may require user interaction)
+    app.window.fullscreen()
+```
+
+#### Window Methods
+
+| Method | Description |
+|--------|-------------|
+| `set_title(title)` | Update the browser tab title |
+| `set_theme(theme)` | Set theme ('light', 'dark', 'auto') |
+| `dark()` | Switch to dark theme |
+| `light()` | Switch to light theme |
+| `resize(width, height)` | Resize the window |
+| `set_background(color)` | Set the page background color |
+| `set_favicon(url)` | Set the page favicon |
+| `fullscreen()` | Request fullscreen mode |
+| `on_resize(callback)` | Register resize callback |
+| `on_close(callback)` | Register close callback |
+
+#### WindowConfig Presets
+
+```python
+from animaid import WindowConfig
+
+# Factory presets
+config = WindowConfig.compact(title="Tool")    # 600x400
+config = WindowConfig.standard(title="App")    # 1024x768
+config = WindowConfig.wide(title="Dashboard")  # 1280x720
+config = WindowConfig.dark(title="Dark Mode")  # Dark theme
+```
+
+#### Theme Toggle Example
+
+```python
+from animaid import App, HTMLButton
+
+with App() as app:
+    toggle = HTMLButton("Toggle Theme", variant="primary")
+    app.add(toggle)
+    dark = False
+
+    while True:
+        event = app.wait_for_event(timeout=0.5)
+        if event and event.event_type == "click":
+            dark = not dark
+            if dark:
+                app.window.dark()
+            else:
+                app.window.light()
 ```
 
 ### API Methods
@@ -473,7 +561,7 @@ print(f"Open browser at: {anim.url}")
 
 ### Installation
 
-The `Animate` class requires the tutorial dependencies:
+The `App` class requires the tutorial dependencies:
 
 ```bash
 pip install animaid[tutorial]
@@ -483,17 +571,17 @@ uv pip install animaid[tutorial]
 
 ### Reactive Updates
 
-Mutable HTML objects (`HTMLList`, `HTMLDict`, `HTMLSet`) automatically notify the Animate display when their contents change. This means you can mutate these objects directly and the browser will update in real-time without calling `update()`.
+Mutable HTML objects (`HTMLList`, `HTMLDict`, `HTMLSet`) automatically notify the App display when their contents change. This means you can mutate these objects directly and the browser will update in real-time without calling `update()`.
 
 ```python
-from animaid import Animate, HTMLList, HTMLDict, HTMLSet
+from animaid import App, HTMLList, HTMLDict, HTMLSet
 
-anim = Animate()
-anim.run()
+app = App()
+app.run()
 
 # Add a mutable list
 scores = HTMLList([10, 20, 30]).pills()
-anim.add(scores)
+app.add(scores)
 
 # Mutate the list - browser updates automatically!
 scores.append(40)      # Browser shows [10, 20, 30, 40]
@@ -502,57 +590,57 @@ scores.pop()           # Browser shows [100, 20, 30]
 
 # Same for dicts
 data = HTMLDict({"score": 0, "level": 1}).card()
-anim.add(data)
+app.add(data)
 data["score"] = 500    # Browser updates automatically
 
 # And sets
 tags = HTMLSet({"python", "html"}).pills()
-anim.add(tags)
+app.add(tags)
 tags.add("css")        # Browser updates automatically
 ```
 
-**Styling updates work on all types:** All HTML types (`HTMLString`, `HTMLInt`, `HTMLFloat`, `HTMLTuple`, `HTMLList`, `HTMLDict`, `HTMLSet`) automatically notify Animate when their styles change:
+**Styling updates work on all types:** All HTML types (`HTMLString`, `HTMLInt`, `HTMLFloat`, `HTMLTuple`, `HTMLList`, `HTMLDict`, `HTMLSet`) automatically notify App when their styles change:
 
 ```python
-from animaid import Animate, HTMLString, HTMLInt
+from animaid import App, HTMLString, HTMLInt
 
-anim = Animate()
-anim.run()
+app = App()
+app.run()
 
 # Style changes trigger automatic updates
 message = HTMLString("Hello")
-anim.add(message)
+app.add(message)
 message.bold()        # Browser updates automatically
 message.red()         # Browser updates automatically
 
 number = HTMLInt(42)
-anim.add(number)
+app.add(number)
 number.badge()        # Browser updates automatically
 ```
 
 **Immutable types need update() for data changes:** Since `HTMLString`, `HTMLInt`, `HTMLFloat`, and `HTMLTuple` inherit from Python's immutable types, you cannot change their underlying data. To display different content, use the `update()` method:
 
 ```python
-from animaid import Animate, HTMLString
+from animaid import App, HTMLString
 
-anim = Animate()
-anim.run()
+app = App()
+app.run()
 
 message = HTMLString("Loading...").muted()
-item_id = anim.add(message)
+item_id = app.add(message)
 
 # Must use update() to change the content (not just style)
-anim.update(item_id, HTMLString("Complete!").success())
+app.update(item_id, HTMLString("Complete!").success())
 ```
 
 **Manual refresh:** If you modify an object through a method that bypasses the notification system, use `refresh()` or `refresh_all()`:
 
 ```python
 # Force re-render of a specific item
-anim.refresh(item_id)
+app.refresh(item_id)
 
 # Force re-render of all items
-anim.refresh_all()
+app.refresh_all()
 ```
 
 ## Demo Programs

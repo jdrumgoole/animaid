@@ -11,7 +11,7 @@ Shows how:
 
 import time
 
-from animaid import Animate, HTMLString
+from animaid import App, HTMLString
 
 
 def main() -> None:
@@ -19,17 +19,17 @@ def main() -> None:
     print("Watch the message appear character by character, then get styled!")
     print()
 
-    with Animate(title="Demo: Typewriter Effect") as anim:
+    with App(title="Demo: Typewriter Effect") as app:
         # Title
         title = HTMLString("Typewriter Effect").bold().xxl()
-        anim.add(title)
+        app.add(title)
 
         # The message to type out
         message = "Hello, AnimAID!"
 
         # Start with empty text
         text = HTMLString("").large()
-        text_id = anim.add(text)
+        text_id = app.add(text)
 
         time.sleep(0.5)
 
@@ -39,7 +39,7 @@ def main() -> None:
         for char in message:
             current += char
             text = HTMLString(current).large()
-            anim.update(text_id, text)
+            app.update(text_id, text)
             print(f"  '{current}'")
             time.sleep(0.1)
 
@@ -52,31 +52,31 @@ def main() -> None:
         # 1. Make bold
         print("  + bold")
         text = HTMLString(current).large().bold()
-        anim.update(text_id, text)
+        app.update(text_id, text)
         time.sleep(0.5)
 
         # 2. Add color
         print("  + blue color")
         text = HTMLString(current).large().bold().blue()
-        anim.update(text_id, text)
+        app.update(text_id, text)
         time.sleep(0.5)
 
         # 3. Make larger
         print("  + extra large size")
         text = HTMLString(current).xxl().bold().blue()
-        anim.update(text_id, text)
+        app.update(text_id, text)
         time.sleep(0.5)
 
         # 4. Add background
         print("  + yellow background")
         text = HTMLString(current).xxl().bold().blue().bg_yellow()
-        anim.update(text_id, text)
+        app.update(text_id, text)
         time.sleep(0.5)
 
         # 5. Add padding
         print("  + padding")
         text = HTMLString(current).xxl().bold().blue().bg_yellow().padding("10px 20px")
-        anim.update(text_id, text)
+        app.update(text_id, text)
 
         print()
         print("Final styled message complete!")

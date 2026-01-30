@@ -11,7 +11,7 @@ Visualizes bubble sort step-by-step:
 
 import time
 
-from animaid import Animate, HTMLList, HTMLString
+from animaid import App, HTMLList, HTMLString
 
 
 def create_styled_list(
@@ -45,14 +45,14 @@ def main() -> None:
     print("Watch bubble sort in action!")
     print()
 
-    with Animate(title="Demo: Bubble Sort Visualizer") as anim:
+    with App(title="Demo: Bubble Sort Visualizer") as app:
         # Title
         title = HTMLString("Bubble Sort Visualizer").bold().xxl()
-        anim.add(title)
+        app.add(title)
 
         # Status
         status = HTMLString("Starting sort...").muted()
-        status_id = anim.add(status)
+        status_id = app.add(status)
 
         # Initial array
         arr = [64, 34, 25, 12, 22, 11, 90]
@@ -61,7 +61,7 @@ def main() -> None:
 
         # Create initial display
         array_list = create_styled_list(arr)
-        array_id = anim.add(array_list)
+        array_id = app.add(array_list)
 
         time.sleep(1)
 
@@ -76,9 +76,9 @@ def main() -> None:
 
                 # Highlight comparison
                 status = HTMLString(f"Comparing {arr[j]} and {arr[j + 1]}...").info()
-                anim.update(status_id, status)
+                app.update(status_id, status)
                 array_list = create_styled_list(arr, j, j + 1)
-                anim.update(array_id, array_list)
+                app.update(array_id, array_list)
                 time.sleep(0.3)
 
                 if arr[j] > arr[j + 1]:
@@ -88,9 +88,9 @@ def main() -> None:
 
                     # Show swap
                     status = HTMLString(f"Swapped! {arr[j]} <-> {arr[j + 1]}").success()
-                    anim.update(status_id, status)
+                    app.update(status_id, status)
                     array_list = create_styled_list(arr, j, j + 1, swapped=True)
-                    anim.update(array_id, array_list)
+                    app.update(array_id, array_list)
                     print(f"  Swap: {arr[j]} <-> {arr[j + 1]} -> {arr}")
                     time.sleep(0.3)
 
@@ -100,7 +100,7 @@ def main() -> None:
             .success()
             .bold()
         )
-        anim.update(status_id, status)
+        app.update(status_id, status)
 
         # Create final display with all green
         final_items = []
@@ -109,7 +109,7 @@ def main() -> None:
             final_items.append(item)
 
         array_list = HTMLList(final_items).horizontal().gap("8px")
-        anim.update(array_id, array_list)
+        app.update(array_id, array_list)
 
         print()
         print(f"Final sorted array: {arr}")

@@ -11,7 +11,7 @@ Shows a simulated todo list that:
 
 import time
 
-from animaid import Animate, HTMLList, HTMLString
+from animaid import App, HTMLList, HTMLString
 
 
 def main() -> None:
@@ -19,18 +19,18 @@ def main() -> None:
     print("Watch tasks being added, completed, and removed!")
     print()
 
-    with Animate(title="Demo: Todo List") as anim:
+    with App(title="Demo: Todo List") as app:
         # Title
         title = HTMLString("My Todo List").bold().xxl()
-        anim.add(title)
+        app.add(title)
 
         # Status display
         status = HTMLString("Adding tasks...").muted()
-        status_id = anim.add(status)
+        status_id = app.add(status)
 
         # Initialize empty todo list with menu styling
         todos = HTMLList([]).menu().gap("8px")
-        anim.add(todos)
+        app.add(todos)
 
         time.sleep(1)
 
@@ -56,7 +56,7 @@ def main() -> None:
 
         # Mark some tasks as complete
         status = HTMLString("Completing tasks...").muted()
-        anim.update(status_id, status)
+        app.update(status_id, status)
 
         print("Completing tasks:")
         completed_indices = [0, 2, 4]  # Complete every other task
@@ -74,7 +74,7 @@ def main() -> None:
 
         # Remove completed tasks (work backwards to maintain indices)
         status = HTMLString("Removing completed tasks...").muted()
-        anim.update(status_id, status)
+        app.update(status_id, status)
 
         print("Removing completed tasks:")
         for idx in sorted(completed_indices, reverse=True):
@@ -88,7 +88,7 @@ def main() -> None:
         # Final status
         remaining = len(todos)
         status = HTMLString(f"{remaining} tasks remaining").info()
-        anim.update(status_id, status)
+        app.update(status_id, status)
 
         print(f"Done! {remaining} tasks remaining.")
 

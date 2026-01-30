@@ -47,7 +47,7 @@ Use the dropdown selector to switch between object types. Each type has its own 
 
 ### Input Widgets Tab
 
-The Input Widgets tab demonstrates interactive input widgets that work with the `Animate` class:
+The Input Widgets tab demonstrates interactive input widgets that work with the `App` class:
 
 - **HTMLButton** - Clickable buttons with styles (primary, success, danger, warning)
 - **HTMLTextInput** - Text input fields with placeholder and change events

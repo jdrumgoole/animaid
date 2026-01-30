@@ -243,11 +243,11 @@ import sys
 sys.path.insert(0, "src")
 import animaid.animate as animate_mod
 
-# Patch Animate to use custom port
-_orig_init = animate_mod.Animate.__init__
+# Patch App to use custom port
+_orig_init = animate_mod.App.__init__
 def _patched_init(self, port={port}, **kwargs):
     return _orig_init(self, port=port, **kwargs)
-animate_mod.Animate.__init__ = _patched_init
+animate_mod.App.__init__ = _patched_init
 
 # Now run the demo
 exec(open("{demo_script}").read())

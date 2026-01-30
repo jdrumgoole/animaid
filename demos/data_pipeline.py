@@ -11,7 +11,7 @@ Simulates an ETL (Extract-Transform-Load) pipeline:
 
 import time
 
-from animaid import Animate, HTMLDict, HTMLString
+from animaid import App, HTMLDict, HTMLString
 
 
 def create_progress_bar(percent: int) -> str:
@@ -26,10 +26,10 @@ def main() -> None:
     print("Watch the ETL pipeline process data in stages!")
     print()
 
-    with Animate(title="Demo: Data Pipeline") as anim:
+    with App(title="Demo: Data Pipeline") as app:
         # Title
         title = HTMLString("ETL Data Pipeline").bold().xxl()
-        anim.add(title)
+        app.add(title)
 
         # Pipeline stages
         stages = ["Extract", "Transform", "Load"]
@@ -47,14 +47,14 @@ def main() -> None:
             .key_bold()
             .key_width("120px")
         )
-        anim.add(pipeline_status)
+        app.add(pipeline_status)
 
         # Overall progress
         overall_label = HTMLString("Overall Progress").bold().large()
-        anim.add(overall_label)
+        app.add(overall_label)
 
         overall_progress = HTMLString("0% Complete").muted()
-        overall_id = anim.add(overall_progress)
+        overall_id = app.add(overall_progress)
 
         time.sleep(1)
 
@@ -76,7 +76,7 @@ def main() -> None:
                 # Update overall progress
                 overall_pct = ((stage_idx * 100) + percent) // len(stages)
                 overall_progress = HTMLString(f"{overall_pct}% Complete").info()
-                anim.update(overall_id, overall_progress)
+                app.update(overall_id, overall_progress)
 
                 print(f"  {stage}: {percent}%")
                 time.sleep(0.1)
@@ -89,11 +89,11 @@ def main() -> None:
 
         # All done!
         overall_progress = HTMLString("100% Complete!").success().bold()
-        anim.update(overall_id, overall_progress)
+        app.update(overall_id, overall_progress)
 
         # Add success message
         success_msg = HTMLString("Pipeline completed successfully!").success().large()
-        anim.add(success_msg)
+        app.add(success_msg)
 
         print("Pipeline completed successfully!")
 

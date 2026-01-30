@@ -18,10 +18,10 @@ class HTMLCheckbox:
         >>> checkbox = HTMLCheckbox("Accept terms", checked=False)
         >>> checkbox = HTMLCheckbox("Enable feature").on_change(handle_change)
 
-        # With Animate - two-way binding
-        >>> with Animate() as anim:
+        # With App - two-way binding
+        >>> with App() as app:
         ...     terms = HTMLCheckbox("I accept the terms")
-        ...     anim.add(terms)
+        ...     app.add(terms)
         ...     # Later, read the current value:
         ...     print(terms.checked)  # True/False synced from browser
     """

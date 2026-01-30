@@ -14,7 +14,7 @@ Shows:
 import time
 
 from animaid import (
-    Animate,
+    App,
     HTMLCard,
     HTMLColumn,
     HTMLRow,
@@ -29,16 +29,16 @@ def main() -> None:
     print("Watch different card styles appear!")
     print()
 
-    with Animate(title="Demo: HTMLCard") as anim:
+    with App(title="Demo: HTMLCard") as app:
         # Title
         title = HTMLString("HTMLCard Demo").bold().xxl()
-        anim.add(title)
-        anim.add(HTMLString("Visual grouping with titles, shadows, and borders").muted())
+        app.add(title)
+        app.add(HTMLString("Visual grouping with titles, shadows, and borders").muted())
 
         time.sleep(0.5)
 
         # Section 1: Basic Cards
-        anim.add(HTMLString("Basic Cards").bold().xl().styled(margin_top="20px"))
+        app.add(HTMLString("Basic Cards").bold().xl().styled(margin_top="20px"))
 
         row1 = HTMLRow([
             HTMLCard(
@@ -54,12 +54,12 @@ def main() -> None:
                 ],
             ),
         ]).gap(16)
-        anim.add(row1)
+        app.add(row1)
 
         time.sleep(0.8)
 
         # Section 2: Shadow Variations
-        anim.add(HTMLString("Shadow Variations").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Shadow Variations").bold().xl().styled(margin_top="24px"))
 
         row2 = HTMLRow([
             HTMLCard(
@@ -79,12 +79,12 @@ def main() -> None:
                 children=[HTMLString("ShadowSize.LG")],
             ).shadow(ShadowSize.LG),
         ]).gap(16)
-        anim.add(row2)
+        app.add(row2)
 
         time.sleep(0.8)
 
         # Section 3: Presets
-        anim.add(HTMLString("Card Presets").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Card Presets").bold().xl().styled(margin_top="24px"))
 
         row3 = HTMLRow([
             HTMLCard(
@@ -104,12 +104,12 @@ def main() -> None:
                 children=[HTMLString(".flat() preset")],
             ).flat().styled(background_color="#f5f5f5"),
         ]).gap(16)
-        anim.add(row3)
+        app.add(row3)
 
         time.sleep(0.8)
 
         # Section 4: Filled Cards
-        anim.add(HTMLString("Filled Cards").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Filled Cards").bold().xl().styled(margin_top="24px"))
 
         row4 = HTMLRow([
             HTMLCard(
@@ -129,12 +129,12 @@ def main() -> None:
                 children=[HTMLString("Warning styling")],
             ).filled("#fef2f2"),
         ]).gap(16)
-        anim.add(row4)
+        app.add(row4)
 
         time.sleep(0.8)
 
         # Section 5: Nested Content
-        anim.add(HTMLString("Cards with Nested Content").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Cards with Nested Content").bold().xl().styled(margin_top="24px"))
 
         stats_card = HTMLCard(
             title="User Statistics",
@@ -155,12 +155,12 @@ def main() -> None:
                 ]).gap(8),
             ],
         ).elevated().max_width(300)
-        anim.add(stats_card)
+        app.add(stats_card)
 
         time.sleep(0.8)
 
         # Section 6: Rounded Corners
-        anim.add(HTMLString("Border Radius Options").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Border Radius Options").bold().xl().styled(margin_top="24px"))
 
         row5 = HTMLRow([
             HTMLCard(
@@ -176,7 +176,7 @@ def main() -> None:
                 children=[HTMLString("RadiusSize.XL")],
             ).rounded(RadiusSize.XL).bordered(),
         ]).gap(16)
-        anim.add(row5)
+        app.add(row5)
 
         print()
         print("Card demo complete!")

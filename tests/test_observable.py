@@ -253,40 +253,40 @@ class TestHTMLSetObservable:
         assert styled is html_set
 
 
-class TestAnimateWithObservable:
-    """Test Animate auto-updates when observable items change."""
+class TestAppWithObservable:
+    """Test App auto-updates when observable items change."""
 
-    def test_animate_tracks_obs_id(self) -> None:
-        """Animate should track obs_id when adding observable items."""
-        from animaid import Animate
+    def test_app_tracks_obs_id(self) -> None:
+        """App should track obs_id when adding observable items."""
+        from animaid import App
 
-        anim = Animate(port=8290, auto_open=False)
-        anim.run()
+        app = App(port=8290, auto_open=False)
+        app.run()
         time.sleep(0.5)
 
         try:
             html_list = HTMLList([1, 2, 3])
-            item_id = anim.add(html_list)
+            item_id = app.add(html_list)
 
-            assert html_list._obs_id in anim._obs_id_to_item_id
-            assert anim._obs_id_to_item_id[html_list._obs_id] == item_id
+            assert html_list._obs_id in app._obs_id_to_item_id
+            assert app._obs_id_to_item_id[html_list._obs_id] == item_id
         finally:
-            anim.stop()
+            app.stop()
 
-    def test_animate_updates_on_list_change(self) -> None:
-        """Animate should update browser when list changes."""
-        from animaid import Animate
+    def test_app_updates_on_list_change(self) -> None:
+        """App should update browser when list changes."""
+        from animaid import App
 
-        anim = Animate(port=8291, auto_open=False)
-        anim.run()
+        app = App(port=8291, auto_open=False)
+        app.run()
         time.sleep(0.5)
 
         try:
             html_list = HTMLList([1, 2, 3])
-            anim.add(html_list)
+            app.add(html_list)
 
             # Verify initial state
-            state = anim.get_full_state()
+            state = app.get_full_state()
             assert "1" in state[0]["html"]
             assert "4" not in state[0]["html"]
 
@@ -297,25 +297,25 @@ class TestAnimateWithObservable:
             time.sleep(0.1)
 
             # Verify updated state
-            state = anim.get_full_state()
+            state = app.get_full_state()
             assert "4" in state[0]["html"]
         finally:
-            anim.stop()
+            app.stop()
 
-    def test_animate_updates_on_dict_change(self) -> None:
-        """Animate should update browser when dict changes."""
-        from animaid import Animate
+    def test_app_updates_on_dict_change(self) -> None:
+        """App should update browser when dict changes."""
+        from animaid import App
 
-        anim = Animate(port=8292, auto_open=False)
-        anim.run()
+        app = App(port=8292, auto_open=False)
+        app.run()
         time.sleep(0.5)
 
         try:
             html_dict = HTMLDict({"score": 0})
-            anim.add(html_dict)
+            app.add(html_dict)
 
             # Verify initial state
-            state = anim.get_full_state()
+            state = app.get_full_state()
             assert "0" in state[0]["html"]
 
             # Mutate the dict
@@ -324,22 +324,22 @@ class TestAnimateWithObservable:
             time.sleep(0.1)
 
             # Verify updated state
-            state = anim.get_full_state()
+            state = app.get_full_state()
             assert "100" in state[0]["html"]
         finally:
-            anim.stop()
+            app.stop()
 
-    def test_animate_updates_on_set_change(self) -> None:
-        """Animate should update browser when set changes."""
-        from animaid import Animate
+    def test_app_updates_on_set_change(self) -> None:
+        """App should update browser when set changes."""
+        from animaid import App
 
-        anim = Animate(port=8293, auto_open=False)
-        anim.run()
+        app = App(port=8293, auto_open=False)
+        app.run()
         time.sleep(0.5)
 
         try:
             html_set = HTMLSet({1, 2, 3})
-            anim.add(html_set)
+            app.add(html_set)
 
             # Mutate the set
             html_set.add(99)
@@ -347,64 +347,64 @@ class TestAnimateWithObservable:
             time.sleep(0.1)
 
             # Verify updated state
-            state = anim.get_full_state()
+            state = app.get_full_state()
             assert "99" in state[0]["html"]
         finally:
-            anim.stop()
+            app.stop()
 
-    def test_animate_cleans_up_obs_id_on_remove(self) -> None:
-        """Animate should clean up obs_id mapping when item is removed."""
-        from animaid import Animate
+    def test_app_cleans_up_obs_id_on_remove(self) -> None:
+        """App should clean up obs_id mapping when item is removed."""
+        from animaid import App
 
-        anim = Animate(port=8294, auto_open=False)
-        anim.run()
+        app = App(port=8294, auto_open=False)
+        app.run()
         time.sleep(0.5)
 
         try:
             html_list = HTMLList([1, 2, 3])
-            item_id = anim.add(html_list)
+            item_id = app.add(html_list)
 
-            assert html_list._obs_id in anim._obs_id_to_item_id
+            assert html_list._obs_id in app._obs_id_to_item_id
 
-            anim.remove(item_id)
+            app.remove(item_id)
 
-            assert html_list._obs_id not in anim._obs_id_to_item_id
+            assert html_list._obs_id not in app._obs_id_to_item_id
         finally:
-            anim.stop()
+            app.stop()
 
-    def test_animate_cleans_up_obs_id_on_clear_all(self) -> None:
-        """Animate should clean up all obs_id mappings when clear_all is called."""
-        from animaid import Animate
+    def test_app_cleans_up_obs_id_on_clear_all(self) -> None:
+        """App should clean up all obs_id mappings when clear_all is called."""
+        from animaid import App
 
-        anim = Animate(port=8295, auto_open=False)
-        anim.run()
+        app = App(port=8295, auto_open=False)
+        app.run()
         time.sleep(0.5)
 
         try:
             html_list = HTMLList([1, 2, 3])
             html_dict = HTMLDict({"a": 1})
-            anim.add(html_list)
-            anim.add(html_dict)
+            app.add(html_list)
+            app.add(html_dict)
 
-            assert len(anim._obs_id_to_item_id) == 2
+            assert len(app._obs_id_to_item_id) == 2
 
-            anim.clear_all()
+            app.clear_all()
 
-            assert len(anim._obs_id_to_item_id) == 0
+            assert len(app._obs_id_to_item_id) == 0
         finally:
-            anim.stop()
+            app.stop()
 
     def test_refresh_method(self) -> None:
         """Refresh should re-render and broadcast a single item."""
-        from animaid import Animate
+        from animaid import App
 
-        anim = Animate(port=8296, auto_open=False)
-        anim.run()
+        app = App(port=8296, auto_open=False)
+        app.run()
         time.sleep(0.5)
 
         try:
             html_list = HTMLList([1, 2, 3])
-            item_id = anim.add(html_list)
+            item_id = app.add(html_list)
 
             # Manually modify without triggering notify
             list.append(html_list, 4)  # Bypass our override
@@ -413,33 +413,33 @@ class TestAnimateWithObservable:
             # Note: get_full_state re-renders, so we skip checking here
 
             # Call refresh
-            result = anim.refresh(item_id)
+            result = app.refresh(item_id)
             assert result is True
 
             # Refresh on non-existent ID
-            result = anim.refresh("nonexistent")
+            result = app.refresh("nonexistent")
             assert result is False
         finally:
-            anim.stop()
+            app.stop()
 
     def test_refresh_all_method(self) -> None:
         """Refresh_all should re-render all items."""
-        from animaid import Animate
+        from animaid import App
 
-        anim = Animate(port=8297, auto_open=False)
-        anim.run()
+        app = App(port=8297, auto_open=False)
+        app.run()
         time.sleep(0.5)
 
         try:
             html_list = HTMLList([1, 2, 3])
             html_dict = HTMLDict({"a": 1})
-            anim.add(html_list)
-            anim.add(html_dict)
+            app.add(html_list)
+            app.add(html_dict)
 
             # This should not raise
-            anim.refresh_all()
+            app.refresh_all()
         finally:
-            anim.stop()
+            app.stop()
 
 
 class TestImmutableTypesObservable:
@@ -549,20 +549,20 @@ class TestImmutableTypesObservable:
         finally:
             pub.unsubscribe(listener, "animaid.changed")
 
-    def test_animate_updates_on_string_styling(self) -> None:
-        """Animate should update browser when HTMLString is styled."""
-        from animaid import Animate, HTMLString
+    def test_app_updates_on_string_styling(self) -> None:
+        """App should update browser when HTMLString is styled."""
+        from animaid import App, HTMLString
 
-        anim = Animate(port=8298, auto_open=False)
-        anim.run()
+        app = App(port=8298, auto_open=False)
+        app.run()
         time.sleep(0.5)
 
         try:
             s = HTMLString("hello")
-            anim.add(s)
+            app.add(s)
 
             # Verify initial state
-            state = anim.get_full_state()
+            state = app.get_full_state()
             assert "font-weight: bold" not in state[0]["html"]
 
             # Style the string
@@ -571,25 +571,25 @@ class TestImmutableTypesObservable:
             time.sleep(0.1)
 
             # Verify updated state
-            state = anim.get_full_state()
+            state = app.get_full_state()
             assert "font-weight: bold" in state[0]["html"]
         finally:
-            anim.stop()
+            app.stop()
 
-    def test_animate_updates_on_int_styling(self) -> None:
-        """Animate should update browser when HTMLInt is styled."""
-        from animaid import Animate, HTMLInt
+    def test_app_updates_on_int_styling(self) -> None:
+        """App should update browser when HTMLInt is styled."""
+        from animaid import App, HTMLInt
 
-        anim = Animate(port=8299, auto_open=False)
-        anim.run()
+        app = App(port=8299, auto_open=False)
+        app.run()
         time.sleep(0.5)
 
         try:
             n = HTMLInt(42)
-            anim.add(n)
+            app.add(n)
 
             # Verify initial state
-            state = anim.get_full_state()
+            state = app.get_full_state()
             assert "color: red" not in state[0]["html"]
 
             # Style the int
@@ -598,7 +598,7 @@ class TestImmutableTypesObservable:
             time.sleep(0.1)
 
             # Verify updated state
-            state = anim.get_full_state()
+            state = app.get_full_state()
             assert "color: red" in state[0]["html"]
         finally:
-            anim.stop()
+            app.stop()

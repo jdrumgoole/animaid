@@ -526,39 +526,39 @@ class TestHTMLSelect:
         assert "&lt;script&gt;" in html
 
 
-class TestAnimateEventHandling:
-    """Tests for Animate event handling."""
+class TestAppEventHandling:
+    """Tests for App event handling."""
 
     def test_event_queue_exists(self) -> None:
-        """Test that Animate has event queue."""
-        from animaid import Animate
+        """Test that App has event queue."""
+        from animaid import App
 
-        anim = Animate(auto_open=False)
-        assert hasattr(anim, "_event_queue")
+        app = App(auto_open=False)
+        assert hasattr(app, "_event_queue")
 
     def test_wait_for_event_timeout(self) -> None:
         """Test wait_for_event with timeout."""
-        from animaid import Animate
+        from animaid import App
 
-        anim = Animate(auto_open=False)
-        event = anim.wait_for_event(timeout=0.01)
+        app = App(auto_open=False)
+        event = app.wait_for_event(timeout=0.01)
         assert event is None
 
     def test_get_events_empty(self) -> None:
         """Test get_events when queue is empty."""
-        from animaid import Animate
+        from animaid import App
 
-        anim = Animate(auto_open=False)
-        events = anim.get_events()
+        app = App(auto_open=False)
+        events = app.get_events()
         assert events == []
 
     def test_handle_input_event_click(self) -> None:
         """Test handling a click event."""
-        from animaid import Animate, HTMLButton
+        from animaid import App, HTMLButton
 
-        anim = Animate(auto_open=False)
+        app = App(auto_open=False)
         button = HTMLButton("Test")
-        anim.add(button, id="btn_1")
+        app.add(button, id="btn_1")
 
         clicked = False
 
@@ -569,21 +569,21 @@ class TestAnimateEventHandling:
         button._on_click = on_click
 
         # Simulate event from browser
-        anim.handle_input_event({"id": "btn_1", "event": "click"})
+        app.handle_input_event({"id": "btn_1", "event": "click"})
 
         assert clicked
-        events = anim.get_events()
+        events = app.get_events()
         assert len(events) == 1
         assert events[0].id == "btn_1"
         assert events[0].event_type == "click"
 
     def test_handle_input_event_change(self) -> None:
         """Test handling a change event."""
-        from animaid import Animate, HTMLTextInput
+        from animaid import App, HTMLTextInput
 
-        anim = Animate(auto_open=False)
+        app = App(auto_open=False)
         text = HTMLTextInput(value="initial")
-        anim.add(text, id="text_1")
+        app.add(text, id="text_1")
 
         received = []
 
@@ -593,21 +593,21 @@ class TestAnimateEventHandling:
         text._on_change = on_change
 
         # Simulate event from browser
-        anim.handle_input_event({"id": "text_1", "event": "change", "value": "new"})
+        app.handle_input_event({"id": "text_1", "event": "change", "value": "new"})
 
         assert text.value == "new"
         assert received == ["new"]
-        events = anim.get_events()
+        events = app.get_events()
         assert len(events) == 1
         assert events[0].value == "new"
 
     def test_handle_input_event_submit(self) -> None:
         """Test handling a submit event."""
-        from animaid import Animate, HTMLTextInput
+        from animaid import App, HTMLTextInput
 
-        anim = Animate(auto_open=False)
+        app = App(auto_open=False)
         text = HTMLTextInput(value="test")
-        anim.add(text, id="text_1")
+        app.add(text, id="text_1")
 
         submitted = []
 
@@ -617,7 +617,7 @@ class TestAnimateEventHandling:
         text._on_submit = on_submit
 
         # Simulate event from browser
-        anim.handle_input_event({"id": "text_1", "event": "submit", "value": "test"})
+        app.handle_input_event({"id": "text_1", "event": "submit", "value": "test"})
 
         assert submitted == ["test"]
 

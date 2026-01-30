@@ -11,10 +11,10 @@
 
 ## Interactive Display
 
-### Animate
+### App
 
 ```{eval-rst}
-.. autoclass:: animaid.Animate
+.. autoclass:: animaid.App
    :members:
    :undoc-members:
    :show-inheritance:

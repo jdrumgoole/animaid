@@ -2197,7 +2197,7 @@ async def get_input_code(req: InputWidgetRequest) -> dict[str, str]:
 
         if req.show_callback:
             lines.append("")
-            lines.append("# With Animate for interactivity:")
+            lines.append("# With App for interactivity:")
             lines.append("# def on_click():")
             lines.append('#     print("Button clicked!")')
             lines.append("# button = button.on_click(on_click)")
@@ -2223,7 +2223,7 @@ async def get_input_code(req: InputWidgetRequest) -> dict[str, str]:
 
         if req.show_callback:
             lines.append("")
-            lines.append("# With Animate for interactivity:")
+            lines.append("# With App for interactivity:")
             lines.append("# def on_change(value):")
             lines.append('#     print(f"Value changed to: {value}")')
             lines.append("# text_input = text_input.on_change(on_change)")
@@ -2247,7 +2247,7 @@ async def get_input_code(req: InputWidgetRequest) -> dict[str, str]:
 
         if req.show_callback:
             lines.append("")
-            lines.append("# With Animate for interactivity:")
+            lines.append("# With App for interactivity:")
             lines.append("# def on_change(checked):")
             lines.append('#     print(f"Checkbox is now: {checked}")')
             lines.append("# checkbox = checkbox.on_change(on_change)")
@@ -2271,7 +2271,7 @@ async def get_input_code(req: InputWidgetRequest) -> dict[str, str]:
 
         if req.show_callback:
             lines.append("")
-            lines.append("# With Animate for interactivity:")
+            lines.append("# With App for interactivity:")
             lines.append("# def on_change(value):")
             lines.append('#     print(f"Slider value: {value}")')
             lines.append("# slider = slider.on_change(on_change)")
@@ -2299,7 +2299,7 @@ async def get_input_code(req: InputWidgetRequest) -> dict[str, str]:
 
         if req.show_callback:
             lines.append("")
-            lines.append("# With Animate for interactivity:")
+            lines.append("# With App for interactivity:")
             lines.append("# def on_change(value):")
             lines.append('#     print(f"Selected: {value}")')
             lines.append("# select = select.on_change(on_change)")

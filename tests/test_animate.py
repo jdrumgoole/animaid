@@ -1,54 +1,54 @@
-"""Tests for Animate class."""
+"""Tests for App class."""
 
 import time
 import urllib.error
 import urllib.request
 
-from animaid import Animate, HTMLString
+from animaid import App, HTMLString
 
 
-class TestAnimateBasics:
-    """Test basic Animate functionality."""
+class TestAppBasics:
+    """Test basic App functionality."""
 
     def test_initialization(self) -> None:
-        """Animate should initialize with default values."""
-        anim = Animate()
+        """App should initialize with default values."""
+        anim = App()
         assert anim.port == 8200
         assert anim.title == "AnimAID"
         assert anim.is_running is False
 
     def test_initialization_custom_values(self) -> None:
-        """Animate should accept custom port and title."""
-        anim = Animate(port=8250, title="Custom Title")
+        """App should accept custom port and title."""
+        anim = App(port=8250, title="Custom Title")
         assert anim.port == 8250
         assert anim.title == "Custom Title"
 
     def test_url_property(self) -> None:
         """URL property should return correct server URL."""
-        anim = Animate(port=8300)
+        anim = App(port=8300)
         assert anim.url == "http://127.0.0.1:8300"
 
 
-class TestAnimateItemManagement:
+class TestAppItemManagement:
     """Test item add/update/remove/clear methods."""
 
     def test_add_item(self) -> None:
         """Add should return ID and store item."""
-        anim = Animate()
+        anim = App()
         item_id = anim.add(HTMLString("Hello"))
         assert item_id == "string_1"
         assert anim.get(item_id) is not None
 
     def test_add_item_with_custom_id(self) -> None:
         """Add should accept custom ID."""
-        anim = Animate()
+        anim = App()
         item_id = anim.add(HTMLString("Hello"), id="custom_id")
         assert item_id == "custom_id"
         assert anim.get("custom_id") is not None
 
     def test_add_multiple_items(self) -> None:
         """Add should generate sequential IDs per type."""
-        anim = Animate()
+        anim = App()
         id1 = anim.add(HTMLString("First"))
         id2 = anim.add(HTMLString("Second"))
         id3 = anim.add(HTMLString("Third"))
@@ -60,7 +60,7 @@ class TestAnimateItemManagement:
         """Add should generate type-specific IDs."""
         from animaid import HTMLDict, HTMLInt, HTMLList
 
-        anim = Animate()
+        anim = App()
         str_id = anim.add(HTMLString("Hello"))
         list_id = anim.add(HTMLList([1, 2, 3]))
         dict_id = anim.add(HTMLDict({"a": 1}))
@@ -75,13 +75,13 @@ class TestAnimateItemManagement:
 
     def test_add_string_item(self) -> None:
         """Add should accept plain strings."""
-        anim = Animate()
+        anim = App()
         item_id = anim.add("Plain text")
         assert anim.get(item_id) == "Plain text"
 
     def test_update_item(self) -> None:
         """Update should change item content."""
-        anim = Animate()
+        anim = App()
         item_id = anim.add(HTMLString("Original"))
         result = anim.update(item_id, HTMLString("Updated"))
         assert result is True
@@ -91,13 +91,13 @@ class TestAnimateItemManagement:
 
     def test_update_nonexistent_item(self) -> None:
         """Update should return False for nonexistent ID."""
-        anim = Animate()
+        anim = App()
         result = anim.update("nonexistent", HTMLString("Updated"))
         assert result is False
 
     def test_remove_item(self) -> None:
         """Remove should delete item."""
-        anim = Animate()
+        anim = App()
         item_id = anim.add(HTMLString("To remove"))
         assert anim.get(item_id) is not None
         result = anim.remove(item_id)
@@ -106,13 +106,13 @@ class TestAnimateItemManagement:
 
     def test_remove_nonexistent_item(self) -> None:
         """Remove should return False for nonexistent ID."""
-        anim = Animate()
+        anim = App()
         result = anim.remove("nonexistent")
         assert result is False
 
     def test_clear_all_items(self) -> None:
         """clear_all should remove all items."""
-        anim = Animate()
+        anim = App()
         anim.add(HTMLString("First"))
         anim.add(HTMLString("Second"))
         anim.add(HTMLString("Third"))
@@ -122,7 +122,7 @@ class TestAnimateItemManagement:
 
     def test_clear_single_item(self) -> None:
         """clear(id) should remove a single item by ID."""
-        anim = Animate()
+        anim = App()
         id1 = anim.add(HTMLString("First"))
         id2 = anim.add(HTMLString("Second"))
         assert len(anim.items()) == 2
@@ -134,13 +134,13 @@ class TestAnimateItemManagement:
 
     def test_clear_nonexistent_item(self) -> None:
         """clear(id) should return False for nonexistent ID."""
-        anim = Animate()
+        anim = App()
         result = anim.clear("nonexistent")
         assert result is False
 
     def test_add_stores_anim_id_on_object(self) -> None:
         """add() should store the animate ID on the object."""
-        anim = Animate()
+        anim = App()
         item = HTMLString("Hello")
         item_id = anim.add(item)
         assert hasattr(item, "_anim_id")
@@ -148,7 +148,7 @@ class TestAnimateItemManagement:
 
     def test_remove_by_object(self) -> None:
         """remove() should accept an object and remove it."""
-        anim = Animate()
+        anim = App()
         item1 = HTMLString("First")
         item2 = HTMLString("Second")
         anim.add(item1)
@@ -161,7 +161,7 @@ class TestAnimateItemManagement:
 
     def test_clear_by_object(self) -> None:
         """clear() should accept an object and remove it."""
-        anim = Animate()
+        anim = App()
         item = HTMLString("Hello")
         anim.add(item)
         result = anim.clear(item)
@@ -170,14 +170,14 @@ class TestAnimateItemManagement:
 
     def test_remove_object_not_added(self) -> None:
         """remove() should return False for object not added."""
-        anim = Animate()
+        anim = App()
         item = HTMLString("Not added")
         result = anim.remove(item)
         assert result is False
 
     def test_get_item(self) -> None:
         """Get should return item by ID."""
-        anim = Animate()
+        anim = App()
         item = HTMLString("Hello")
         item_id = anim.add(item)
         retrieved = anim.get(item_id)
@@ -185,12 +185,12 @@ class TestAnimateItemManagement:
 
     def test_get_nonexistent_item(self) -> None:
         """Get should return None for nonexistent ID."""
-        anim = Animate()
+        anim = App()
         assert anim.get("nonexistent") is None
 
     def test_items_returns_copy(self) -> None:
         """Items should return a copy of the items list."""
-        anim = Animate()
+        anim = App()
         anim.add(HTMLString("First"))
         anim.add(HTMLString("Second"))
         items = anim.items()
@@ -199,18 +199,18 @@ class TestAnimateItemManagement:
         assert len(anim.items()) == 2  # Original should be unchanged
 
 
-class TestAnimateFullState:
+class TestAppFullState:
     """Test full state rendering."""
 
     def test_get_full_state_empty(self) -> None:
         """Get full state should return empty list when no items."""
-        anim = Animate()
+        anim = App()
         state = anim.get_full_state()
         assert state == []
 
     def test_get_full_state_with_items(self) -> None:
         """Get full state should return rendered items."""
-        anim = Animate()
+        anim = App()
         anim.add(HTMLString("Hello").bold())
         anim.add(HTMLString("World").italic())
         state = anim.get_full_state()
@@ -222,26 +222,26 @@ class TestAnimateFullState:
 
     def test_get_full_state_plain_string(self) -> None:
         """Get full state should render plain strings."""
-        anim = Animate()
+        anim = App()
         anim.add("Plain text")
         state = anim.get_full_state()
         assert len(state) == 1
         assert state[0]["html"] == "Plain text"
 
 
-class TestAnimateContextManager:
+class TestAppContextManager:
     """Test context manager functionality."""
 
     def test_context_manager_enters(self) -> None:
-        """Context manager should return Animate instance."""
-        with Animate(port=8251, auto_open=False) as anim:
-            assert isinstance(anim, Animate)
-            assert anim.is_running is True
+        """Context manager should return App instance."""
+        with App(port=8251, auto_open=False) as app:
+            assert isinstance(app, App)
+            assert app.is_running is True
 
     def test_context_manager_stops_on_exit(self) -> None:
         """Context manager should stop server on exit."""
         anim_ref = None
-        with Animate(port=8252, auto_open=False) as anim:
+        with App(port=8252, auto_open=False) as anim:
             anim_ref = anim
             assert anim.is_running is True
         # Give it a moment to stop
@@ -250,12 +250,12 @@ class TestAnimateContextManager:
         assert anim_ref.is_running is False
 
 
-class TestAnimateServer:
+class TestAppServer:
     """Test server functionality (integration tests)."""
 
     def test_server_starts_and_stops(self) -> None:
         """Server should start and stop correctly."""
-        anim = Animate(port=8253, auto_open=False)
+        anim = App(port=8253, auto_open=False)
         assert anim.is_running is False
 
         anim.run()
@@ -277,14 +277,14 @@ class TestAnimateServer:
 
     def test_run_returns_self(self) -> None:
         """Run should return self for method chaining."""
-        anim = Animate(port=8254, auto_open=False)
+        anim = App(port=8254, auto_open=False)
         result = anim.run()
         assert result is anim
         anim.stop()
 
     def test_double_run_is_safe(self) -> None:
         """Calling run twice should be safe."""
-        anim = Animate(port=8255, auto_open=False)
+        anim = App(port=8255, auto_open=False)
         anim.run()
         result = anim.run()  # Second call should not fail
         assert result is anim
@@ -292,13 +292,13 @@ class TestAnimateServer:
 
     def test_stop_when_not_running_is_safe(self) -> None:
         """Calling stop when not running should be safe."""
-        anim = Animate()
+        anim = App()
         anim.stop()  # Should not raise
         anim.stop()  # Should not raise
 
     def test_server_serves_html_page(self) -> None:
         """Server should serve HTML page with title."""
-        anim = Animate(port=8256, title="Test Title", auto_open=False)
+        anim = App(port=8256, title="Test Title", auto_open=False)
         anim.run()
         time.sleep(0.5)
 

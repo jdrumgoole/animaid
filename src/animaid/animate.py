@@ -1,4 +1,4 @@
-"""Animate - Tkinter-like interactive GUI environment using HTML."""
+"""App - Tkinter-like interactive GUI environment using HTML."""
 
 from __future__ import annotations
 
@@ -11,12 +11,13 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
 from animaid.input_event import InputEvent
+from animaid.window import Window, WindowConfig
 
 if TYPE_CHECKING:
     from animaid.html_object import HTMLObject
 
 
-class Animate:
+class App:
     """A Tkinter-like interactive GUI environment using HTML.
 
     The browser becomes the display surface, and AnimAID objects become
@@ -24,19 +25,28 @@ class Animate:
     with real-time visual feedback.
 
     Examples:
-        >>> from animaid import Animate, HTMLString
-        >>> anim = Animate()
-        >>> anim.run()  # Starts server, opens browser
-        >>> anim.add(HTMLString("Hello").bold)
-        'item_0'
-        >>> anim.add(HTMLString("World").italic)
-        'item_1'
-        >>> anim.stop()
+        >>> from animaid import App, HTMLString
+        >>> app = App()
+        >>> app.run()  # Starts server, opens browser
+        >>> app.add(HTMLString("Hello").bold)
+        'string_1'
+        >>> app.add(HTMLString("World").italic)
+        'string_2'
+        >>> app.stop()
 
         # Context manager support
-        >>> with Animate() as anim:
-        ...     anim.add(HTMLString("Temporary display"))
+        >>> with App() as app:
+        ...     app.add(HTMLString("Temporary display"))
         # Server stops when context exits
+
+        # With window configuration
+        >>> with App(title="Dashboard", theme="dark") as app:
+        ...     app.window.set_title("Loading...")
+        ...     app.add(HTMLString("Content"))
+
+    Note:
+        The class was previously named ``Animate``. That name still works
+        but is deprecated. Please use ``App`` instead.
     """
 
     def __init__(
@@ -44,17 +54,72 @@ class Animate:
         port: int = 8200,
         title: str = "AnimAID",
         auto_open: bool = True,
+        window: WindowConfig | None = None,
+        width: int | None = None,
+        height: int | None = None,
+        theme: str = "light",
     ) -> None:
-        """Initialize the Animate environment.
+        """Initialize the App environment.
 
         Args:
             port: Port number for the server (default: 8200).
             title: Title displayed in the browser window.
             auto_open: Whether to automatically open browser on run().
+            window: Optional WindowConfig for initial window setup.
+            width: Optional initial window width (overrides window config).
+            height: Optional initial window height (overrides window config).
+            theme: Initial theme ('light', 'dark', 'auto'). Overrides window config.
         """
         self._port = port
-        self._title = title
         self._auto_open = auto_open
+
+        # Build window configuration
+        if window is not None:
+            config = window
+            # Override with explicit parameters
+            if title != "AnimAID":
+                config = WindowConfig(
+                    title=title,
+                    width=config.width,
+                    height=config.height,
+                    theme=config.theme,
+                    background_color=config.background_color,
+                    favicon=config.favicon,
+                )
+        else:
+            config = WindowConfig(title=title, width=width, height=height, theme=theme)
+
+        # Apply explicit overrides
+        if width is not None:
+            config = WindowConfig(
+                title=config.title,
+                width=width,
+                height=config.height,
+                theme=config.theme,
+                background_color=config.background_color,
+                favicon=config.favicon,
+            )
+        if height is not None:
+            config = WindowConfig(
+                title=config.title,
+                width=config.width,
+                height=height,
+                theme=config.theme,
+                background_color=config.background_color,
+                favicon=config.favicon,
+            )
+        if theme != "light":
+            config = WindowConfig(
+                title=config.title,
+                width=config.width,
+                height=config.height,
+                theme=theme,
+                background_color=config.background_color,
+                favicon=config.favicon,
+            )
+
+        self._window = Window(self, config)
+        self._title = config.title
         self._items: list[tuple[str, Any]] = []  # (id, item) pairs
         self._connections: set[Any] = set()  # WebSocket connections
         self._server_thread: threading.Thread | None = None
@@ -70,7 +135,20 @@ class Animate:
         self._event_queue: queue.Queue[InputEvent] = queue.Queue()
         self._input_handlers: dict[str, Callable[..., Any]] = {}
 
-    def run(self) -> Animate:
+    @property
+    def window(self) -> Window:
+        """Access window-level controls.
+
+        Returns:
+            The Window instance for controlling window appearance and behavior.
+
+        Examples:
+            >>> app.window.dark()  # Switch to dark theme
+            >>> app.window.set_title("Processing...")
+        """
+        return self._window
+
+    def run(self) -> App:
         """Start the server in a background thread and open the browser.
 
         Returns:
@@ -526,7 +604,18 @@ class Animate:
             )
         )
 
-    def __enter__(self) -> Animate:
+    def handle_window_event(self, message: dict[str, Any]) -> None:
+        """Handle a window event from the browser.
+
+        This is called by the server when a window event is received.
+
+        Args:
+            message: The event message containing event type and data.
+        """
+        event = message.get("event", "")
+        self._window.handle_window_event(event, message)
+
+    def __enter__(self) -> App:
         """Enter context manager - start the server."""
         return self.run()
 

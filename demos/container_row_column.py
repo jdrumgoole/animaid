@@ -16,7 +16,7 @@ import time
 
 from animaid import (
     AlignItems,
-    Animate,
+    App,
     HTMLButton,
     HTMLCard,
     HTMLColumn,
@@ -31,16 +31,16 @@ def main() -> None:
     print("Watch flexbox layouts appear!")
     print()
 
-    with Animate(title="Demo: HTMLRow & HTMLColumn") as anim:
+    with App(title="Demo: HTMLRow & HTMLColumn") as app:
         # Title
         title = HTMLString("HTMLRow & HTMLColumn Demo").bold().xxl()
-        anim.add(title)
-        anim.add(HTMLString("Flexbox layouts for horizontal and vertical arrangement").muted())
+        app.add(title)
+        app.add(HTMLString("Flexbox layouts for horizontal and vertical arrangement").muted())
 
         time.sleep(0.5)
 
         # Section 1: Basic Row
-        anim.add(HTMLString("Basic HTMLRow").bold().xl().styled(margin_top="20px"))
+        app.add(HTMLString("Basic HTMLRow").bold().xl().styled(margin_top="20px"))
 
         basic_row = HTMLRow([
             HTMLString("Item 1").styled(padding="8px", background_color="#e0f2fe", border_radius="4px"),
@@ -51,12 +51,12 @@ def main() -> None:
             background_color="#f5f5f5",
             border_radius="8px",
         )
-        anim.add(basic_row)
+        app.add(basic_row)
 
         time.sleep(0.8)
 
         # Section 2: Basic Column
-        anim.add(HTMLString("Basic HTMLColumn").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Basic HTMLColumn").bold().xl().styled(margin_top="24px"))
 
         basic_column = HTMLColumn([
             HTMLString("Item 1").styled(padding="8px", background_color="#e0f2fe", border_radius="4px"),
@@ -68,12 +68,12 @@ def main() -> None:
             border_radius="8px",
             max_width="200px",
         )
-        anim.add(basic_column)
+        app.add(basic_column)
 
         time.sleep(0.8)
 
         # Section 3: Row Alignment
-        anim.add(HTMLString("Row Alignment Options").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Row Alignment Options").bold().xl().styled(margin_top="24px"))
 
         alignment_demo = HTMLColumn([
             HTMLString("justify: start (default)").muted(),
@@ -101,12 +101,12 @@ def main() -> None:
                 padding="8px", background_color="#f5f5f5", border_radius="4px",
             ),
         ]).gap(8).max_width(400)
-        anim.add(alignment_demo)
+        app.add(alignment_demo)
 
         time.sleep(0.8)
 
         # Section 4: Vertical Alignment
-        anim.add(HTMLString("Vertical Alignment (align)").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Vertical Alignment (align)").bold().xl().styled(margin_top="24px"))
 
         valign_demo = HTMLRow([
             HTMLColumn([
@@ -146,12 +146,12 @@ def main() -> None:
                 ),
             ]).gap(4),
         ]).gap(16)
-        anim.add(valign_demo)
+        app.add(valign_demo)
 
         time.sleep(0.8)
 
         # Section 5: Row Presets
-        anim.add(HTMLString("Row Presets").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Row Presets").bold().xl().styled(margin_top="24px"))
 
         presets_card = HTMLCard(
             children=[
@@ -183,12 +183,12 @@ def main() -> None:
                 ]).gap(16),
             ],
         ).outlined()
-        anim.add(presets_card)
+        app.add(presets_card)
 
         time.sleep(0.8)
 
         # Section 6: Column Presets
-        anim.add(HTMLString("Column Presets").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Column Presets").bold().xl().styled(margin_top="24px"))
 
         col_presets = HTMLRow([
             HTMLCard(
@@ -226,12 +226,12 @@ def main() -> None:
                 ],
             ).outlined(),
         ]).gap(16)
-        anim.add(col_presets)
+        app.add(col_presets)
 
         time.sleep(0.8)
 
         # Section 7: Nested Layouts
-        anim.add(HTMLString("Nested Layouts").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Nested Layouts").bold().xl().styled(margin_top="24px"))
 
         nested = HTMLCard(
             title="Dashboard Layout",
@@ -276,7 +276,7 @@ def main() -> None:
                 ]).gap(16),
             ],
         ).shadow()
-        anim.add(nested)
+        app.add(nested)
 
         print()
         print("Row & Column demo complete!")

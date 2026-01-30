@@ -7,7 +7,7 @@ Demonstrates: Multiple input widgets, checkboxes, select, form submission
 import time
 
 from animaid import (
-    Animate,
+    App,
     HTMLButton,
     HTMLCheckbox,
     HTMLSelect,
@@ -18,39 +18,39 @@ from animaid import (
 
 def main() -> None:
     """Run the registration form demo."""
-    with Animate(title="Demo: Registration Form") as anim:
+    with App(title="Demo: Registration Form") as app:
         # Title
         title = HTMLString("User Registration").bold().xl()
-        anim.add(title)
+        app.add(title)
 
         # Name input
-        anim.add(HTMLString("Name:").bold())
+        app.add(HTMLString("Name:").bold())
         name_input = HTMLTextInput(placeholder="Enter your full name...")
-        anim.add(name_input)
+        app.add(name_input)
 
         # Email input
-        anim.add(HTMLString("Email:").bold())
+        app.add(HTMLString("Email:").bold())
         email_input = HTMLTextInput(placeholder="your@email.com")
-        anim.add(email_input)
+        app.add(email_input)
 
         # Country select
-        anim.add(HTMLString("Country:").bold())
+        app.add(HTMLString("Country:").bold())
         country_select = HTMLSelect(
             options=["United States", "United Kingdom", "Canada", "Australia", "Other"]
         )
-        anim.add(country_select)
+        app.add(country_select)
 
         # Newsletter checkbox
         newsletter = HTMLCheckbox("Subscribe to newsletter", checked=True)
-        anim.add(newsletter)
+        app.add(newsletter)
 
         # Terms checkbox
         terms = HTMLCheckbox("I accept the terms and conditions", checked=False)
-        anim.add(terms)
+        app.add(terms)
 
         # Result display
         result = HTMLString("")
-        anim.add(result, id="result")
+        app.add(result, id="result")
 
         # Submit button
         def submit_form() -> None:
@@ -63,19 +63,19 @@ def main() -> None:
             if not name:
                 result._value = "Please enter your name!"
                 result._styles = {"color": "red"}
-                anim.refresh("result")
+                app.refresh("result")
                 return
 
             if not email or "@" not in email:
                 result._value = "Please enter a valid email!"
                 result._styles = {"color": "red"}
-                anim.refresh("result")
+                app.refresh("result")
                 return
 
             if not accepted_terms:
                 result._value = "Please accept the terms and conditions!"
                 result._styles = {"color": "red"}
-                anim.refresh("result")
+                app.refresh("result")
                 return
 
             # Success!
@@ -86,7 +86,7 @@ def main() -> None:
                 f"(Newsletter: {newsletter_status})"
             )
             result._styles = {"color": "green", "font-weight": "bold"}
-            anim.refresh("result")
+            app.refresh("result")
 
             print("\nRegistration submitted:")
             print(f"  Name: {name}")
@@ -95,7 +95,7 @@ def main() -> None:
             print(f"  Newsletter: {wants_newsletter}")
 
         submit_button = HTMLButton("Register").primary().large().on_click(submit_form)
-        anim.add(submit_button)
+        app.add(submit_button)
 
         print("Registration Form Demo")
         print("=" * 40)

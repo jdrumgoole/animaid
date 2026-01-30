@@ -6,23 +6,23 @@ Demonstrates: HTMLTextInput, HTMLButton, on_click callbacks, two-way binding
 
 import time
 
-from animaid import Animate, HTMLButton, HTMLString, HTMLTextInput
+from animaid import App, HTMLButton, HTMLString, HTMLTextInput
 
 
 def main() -> None:
     """Run the interactive greeter demo."""
-    with Animate(title="Demo: Interactive Greeter") as anim:
+    with App(title="Demo: Interactive Greeter") as app:
         # Title
         title = HTMLString("What's your name?").bold().large()
-        anim.add(title)
+        app.add(title)
 
         # Text input for name
         name_input = HTMLTextInput(placeholder="Enter your name...")
-        anim.add(name_input, id="name_input")
+        app.add(name_input, id="name_input")
 
         # Greeting display
         greeting = HTMLString("").success().xl()
-        anim.add(greeting, id="greeting")
+        app.add(greeting, id="greeting")
 
         # Greet button with callback
         def greet() -> None:
@@ -31,10 +31,10 @@ def main() -> None:
                 greeting._value = f"Hello, {name}! 👋"
             else:
                 greeting._value = "Please enter your name first!"
-            anim.refresh("greeting")
+            app.refresh("greeting")
 
         button = HTMLButton("Greet Me!").primary().on_click(greet)
-        anim.add(button)
+        app.add(button)
 
         print("Interactive Greeter Demo")
         print("=" * 40)

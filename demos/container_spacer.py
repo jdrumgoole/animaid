@@ -14,7 +14,7 @@ Shows:
 import time
 
 from animaid import (
-    Animate,
+    App,
     HTMLButton,
     HTMLCard,
     HTMLColumn,
@@ -29,16 +29,16 @@ def main() -> None:
     print("Watch different spacer uses appear!")
     print()
 
-    with Animate(title="Demo: HTMLSpacer") as anim:
+    with App(title="Demo: HTMLSpacer") as app:
         # Title
         title = HTMLString("HTMLSpacer Demo").bold().xxl()
-        anim.add(title)
-        anim.add(HTMLString("Empty space for precise layout control").muted())
+        app.add(title)
+        app.add(HTMLString("Empty space for precise layout control").muted())
 
         time.sleep(0.5)
 
         # Section 1: Fixed Height Spacers
-        anim.add(HTMLString("Fixed Height Spacers").bold().xl().styled(margin_top="20px"))
+        app.add(HTMLString("Fixed Height Spacers").bold().xl().styled(margin_top="20px"))
 
         spacer_demo = HTMLCard(
             children=[
@@ -57,12 +57,12 @@ def main() -> None:
                 ]),
             ],
         ).outlined()
-        anim.add(spacer_demo)
+        app.add(spacer_demo)
 
         time.sleep(0.8)
 
         # Section 2: Preset Sizes
-        anim.add(HTMLString("Size Presets").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Size Presets").bold().xl().styled(margin_top="24px"))
 
         presets_card = HTMLCard(
             children=[
@@ -95,13 +95,13 @@ def main() -> None:
                 ]).gap(4),
             ],
         ).outlined().max_width(350)
-        anim.add(presets_card)
+        app.add(presets_card)
 
         time.sleep(0.8)
 
         # Section 3: Flex Spacers (Push Apart)
-        anim.add(HTMLString("Flex Spacers (Push Apart)").bold().xl().styled(margin_top="24px"))
-        anim.add(HTMLString("Flex spacers expand to fill available space").muted())
+        app.add(HTMLString("Flex Spacers (Push Apart)").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Flex spacers expand to fill available space").muted())
 
         flex_demo = HTMLCard(
             children=[
@@ -129,12 +129,12 @@ def main() -> None:
                 ]).gap(8),
             ],
         ).outlined()
-        anim.add(flex_demo)
+        app.add(flex_demo)
 
         time.sleep(0.8)
 
         # Section 4: Multiple Flex Spacers
-        anim.add(HTMLString("Multiple Flex Spacers").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Multiple Flex Spacers").bold().xl().styled(margin_top="24px"))
 
         multi_flex = HTMLCard(
             children=[
@@ -165,12 +165,12 @@ def main() -> None:
                 ]).gap(8),
             ],
         ).outlined()
-        anim.add(multi_flex)
+        app.add(multi_flex)
 
         time.sleep(0.8)
 
         # Section 5: Real-World Header Example
-        anim.add(HTMLString("Real-World Example: Header Layout").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Real-World Example: Header Layout").bold().xl().styled(margin_top="24px"))
 
         header = HTMLRow([
             HTMLString("MyApp").bold().xl(),
@@ -187,12 +187,12 @@ def main() -> None:
             border_radius="8px",
         )
         # Style text white
-        anim.add(header)
+        app.add(header)
 
         time.sleep(0.8)
 
         # Section 6: Vertical Spacing in Columns
-        anim.add(HTMLString("Vertical Spacing in Columns").bold().xl().styled(margin_top="24px"))
+        app.add(HTMLString("Vertical Spacing in Columns").bold().xl().styled(margin_top="24px"))
 
         form_card = HTMLCard(
             title="Contact Form",
@@ -219,7 +219,7 @@ def main() -> None:
                 ]).gap(4),
             ],
         ).shadow().max_width(320)
-        anim.add(form_card)
+        app.add(form_card)
 
         print()
         print("Spacer demo complete!")

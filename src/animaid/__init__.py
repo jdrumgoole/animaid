@@ -77,17 +77,21 @@ from animaid.html_set import HTMLSet
 from animaid.html_string import HTMLString
 from animaid.html_tuple import HTMLTuple
 
-# Conditional import for Animate and input widgets (requires tutorial dependencies)
+# Conditional import for App and input widgets (requires tutorial dependencies)
 try:
-    from animaid.animate import Animate
+    from animaid.animate import App
     from animaid.html_button import HTMLButton
     from animaid.html_checkbox import HTMLCheckbox
     from animaid.html_select import HTMLSelect
     from animaid.html_slider import HTMLSlider
     from animaid.html_text_input import HTMLTextInput
     from animaid.input_event import InputEvent
+    from animaid.window import Window, WindowConfig
+
 except ImportError:
-    Animate = None  # type: ignore[misc, assignment]
+    App = None  # type: ignore[misc, assignment]
+    Window = None  # type: ignore[misc, assignment]
+    WindowConfig = None  # type: ignore[misc, assignment]
     HTMLButton = None  # type: ignore[misc, assignment]
     HTMLCheckbox = None  # type: ignore[misc, assignment]
     HTMLSelect = None  # type: ignore[misc, assignment]
@@ -132,8 +136,10 @@ Spacer = HTMLSpacer
 
 __all__ = [
     "__version__",
-    # Animation
-    "Animate",
+    # Application
+    "App",
+    "Window",
+    "WindowConfig",
     # Input widgets (full names)
     "HTMLButton",
     "HTMLCheckbox",

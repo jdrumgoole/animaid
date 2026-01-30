@@ -4,50 +4,50 @@
 Demonstrates: HTMLButton, event polling with wait_for_event(), on_click callbacks
 """
 
-from animaid import Animate, HTMLButton, HTMLString
+from animaid import App, HTMLButton, HTMLString
 
 
 def main() -> None:
     """Run the interactive counter demo."""
-    with Animate(title="Demo: Interactive Counter") as anim:
+    with App(title="Demo: Interactive Counter") as app:
         count = 0
 
         # Display
         display = HTMLString(str(count)).xxl().bold()
-        anim.add(display, id="display")
+        app.add(display, id="display")
 
         # Increment button
         def increment() -> None:
             nonlocal count
             count += 1
             display._value = str(count)
-            anim.refresh("display")
+            app.refresh("display")
             print(f"Count: {count}")
 
         inc_button = HTMLButton("+").primary().large().on_click(increment)
-        anim.add(inc_button)
+        app.add(inc_button)
 
         # Decrement button
         def decrement() -> None:
             nonlocal count
             count -= 1
             display._value = str(count)
-            anim.refresh("display")
+            app.refresh("display")
             print(f"Count: {count}")
 
         dec_button = HTMLButton("-").danger().large().on_click(decrement)
-        anim.add(dec_button)
+        app.add(dec_button)
 
         # Reset button
         def reset() -> None:
             nonlocal count
             count = 0
             display._value = str(count)
-            anim.refresh("display")
+            app.refresh("display")
             print("Count reset to 0")
 
         reset_button = HTMLButton("Reset").warning().on_click(reset)
-        anim.add(reset_button)
+        app.add(reset_button)
 
         print("Interactive Counter Demo")
         print("=" * 40)

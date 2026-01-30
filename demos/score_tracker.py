@@ -12,7 +12,7 @@ Shows how:
 import random
 import time
 
-from animaid import Animate, HTMLDict, HTMLString
+from animaid import App, HTMLDict, HTMLString
 
 
 def main() -> None:
@@ -20,10 +20,10 @@ def main() -> None:
     print("Watch the scores update in real-time!")
     print()
 
-    with Animate(title="Demo: Score Tracker") as anim:
+    with App(title="Demo: Score Tracker") as app:
         # Title
         title = HTMLString("Game Score Tracker").bold().xxl()
-        anim.add(title)
+        app.add(title)
 
         # Initialize scores
         scores = (
@@ -38,7 +38,7 @@ def main() -> None:
             .value_color("#1565c0")
         )
 
-        anim.add(scores)
+        app.add(scores)
 
         time.sleep(1)
 
@@ -79,7 +79,7 @@ def main() -> None:
             result = HTMLString(f"{winner} Wins!").success().bold().xl()
         else:
             result = HTMLString("It's a Tie!").info().bold().xl()
-        anim.add(result)
+        app.add(result)
 
         print()
         input("Press Enter to exit...")

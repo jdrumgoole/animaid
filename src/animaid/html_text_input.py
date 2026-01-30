@@ -18,10 +18,10 @@ class HTMLTextInput:
         >>> text = HTMLTextInput(placeholder="Enter your name...")
         >>> text = HTMLTextInput(value="Default").on_change(handle_change)
 
-        # With Animate - two-way binding
-        >>> with Animate() as anim:
+        # With App - two-way binding
+        >>> with App() as app:
         ...     name_input = HTMLTextInput(placeholder="Name")
-        ...     anim.add(name_input)
+        ...     app.add(name_input)
         ...     # Later, read the current value:
         ...     print(name_input.value)  # Value synced from browser
     """

@@ -6,25 +6,25 @@ Demonstrates: HTMLSelect with selection handling, dynamic updates, and styling o
 
 import time
 
-from animaid import Animate, HTMLSelect, HTMLString
+from animaid import App, HTMLSelect, HTMLString
 
 
 def main() -> None:
     """Run the select dropdown showcase demo."""
-    with Animate(title="Demo: Select Dropdown Showcase") as anim:
+    with App(title="Demo: Select Dropdown Showcase") as app:
         # Title
         title = HTMLString("Select Dropdown Showcase").bold().xl()
-        anim.add(title)
+        app.add(title)
 
         # Section 1: Basic Selection with Display
-        anim.add(HTMLString("Basic Selection").bold().large())
-        anim.add(HTMLString("Choose a color to see it displayed:").muted())
+        app.add(HTMLString("Basic Selection").bold().large())
+        app.add(HTMLString("Choose a color to see it displayed:").muted())
 
         color_display = HTMLString("Selected: Red").monospace()
-        anim.add(color_display, id="color_display")
+        app.add(color_display, id="color_display")
 
         color_preview = HTMLString("Sample Text")
-        anim.add(color_preview, id="color_preview")
+        app.add(color_preview, id="color_preview")
 
         def on_color_change(value: str) -> None:
             color_display._value = f"Selected: {value}"
@@ -37,26 +37,26 @@ def main() -> None:
             }
             color = color_map.get(value, "#1e293b")
             color_preview._styles = {"color": color, "font-weight": "bold"}
-            anim.refresh("color_display")
-            anim.refresh("color_preview")
+            app.refresh("color_display")
+            app.refresh("color_preview")
             print(f"Color selected: {value}")
 
         color_select = HTMLSelect(
             options=["Red", "Green", "Blue", "Purple", "Orange"]
         ).on_change(on_color_change)
-        anim.add(color_select)
+        app.add(color_select)
 
         # Initialize preview color
         color_preview._styles = {"color": "#ef4444", "font-weight": "bold"}
 
         # Section 2: Size Selector
-        anim.add(HTMLString("Size Selector").bold().large())
+        app.add(HTMLString("Size Selector").bold().large())
 
         size_display = HTMLString("Font size: 16px").monospace()
-        anim.add(size_display, id="size_display")
+        app.add(size_display, id="size_display")
 
         size_sample = HTMLString("This text changes size")
-        anim.add(size_sample, id="size_sample")
+        app.add(size_sample, id="size_sample")
 
         def on_size_change(value: str) -> None:
             size_map = {
@@ -68,20 +68,20 @@ def main() -> None:
             px_size = size_map.get(value, "16px")
             size_display._value = f"Font size: {px_size}"
             size_sample._styles = {"font-size": px_size}
-            anim.refresh("size_display")
-            anim.refresh("size_sample")
+            app.refresh("size_display")
+            app.refresh("size_sample")
             print(f"Size selected: {value} ({px_size})")
 
         size_select = HTMLSelect(
             options=["Small", "Medium", "Large", "Extra Large"], value="Medium"
         ).on_change(on_size_change)
-        anim.add(size_select)
+        app.add(size_select)
 
         # Section 3: Country Selector with Flag
-        anim.add(HTMLString("Country Selector").bold().large())
+        app.add(HTMLString("Country Selector").bold().large())
 
         country_info = HTMLString("USA - United States of America").monospace()
-        anim.add(country_info, id="country_info")
+        app.add(country_info, id="country_info")
 
         country_data = {
             "USA": {"name": "United States of America", "capital": "Washington, D.C."},
@@ -97,45 +97,45 @@ def main() -> None:
             country_info._value = (
                 f"{value} - {info.get('name', '')}\nCapital: {info.get('capital', '')}"
             )
-            anim.refresh("country_info")
+            app.refresh("country_info")
             print(f"Country selected: {value}")
 
         country_select = HTMLSelect(
             options=["USA", "UK", "France", "Germany", "Japan", "Australia"]
         ).wide().on_change(on_country_change)
-        anim.add(country_select)
+        app.add(country_select)
 
         # Section 4: Select Sizes
-        anim.add(HTMLString("Select Sizes").bold().large())
+        app.add(HTMLString("Select Sizes").bold().large())
 
         small_select = HTMLSelect(options=["Small Option 1", "Small Option 2"]).small()
-        anim.add(small_select)
+        app.add(small_select)
 
         normal_select = HTMLSelect(options=["Normal Option 1", "Normal Option 2"])
-        anim.add(normal_select)
+        app.add(normal_select)
 
         large_select = HTMLSelect(options=["Large Option 1", "Large Option 2"]).large()
-        anim.add(large_select)
+        app.add(large_select)
 
         wide_select = HTMLSelect(
             options=["Wide Option (Full Width)"]
         ).wide()
-        anim.add(wide_select)
+        app.add(wide_select)
 
         # Section 5: Pre-selected Value
-        anim.add(HTMLString("Pre-selected Value").bold().large())
+        app.add(HTMLString("Pre-selected Value").bold().large())
 
         preselected = HTMLSelect(
             options=["First", "Second", "Third", "Fourth"], value="Third"
         )
-        anim.add(preselected)
+        app.add(preselected)
 
         value_display = HTMLString(f"Current value: {preselected.value}").monospace()
-        anim.add(value_display, id="preselected_value")
+        app.add(value_display, id="preselected_value")
 
         def show_preselected_value(value: str) -> None:
             value_display._value = f"Current value: {value}"
-            anim.refresh("preselected_value")
+            app.refresh("preselected_value")
 
         preselected.on_change(show_preselected_value)
 
