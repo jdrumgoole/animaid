@@ -69,6 +69,10 @@ packages = ["src/animaid"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+addopts = "-n auto"
+filterwarnings = [
+    "ignore::pytest.PytestUnraisableExceptionWarning",
+]
 
 [tool.ruff]
 src = ["src"]
@@ -82,3 +86,8 @@ python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
 mypy_path = "src"
+
+[dependency-groups]
+dev = [
+    "pytest-xdist>=3.8.0",
+]

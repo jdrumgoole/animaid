@@ -602,6 +602,16 @@ python demos/countdown_timer.py
 | `input_counter` | Counter with increment/decrement buttons | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/input_counter.py) |
 | `input_form` | Registration form with multiple input types | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/input_form.py) |
 
+### Container Demos
+
+| Demo | Description | Source |
+|------|-------------|--------|
+| `container_layout` | HTMLRow and HTMLColumn container layouts | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/container_layout.py) |
+| `container_card` | HTMLCard with shadows, borders, and presets | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/container_card.py) |
+| `container_divider` | HTMLDivider for visual content separation | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/container_divider.py) |
+| `container_spacer` | HTMLSpacer for fixed and flexible spacing | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/container_spacer.py) |
+| `container_row_column` | Flexbox layouts with alignment options | [View Code](https://github.com/jdrumgoole/animaid/blob/main/demos/container_row_column.py) |
+
 Each demo opens a browser window and shows real-time updates as Python code executes.
 
 ### Demo Gallery
@@ -667,7 +677,7 @@ animaid-tutorial --port 8300
 
 ### Tutorial Features
 
-The tutorial provides four main sections:
+The tutorial provides five main sections:
 
 **Python Objects Tab**
 - Unified interface for all HTML types (HTMLString, HTMLList, HTMLDict, HTMLInt, HTMLFloat, HTMLTuple, HTMLSet)
@@ -684,6 +694,14 @@ The tutorial provides four main sections:
 - Generated Python code for each widget
 
 ![Input Widgets Tab](images/tutorial-input-widgets.png)
+
+**Containers Tab**
+- Layout containers: HTMLRow, HTMLColumn, HTMLCard, HTMLDivider, HTMLSpacer
+- Container-specific controls and presets
+- Live preview of flexbox layouts
+- Generated Python code for each container
+
+![Containers Tab](images/tutorial-containers-row.png)
 
 **Dict of Lists Tab**
 - Visualize nested dictionaries containing lists
@@ -711,6 +729,7 @@ The tutorial provides four main sections:
 tutorial
 demos
 input-widgets
+containers
 api
 ```
 

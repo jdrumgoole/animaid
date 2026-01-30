@@ -17,6 +17,7 @@
         <button class="tab-btn" data-tab="dict-of-lists">Dict of Lists</button>
         <button class="tab-btn" data-tab="list-of-dicts">List of Dicts</button>
         <button class="tab-btn" data-tab="inputs">Input Widgets</button>
+        <button class="tab-btn" data-tab="containers">Containers</button>
     </nav>
 
     <main>
@@ -1294,6 +1295,246 @@ html = button.render()</pre>
                 <div class="html-section">
                     <h3>Generated HTML</h3>
                     <pre class="code-box html-output" id="input-html"></pre>
+                </div>
+            </section>
+        </div>
+
+        <!-- Containers Tab -->
+        <div class="tab-content" id="tab-containers">
+            <aside class="sidebar">
+                <h2>Container Properties</h2>
+
+                <div class="control-group">
+                    <label>Container Type</label>
+                    <select id="container-type" class="container-control">
+                        <option value="row">HTMLRow</option>
+                        <option value="column">HTMLColumn</option>
+                        <option value="card">HTMLCard</option>
+                        <option value="divider">HTMLDivider</option>
+                        <option value="spacer">HTMLSpacer</option>
+                    </select>
+                </div>
+
+                <div class="control-group" id="container-presets-group">
+                    <label>Quick Presets</label>
+                    <!-- Row presets -->
+                    <div class="preset-buttons" id="row-presets">
+                        <button class="preset-btn" data-preset="container-row-buttons">Buttons</button>
+                        <button class="preset-btn" data-preset="container-row-toolbar">Toolbar</button>
+                        <button class="preset-btn" data-preset="container-row-spaced">Spaced</button>
+                        <button class="preset-btn" data-preset="container-row-centered">Centered</button>
+                        <button class="preset-btn" data-preset="container-row-reset">Reset</button>
+                    </div>
+                    <!-- Column presets -->
+                    <div class="preset-buttons" id="column-presets" style="display: none;">
+                        <button class="preset-btn" data-preset="container-column-stack">Stack</button>
+                        <button class="preset-btn" data-preset="container-column-form">Form</button>
+                        <button class="preset-btn" data-preset="container-column-centered">Centered</button>
+                        <button class="preset-btn" data-preset="container-column-reset">Reset</button>
+                    </div>
+                    <!-- Card presets -->
+                    <div class="preset-buttons" id="card-presets" style="display: none;">
+                        <button class="preset-btn" data-preset="container-card-elevated">Elevated</button>
+                        <button class="preset-btn" data-preset="container-card-outlined">Outlined</button>
+                        <button class="preset-btn" data-preset="container-card-flat">Flat</button>
+                        <button class="preset-btn" data-preset="container-card-filled">Filled</button>
+                        <button class="preset-btn" data-preset="container-card-reset">Reset</button>
+                    </div>
+                    <!-- Divider presets -->
+                    <div class="preset-buttons" id="divider-presets" style="display: none;">
+                        <button class="preset-btn" data-preset="container-divider-labeled">Labeled</button>
+                        <button class="preset-btn" data-preset="container-divider-dashed">Dashed</button>
+                        <button class="preset-btn" data-preset="container-divider-subtle">Subtle</button>
+                        <button class="preset-btn" data-preset="container-divider-bold">Bold</button>
+                        <button class="preset-btn" data-preset="container-divider-reset">Reset</button>
+                    </div>
+                    <!-- Spacer presets -->
+                    <div class="preset-buttons" id="spacer-presets" style="display: none;">
+                        <button class="preset-btn" data-preset="container-spacer-sm">Small</button>
+                        <button class="preset-btn" data-preset="container-spacer-md">Medium</button>
+                        <button class="preset-btn" data-preset="container-spacer-lg">Large</button>
+                        <button class="preset-btn" data-preset="container-spacer-flex">Flex</button>
+                        <button class="preset-btn" data-preset="container-spacer-reset">Reset</button>
+                    </div>
+                </div>
+
+                <!-- Layout Options (for Row, Column, Card) -->
+                <div id="layout-options" class="control-group">
+                    <h3 class="section-title">Layout Options</h3>
+                    <div class="control-group">
+                        <label><input type="checkbox" id="layout-full-width" class="container-control"> Full Width</label>
+                    </div>
+                    <div class="control-group">
+                        <label><input type="checkbox" id="layout-full-height" class="container-control"> Full Height</label>
+                    </div>
+                    <div class="control-group">
+                        <label><input type="checkbox" id="layout-expand" class="container-control"> Expand (flex: 1)</label>
+                    </div>
+                </div>
+
+                <!-- Row Controls -->
+                <div id="row-controls" class="widget-controls">
+                    <h3 class="section-title">Row Settings</h3>
+                    <div class="control-group">
+                        <label for="row-gap">Gap (px)</label>
+                        <input type="number" id="row-gap" value="8" min="0" max="100" class="container-control">
+                    </div>
+                    <div class="control-group">
+                        <label>Justify Content</label>
+                        <select id="row-justify" class="container-control">
+                            <option value="start">Start</option>
+                            <option value="center">Center</option>
+                            <option value="end">End</option>
+                            <option value="space-between">Space Between</option>
+                            <option value="space-around">Space Around</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Align Items</label>
+                        <select id="row-align" class="container-control">
+                            <option value="stretch">Stretch</option>
+                            <option value="start">Start</option>
+                            <option value="center">Center</option>
+                            <option value="end">End</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label><input type="checkbox" id="row-wrap" class="container-control"> Enable Wrap</label>
+                    </div>
+                </div>
+
+                <!-- Column Controls -->
+                <div id="column-controls" class="widget-controls" style="display: none;">
+                    <h3 class="section-title">Column Settings</h3>
+                    <div class="control-group">
+                        <label for="column-gap">Gap (px)</label>
+                        <input type="number" id="column-gap" value="8" min="0" max="100" class="container-control">
+                    </div>
+                    <div class="control-group">
+                        <label>Align Items</label>
+                        <select id="column-align" class="container-control">
+                            <option value="stretch">Stretch</option>
+                            <option value="start">Start</option>
+                            <option value="center">Center</option>
+                            <option value="end">End</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="column-max-width">Max Width</label>
+                        <input type="text" id="column-max-width" value="" placeholder="e.g., 300px" class="container-control">
+                    </div>
+                </div>
+
+                <!-- Card Controls -->
+                <div id="card-controls" class="widget-controls" style="display: none;">
+                    <h3 class="section-title">Card Settings</h3>
+                    <div class="control-group">
+                        <label for="card-title">Title (optional)</label>
+                        <input type="text" id="card-title" value="Card Title" class="container-control">
+                    </div>
+                    <div class="control-group">
+                        <label>Shadow</label>
+                        <select id="card-shadow" class="container-control">
+                            <option value="none">None</option>
+                            <option value="sm">Small</option>
+                            <option value="default" selected>Default</option>
+                            <option value="md">Medium</option>
+                            <option value="lg">Large</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Border Radius</label>
+                        <select id="card-radius" class="container-control">
+                            <option value="none">None</option>
+                            <option value="sm">Small</option>
+                            <option value="default" selected>Default</option>
+                            <option value="lg">Large</option>
+                            <option value="xl">Extra Large</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label><input type="checkbox" id="card-bordered" class="container-control"> Show Border</label>
+                    </div>
+                    <div class="control-group">
+                        <label for="card-bg-color">Background Color</label>
+                        <input type="text" id="card-bg-color" value="" placeholder="e.g., #eff6ff" class="container-control">
+                    </div>
+                </div>
+
+                <!-- Divider Controls -->
+                <div id="divider-controls" class="widget-controls" style="display: none;">
+                    <h3 class="section-title">Divider Settings</h3>
+                    <div class="control-group">
+                        <label for="divider-label">Label (optional)</label>
+                        <input type="text" id="divider-label" value="" placeholder="e.g., OR" class="container-control">
+                    </div>
+                    <div class="control-group">
+                        <label>Style</label>
+                        <select id="divider-style" class="container-control">
+                            <option value="solid">Solid</option>
+                            <option value="dashed">Dashed</option>
+                            <option value="dotted">Dotted</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="divider-color">Color</label>
+                        <input type="text" id="divider-color" value="" placeholder="e.g., #3b82f6" class="container-control">
+                    </div>
+                    <div class="control-group">
+                        <label for="divider-thickness">Thickness (px)</label>
+                        <input type="number" id="divider-thickness" value="1" min="1" max="10" class="container-control">
+                    </div>
+                    <div class="control-group">
+                        <label><input type="checkbox" id="divider-vertical" class="container-control"> Vertical</label>
+                    </div>
+                </div>
+
+                <!-- Spacer Controls -->
+                <div id="spacer-controls" class="widget-controls" style="display: none;">
+                    <h3 class="section-title">Spacer Settings</h3>
+                    <div class="control-group">
+                        <label>Mode</label>
+                        <select id="spacer-mode" class="container-control">
+                            <option value="height">Fixed Height</option>
+                            <option value="width">Fixed Width</option>
+                            <option value="flex">Flexible (Flex)</option>
+                        </select>
+                    </div>
+                    <div class="control-group" id="spacer-size-group">
+                        <label for="spacer-size">Size (px)</label>
+                        <input type="number" id="spacer-size" value="16" min="0" max="200" class="container-control">
+                    </div>
+                    <div class="control-group" id="spacer-flex-group" style="display: none;">
+                        <label for="spacer-flex-value">Flex Grow</label>
+                        <input type="number" id="spacer-flex-value" value="1" min="0" max="10" class="container-control">
+                    </div>
+                </div>
+            </aside>
+
+            <section class="display-area">
+                <div class="preview-section">
+                    <h3>Preview</h3>
+                    <div class="preview-box" id="container-preview">
+                        <!-- Rendered container will appear here -->
+                    </div>
+                </div>
+
+                <div class="code-section">
+                    <h3>Python Code</h3>
+                    <pre class="code-box" id="container-code">from animaid import HTMLRow, HTMLString
+
+row = HTMLRow([
+    HTMLString("Item 1"),
+    HTMLString("Item 2"),
+    HTMLString("Item 3"),
+]).gap(8)
+
+html = row.render()</pre>
+                </div>
+
+                <div class="html-section">
+                    <h3>Generated HTML</h3>
+                    <pre class="code-box html-output" id="container-html"></pre>
                 </div>
             </section>
         </div>

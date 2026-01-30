@@ -23,6 +23,7 @@ Beginner Tips:
 
 from animaid.css_types import (
     # Layout enums
+    AlignContent,
     AlignItems,
     # Border
     Border,
@@ -35,14 +36,21 @@ from animaid.css_types import (
     # Base class
     CSSValue,
     Display,
+    # Container/decoration enums
+    DividerStyle,
     FlexDirection,
     FlexWrap,
     # Text enums
     FontStyle,
     FontWeight,
+    GridAutoFlow,
     JustifyContent,
+    JustifyItems,
     Overflow,
+    PlaceItems,
     Position,
+    RadiusSize,
+    ShadowSize,
     Size,
     SizeValue,
     # Spacing
@@ -51,6 +59,14 @@ from animaid.css_types import (
     TextAlign,
     TextDecoration,
     TextTransform,
+)
+from animaid.containers import (
+    HTMLCard,
+    HTMLColumn,
+    HTMLContainer,
+    HTMLDivider,
+    HTMLRow,
+    HTMLSpacer,
 )
 from animaid.html_dict import HTMLDict
 from animaid.html_float import HTMLFloat
@@ -106,6 +122,14 @@ Checkbox = HTMLCheckbox
 Slider = HTMLSlider
 Select = HTMLSelect
 
+# Container aliases
+Container = HTMLContainer
+Row = HTMLRow
+Column = HTMLColumn
+Card = HTMLCard
+Divider = HTMLDivider
+Spacer = HTMLSpacer
+
 __all__ = [
     "__version__",
     # Animation
@@ -123,6 +147,20 @@ __all__ = [
     "Select",
     "Slider",
     "TextInput",
+    # Container widgets (full names)
+    "HTMLCard",
+    "HTMLColumn",
+    "HTMLContainer",
+    "HTMLDivider",
+    "HTMLRow",
+    "HTMLSpacer",
+    # Container widgets (short aliases)
+    "Card",
+    "Column",
+    "Container",
+    "Divider",
+    "Row",
+    "Spacer",
     # HTML types (full names)
     "HTMLDict",
     "HTMLFloat",
@@ -159,13 +197,21 @@ __all__ = [
     "TextDecoration",
     "TextTransform",
     # Layout enums
+    "AlignContent",
     "AlignItems",
     "Display",
     "FlexDirection",
     "FlexWrap",
+    "GridAutoFlow",
     "JustifyContent",
+    "JustifyItems",
     "Overflow",
+    "PlaceItems",
     "Position",
+    # Container/decoration enums
+    "DividerStyle",
+    "RadiusSize",
+    "ShadowSize",
     # Border
     "Border",
     "BorderStyle",

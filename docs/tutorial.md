@@ -20,7 +20,7 @@ animaid-tutorial --no-browser
 
 ## Tutorial Tabs
 
-The tutorial provides four main sections accessible via tabs at the top of the page.
+The tutorial provides five main sections accessible via tabs at the top of the page.
 
 ### Python Objects Tab
 
@@ -62,6 +62,26 @@ The Input Widgets tab demonstrates interactive input widgets that work with the 
 - Live demonstration of event handling
 - Value display showing current widget state
 - Generated Python code for each widget
+
+### Containers Tab
+
+The Containers tab lets you explore layout containers for organizing content:
+
+- **HTMLRow** - Horizontal flexbox layout with alignment options
+- **HTMLColumn** - Vertical flexbox layout with alignment options
+- **HTMLCard** - Visual grouping with titles, shadows, and borders
+- **HTMLDivider** - Visual separators between content sections
+- **HTMLSpacer** - Fixed or flexible spacing for layout control
+
+![Containers Tab](images/tutorial-containers-row.png)
+
+**Features:**
+- Container-specific controls and presets
+- Live preview of container layouts
+- Generated Python code for each container
+- Nested layout demonstration
+
+See the [Container Widgets](containers.md) documentation for detailed usage.
 
 ### Dict of Lists Tab
 

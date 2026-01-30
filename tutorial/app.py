@@ -711,6 +711,41 @@ class InputWidgetRequest(BaseModel):
     show_callback: bool = True
 
 
+class ContainerRequest(BaseModel):
+    """Request model for container widget rendering."""
+
+    container_type: str = "row"  # row, column, card, divider, spacer
+    # Row settings
+    row_gap: int = 8
+    row_justify: str = "start"  # start, center, end, space-between, space-around
+    row_align: str = "stretch"  # stretch, start, center, end
+    row_wrap: bool = False
+    # Column settings
+    column_gap: int = 8
+    column_align: str = "stretch"  # stretch, start, center, end
+    column_max_width: str = ""  # e.g., "300px"
+    # Card settings
+    card_title: str = "Card Title"
+    card_shadow: str = "default"  # none, sm, default, md, lg
+    card_radius: str = "default"  # none, sm, default, lg, xl
+    card_bordered: bool = False
+    card_bg_color: str = ""  # e.g., "#eff6ff"
+    # Divider settings
+    divider_label: str = ""
+    divider_style: str = "solid"  # solid, dashed, dotted
+    divider_color: str = ""  # e.g., "#3b82f6"
+    divider_thickness: int = 1
+    divider_vertical: bool = False
+    # Spacer settings
+    spacer_mode: str = "height"  # height, width, flex
+    spacer_size: int = 16
+    spacer_flex_value: int = 1
+    # Layout options (for row, column, card)
+    layout_full_width: bool = False
+    layout_full_height: bool = False
+    layout_expand: bool = False
+
+
 # -------------------------------------------------------------------------
 # Routes
 # -------------------------------------------------------------------------
@@ -2274,6 +2309,364 @@ async def get_input_code(req: InputWidgetRequest) -> dict[str, str]:
 
         lines.append("")
         lines.append("html = select.render()")
+
+    return {"code": "\n".join(lines)}
+
+
+# -------------------------------------------------------------------------
+# Container Widget Endpoints
+# -------------------------------------------------------------------------
+
+
+@app.post("/api/render/container", response_class=HTMLResponse)
+async def render_container(req: ContainerRequest) -> str:
+    """Render a container widget with the given properties."""
+    from animaid import (
+        HTMLCard,
+        HTMLColumn,
+        HTMLDivider,
+        HTMLRow,
+        HTMLSpacer,
+        HTMLString,
+        RadiusSize,
+        ShadowSize,
+    )
+
+    if req.container_type == "row":
+        row = HTMLRow([
+            HTMLString("Item 1").styled(padding="8px", background_color="#e0f2fe", border_radius="4px"),
+            HTMLString("Item 2").styled(padding="8px", background_color="#dcfce7", border_radius="4px"),
+            HTMLString("Item 3").styled(padding="8px", background_color="#fef3c7", border_radius="4px"),
+        ]).gap(req.row_gap)
+        if req.row_justify != "start":
+            row = row.justify(req.row_justify)
+        if req.row_align != "stretch":
+            row = row.align(req.row_align)
+        if req.row_wrap:
+            row = row.wrap()
+        # Layout options
+        if req.layout_full_width:
+            row = row.full_width()
+        if req.layout_full_height:
+            row = row.full_height()
+        if req.layout_expand:
+            row = row.expand()
+        return row.render()
+
+    elif req.container_type == "column":
+        column = HTMLColumn([
+            HTMLString("Item 1").styled(padding="8px", background_color="#e0f2fe", border_radius="4px"),
+            HTMLString("Item 2").styled(padding="8px", background_color="#dcfce7", border_radius="4px"),
+            HTMLString("Item 3").styled(padding="8px", background_color="#fef3c7", border_radius="4px"),
+        ]).gap(req.column_gap)
+        if req.column_align != "stretch":
+            column = column.align(req.column_align)
+        if req.column_max_width:
+            column = column.max_width(req.column_max_width)
+        # Layout options
+        if req.layout_full_width:
+            column = column.full_width()
+        if req.layout_full_height:
+            column = column.full_height()
+        if req.layout_expand:
+            column = column.expand()
+        return column.render()
+
+    elif req.container_type == "card":
+        title = req.card_title if req.card_title else None
+        card = HTMLCard(
+            title=title,
+            children=[
+                HTMLColumn([
+                    HTMLRow([
+                        HTMLString("Status:").bold(),
+                        HTMLString("Active").styled(color="#22c55e"),
+                    ]).gap(8),
+                    HTMLRow([
+                        HTMLString("Members:").bold(),
+                        HTMLString("42"),
+                    ]).gap(8),
+                ]).gap(4),
+            ],
+        )
+        shadow_map = {
+            "none": ShadowSize.NONE,
+            "sm": ShadowSize.SM,
+            "default": ShadowSize.DEFAULT,
+            "md": ShadowSize.MD,
+            "lg": ShadowSize.LG,
+        }
+        card = card.shadow(shadow_map.get(req.card_shadow, ShadowSize.DEFAULT))
+        radius_map = {
+            "none": RadiusSize.NONE,
+            "sm": RadiusSize.SM,
+            "default": RadiusSize.DEFAULT,
+            "lg": RadiusSize.LG,
+            "xl": RadiusSize.XL,
+        }
+        card = card.rounded(radius_map.get(req.card_radius, RadiusSize.DEFAULT))
+        if req.card_bordered:
+            card = card.bordered()
+        if req.card_bg_color:
+            card = card.filled(req.card_bg_color)
+        # Layout options
+        if req.layout_full_width:
+            card = card.full_width()
+        if req.layout_full_height:
+            card = card.full_height()
+        if req.layout_expand:
+            card = card.expand()
+        return card.render()
+
+    elif req.container_type == "divider":
+        divider = HTMLDivider(req.divider_label if req.divider_label else None)
+        if req.divider_style == "dashed":
+            divider = divider.dashed()
+        elif req.divider_style == "dotted":
+            divider = divider.dotted()
+        if req.divider_color:
+            divider = divider.color(req.divider_color)
+        if req.divider_thickness != 1:
+            divider = divider.thickness(req.divider_thickness)
+        if req.divider_vertical:
+            divider = divider.vertical()
+            # Show vertical divider in a row context
+            container = HTMLRow([
+                HTMLString("Left Section").styled(padding="12px", background_color="#e0f2fe", border_radius="4px"),
+                divider,
+                HTMLString("Right Section").styled(padding="12px", background_color="#dcfce7", border_radius="4px"),
+            ]).gap(12).align("stretch").styled(min_height="60px")
+            return container.render()
+        else:
+            # Show horizontal divider between content
+            container = HTMLColumn([
+                HTMLString("Content Above").styled(padding="8px", background_color="#e0f2fe", border_radius="4px"),
+                divider,
+                HTMLString("Content Below").styled(padding="8px", background_color="#dcfce7", border_radius="4px"),
+            ]).gap(0).styled(max_width="400px")
+            return container.render()
+
+    elif req.container_type == "spacer":
+        spacer = HTMLSpacer()
+        if req.spacer_mode == "height":
+            spacer = spacer.height(req.spacer_size)
+            # Show vertical spacer between content
+            spacer = spacer.styled(background_color="#fef3c7")
+            container = HTMLColumn([
+                HTMLString("Content Above").styled(padding="8px", background_color="#e0f2fe", border_radius="4px"),
+                spacer,
+                HTMLString(f"↑ {req.spacer_size}px spacer (yellow) ↑").muted().styled(text_align="center"),
+                HTMLString("Content Below").styled(padding="8px", background_color="#dcfce7", border_radius="4px"),
+            ]).gap(4).styled(max_width="300px")
+            return container.render()
+        elif req.spacer_mode == "width":
+            spacer = spacer.width(req.spacer_size)
+            spacer = spacer.styled(background_color="#fef3c7", min_height="40px")
+            container = HTMLRow([
+                HTMLString("Left").styled(padding="8px", background_color="#e0f2fe", border_radius="4px"),
+                spacer,
+                HTMLString("Right").styled(padding="8px", background_color="#dcfce7", border_radius="4px"),
+            ]).gap(0).align("center")
+            return container.render()
+        else:  # flex
+            spacer = spacer.flex(req.spacer_flex_value)
+            spacer = spacer.styled(background_color="#fef3c7", min_height="30px")
+            container = HTMLRow([
+                HTMLString("Left").styled(padding="8px", background_color="#e0f2fe", border_radius="4px"),
+                spacer,
+                HTMLString("Right (pushed by flex spacer)").styled(padding="8px", background_color="#dcfce7", border_radius="4px"),
+            ]).gap(4).align("center").styled(width="100%")
+            return container.render()
+
+    return "<p>Unknown container type</p>"
+
+
+@app.post("/api/html/container")
+async def get_container_html(req: ContainerRequest) -> dict[str, str]:
+    """Get the pretty-printed HTML for a container widget."""
+    html = await render_container(req)
+    return {"html": pretty_print_html(html)}
+
+
+@app.post("/api/code/container")
+async def get_container_code(req: ContainerRequest) -> dict[str, str]:
+    """Generate Python code for the current container configuration."""
+    lines: list[str] = []
+
+    if req.container_type == "row":
+        lines.append("from animaid import HTMLRow, HTMLString")
+        lines.append("")
+        lines.append("row = HTMLRow([")
+        lines.append('    HTMLString("Item 1"),')
+        lines.append('    HTMLString("Item 2"),')
+        lines.append('    HTMLString("Item 3"),')
+        lines.append(f"]).gap({req.row_gap})")
+        if req.row_justify != "start":
+            lines.append(f'row = row.justify("{req.row_justify}")')
+        if req.row_align != "stretch":
+            lines.append(f'row = row.align("{req.row_align}")')
+        if req.row_wrap:
+            lines.append("row = row.wrap()")
+        # Layout options
+        if req.layout_full_width:
+            lines.append("row = row.full_width()")
+        if req.layout_full_height:
+            lines.append("row = row.full_height()")
+        if req.layout_expand:
+            lines.append("row = row.expand()")
+        lines.append("")
+        lines.append("html = row.render()")
+
+    elif req.container_type == "column":
+        lines.append("from animaid import HTMLColumn, HTMLString")
+        lines.append("")
+        lines.append("column = HTMLColumn([")
+        lines.append('    HTMLString("Item 1"),')
+        lines.append('    HTMLString("Item 2"),')
+        lines.append('    HTMLString("Item 3"),')
+        lines.append(f"]).gap({req.column_gap})")
+        if req.column_align != "stretch":
+            lines.append(f'column = column.align("{req.column_align}")')
+        if req.column_max_width:
+            lines.append(f'column = column.max_width("{req.column_max_width}")')
+        # Layout options
+        if req.layout_full_width:
+            lines.append("column = column.full_width()")
+        if req.layout_full_height:
+            lines.append("column = column.full_height()")
+        if req.layout_expand:
+            lines.append("column = column.expand()")
+        lines.append("")
+        lines.append("html = column.render()")
+
+    elif req.container_type == "card":
+        imports = ["HTMLCard", "HTMLColumn", "HTMLRow", "HTMLString"]
+        shadow_import = ""
+        radius_import = ""
+        if req.card_shadow != "default":
+            imports.append("ShadowSize")
+            shadow_import = f"ShadowSize.{req.card_shadow.upper()}"
+        if req.card_radius != "default":
+            imports.append("RadiusSize")
+            radius_import = f"RadiusSize.{req.card_radius.upper()}"
+
+        lines.append(f"from animaid import {', '.join(imports)}")
+        lines.append("")
+        if req.card_title:
+            lines.append("card = HTMLCard(")
+            lines.append(f'    title="{req.card_title}",')
+            lines.append("    children=[")
+        else:
+            lines.append("card = HTMLCard(")
+            lines.append("    children=[")
+        lines.append("        HTMLColumn([")
+        lines.append("            HTMLRow([")
+        lines.append('                HTMLString("Status:").bold(),')
+        lines.append('                HTMLString("Active").styled(color="#22c55e"),')
+        lines.append("            ]).gap(8),")
+        lines.append("            HTMLRow([")
+        lines.append('                HTMLString("Members:").bold(),')
+        lines.append('                HTMLString("42"),')
+        lines.append("            ]).gap(8),")
+        lines.append("        ]).gap(4),")
+        lines.append("    ],")
+        lines.append(")")
+
+        if req.card_shadow != "default":
+            lines.append(f"card = card.shadow({shadow_import})")
+        if req.card_radius != "default":
+            lines.append(f"card = card.rounded({radius_import})")
+        if req.card_bordered:
+            lines.append("card = card.bordered()")
+        if req.card_bg_color:
+            lines.append(f'card = card.filled("{req.card_bg_color}")')
+        # Layout options
+        if req.layout_full_width:
+            lines.append("card = card.full_width()")
+        if req.layout_full_height:
+            lines.append("card = card.full_height()")
+        if req.layout_expand:
+            lines.append("card = card.expand()")
+
+        lines.append("")
+        lines.append("html = card.render()")
+
+    elif req.container_type == "divider":
+        if req.divider_vertical:
+            lines.append("from animaid import HTMLDivider, HTMLRow, HTMLString")
+        else:
+            lines.append("from animaid import HTMLDivider, HTMLColumn, HTMLString")
+        lines.append("")
+        lines.append("# Create the divider")
+        if req.divider_label:
+            lines.append(f'divider = HTMLDivider("{req.divider_label}")')
+        else:
+            lines.append("divider = HTMLDivider()")
+        if req.divider_style == "dashed":
+            lines.append("divider = divider.dashed()")
+        elif req.divider_style == "dotted":
+            lines.append("divider = divider.dotted()")
+        if req.divider_color:
+            lines.append(f'divider = divider.color("{req.divider_color}")')
+        if req.divider_thickness != 1:
+            lines.append(f"divider = divider.thickness({req.divider_thickness})")
+        if req.divider_vertical:
+            lines.append("divider = divider.vertical()")
+            lines.append("")
+            lines.append("# Use in a row to separate content horizontally")
+            lines.append("layout = HTMLRow([")
+            lines.append('    HTMLString("Left Section"),')
+            lines.append("    divider,")
+            lines.append('    HTMLString("Right Section"),')
+            lines.append("]).gap(12)")
+        else:
+            lines.append("")
+            lines.append("# Use in a column to separate content vertically")
+            lines.append("layout = HTMLColumn([")
+            lines.append('    HTMLString("Content Above"),')
+            lines.append("    divider,")
+            lines.append('    HTMLString("Content Below"),')
+            lines.append("])")
+        lines.append("")
+        lines.append("html = layout.render()")
+
+    elif req.container_type == "spacer":
+        if req.spacer_mode == "width" or req.spacer_mode == "flex":
+            lines.append("from animaid import HTMLRow, HTMLSpacer, HTMLString")
+        else:
+            lines.append("from animaid import HTMLColumn, HTMLSpacer, HTMLString")
+        lines.append("")
+        lines.append("# Create the spacer")
+        lines.append("spacer = HTMLSpacer()")
+        if req.spacer_mode == "height":
+            lines.append(f"spacer = spacer.height({req.spacer_size})")
+            lines.append("")
+            lines.append("# Use in a column for vertical spacing")
+            lines.append("layout = HTMLColumn([")
+            lines.append('    HTMLString("Content Above"),')
+            lines.append("    spacer,")
+            lines.append('    HTMLString("Content Below"),')
+            lines.append("])")
+        elif req.spacer_mode == "width":
+            lines.append(f"spacer = spacer.width({req.spacer_size})")
+            lines.append("")
+            lines.append("# Use in a row for horizontal spacing")
+            lines.append("layout = HTMLRow([")
+            lines.append('    HTMLString("Left"),')
+            lines.append("    spacer,")
+            lines.append('    HTMLString("Right"),')
+            lines.append("])")
+        else:  # flex
+            lines.append(f"spacer = spacer.flex({req.spacer_flex_value})")
+            lines.append("")
+            lines.append("# Flex spacer pushes content apart")
+            lines.append("layout = HTMLRow([")
+            lines.append('    HTMLString("Left"),')
+            lines.append("    spacer,  # Expands to fill space")
+            lines.append('    HTMLString("Right"),')
+            lines.append("])")
+        lines.append("")
+        lines.append("html = layout.render()")
 
     return {"code": "\n".join(lines)}
 

@@ -740,6 +740,121 @@ class Overflow(Enum):
         return self.value
 
 
+class JustifyItems(Enum):
+    """CSS justify-items values for grid containers."""
+
+    START = "start"
+    END = "end"
+    CENTER = "center"
+    STRETCH = "stretch"
+    BASELINE = "baseline"
+
+    def to_css(self) -> str:
+        return self.value
+
+    def __str__(self) -> str:
+        return self.value
+
+
+class AlignContent(Enum):
+    """CSS align-content values for multi-line flex/grid containers."""
+
+    START = "start"
+    END = "end"
+    CENTER = "center"
+    STRETCH = "stretch"
+    SPACE_BETWEEN = "space-between"
+    SPACE_AROUND = "space-around"
+    SPACE_EVENLY = "space-evenly"
+
+    def to_css(self) -> str:
+        return self.value
+
+    def __str__(self) -> str:
+        return self.value
+
+
+class GridAutoFlow(Enum):
+    """CSS grid-auto-flow values."""
+
+    ROW = "row"
+    COLUMN = "column"
+    ROW_DENSE = "row dense"
+    COLUMN_DENSE = "column dense"
+
+    def to_css(self) -> str:
+        return self.value
+
+    def __str__(self) -> str:
+        return self.value
+
+
+class PlaceItems(Enum):
+    """CSS place-items shorthand (align + justify)."""
+
+    START = "start"
+    END = "end"
+    CENTER = "center"
+    STRETCH = "stretch"
+
+    def to_css(self) -> str:
+        return self.value
+
+    def __str__(self) -> str:
+        return self.value
+
+
+class ShadowSize(Enum):
+    """Predefined box-shadow sizes for cards/containers."""
+
+    NONE = "none"
+    SM = "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
+    DEFAULT = "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)"
+    MD = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)"
+    LG = "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)"
+    XL = "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)"
+
+    def to_css(self) -> str:
+        return self.value
+
+    def __str__(self) -> str:
+        return self.value
+
+
+class RadiusSize(Enum):
+    """Predefined border-radius sizes."""
+
+    NONE = "0"
+    SM = "2px"
+    DEFAULT = "4px"
+    MD = "6px"
+    LG = "8px"
+    XL = "12px"
+    XXL = "16px"
+    FULL = "9999px"  # Fully rounded (pill shape)
+
+    def to_css(self) -> str:
+        return self.value
+
+    def __str__(self) -> str:
+        return self.value
+
+
+class DividerStyle(Enum):
+    """Divider line styles (maps to border-style)."""
+
+    SOLID = "solid"
+    DASHED = "dashed"
+    DOTTED = "dotted"
+    DOUBLE = "double"
+
+    def to_css(self) -> str:
+        return self.value
+
+    def __str__(self) -> str:
+        return self.value
+
+
 # =============================================================================
 # Border Enum and Class
 # =============================================================================

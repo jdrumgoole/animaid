@@ -58,6 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Input Widget controls
     setupInputControls();
 
+    // Container controls
+    setupContainerControls();
+
     // Setup preset buttons
     setupPresetButtons();
 
@@ -68,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDictOfListsPreview();
     updateListOfDictsPreview();
     updateInputPreview();
+    updateContainerPreview();
 });
 
 // -------------------------------------------------------------------------
@@ -582,6 +586,140 @@ function applyPreset(preset) {
         document.getElementById('select-value').value = 'Red';
         document.getElementById('select-size').value = 'default';
         updateInputPreview();
+    }
+    // Row presets
+    else if (preset === 'container-row-buttons') {
+        document.getElementById('row-gap').value = '8';
+        document.getElementById('row-justify').value = 'end';
+        document.getElementById('row-align').value = 'center';
+        updateContainerPreview();
+    } else if (preset === 'container-row-toolbar') {
+        document.getElementById('row-gap').value = '4';
+        document.getElementById('row-justify').value = 'start';
+        document.getElementById('row-align').value = 'center';
+        updateContainerPreview();
+    } else if (preset === 'container-row-spaced') {
+        document.getElementById('row-gap').value = '8';
+        document.getElementById('row-justify').value = 'space-between';
+        document.getElementById('row-align').value = 'center';
+        updateContainerPreview();
+    } else if (preset === 'container-row-centered') {
+        document.getElementById('row-gap').value = '8';
+        document.getElementById('row-justify').value = 'center';
+        document.getElementById('row-align').value = 'center';
+        updateContainerPreview();
+    } else if (preset === 'container-row-reset') {
+        document.getElementById('row-gap').value = '8';
+        document.getElementById('row-justify').value = 'start';
+        document.getElementById('row-align').value = 'stretch';
+        document.getElementById('row-wrap').checked = false;
+        updateContainerPreview();
+    }
+    // Column presets
+    else if (preset === 'container-column-stack') {
+        document.getElementById('column-gap').value = '8';
+        document.getElementById('column-align').value = 'stretch';
+        updateContainerPreview();
+    } else if (preset === 'container-column-form') {
+        document.getElementById('column-gap').value = '12';
+        document.getElementById('column-align').value = 'stretch';
+        document.getElementById('column-max-width').value = '400px';
+        updateContainerPreview();
+    } else if (preset === 'container-column-centered') {
+        document.getElementById('column-gap').value = '8';
+        document.getElementById('column-align').value = 'center';
+        updateContainerPreview();
+    } else if (preset === 'container-column-reset') {
+        document.getElementById('column-gap').value = '8';
+        document.getElementById('column-align').value = 'stretch';
+        document.getElementById('column-max-width').value = '';
+        updateContainerPreview();
+    }
+    // Card presets
+    else if (preset === 'container-card-elevated') {
+        document.getElementById('card-shadow').value = 'lg';
+        document.getElementById('card-radius').value = 'lg';
+        document.getElementById('card-bordered').checked = false;
+        document.getElementById('card-bg-color').value = '';
+        updateContainerPreview();
+    } else if (preset === 'container-card-outlined') {
+        document.getElementById('card-shadow').value = 'none';
+        document.getElementById('card-bordered').checked = true;
+        updateContainerPreview();
+    } else if (preset === 'container-card-flat') {
+        document.getElementById('card-shadow').value = 'none';
+        document.getElementById('card-bordered').checked = false;
+        document.getElementById('card-bg-color').value = '#f5f5f5';
+        updateContainerPreview();
+    } else if (preset === 'container-card-filled') {
+        document.getElementById('card-shadow').value = 'none';
+        document.getElementById('card-bordered').checked = false;
+        document.getElementById('card-bg-color').value = '#eff6ff';
+        updateContainerPreview();
+    } else if (preset === 'container-card-reset') {
+        document.getElementById('card-title').value = 'Card Title';
+        document.getElementById('card-shadow').value = 'default';
+        document.getElementById('card-radius').value = 'default';
+        document.getElementById('card-bordered').checked = false;
+        document.getElementById('card-bg-color').value = '';
+        updateContainerPreview();
+    }
+    // Divider presets
+    else if (preset === 'container-divider-labeled') {
+        document.getElementById('divider-label').value = 'OR';
+        document.getElementById('divider-style').value = 'solid';
+        updateContainerPreview();
+    } else if (preset === 'container-divider-dashed') {
+        document.getElementById('divider-label').value = '';
+        document.getElementById('divider-style').value = 'dashed';
+        updateContainerPreview();
+    } else if (preset === 'container-divider-subtle') {
+        document.getElementById('divider-label').value = '';
+        document.getElementById('divider-style').value = 'solid';
+        document.getElementById('divider-color').value = '#e5e7eb';
+        document.getElementById('divider-thickness').value = '1';
+        updateContainerPreview();
+    } else if (preset === 'container-divider-bold') {
+        document.getElementById('divider-label').value = '';
+        document.getElementById('divider-style').value = 'solid';
+        document.getElementById('divider-color').value = '#374151';
+        document.getElementById('divider-thickness').value = '3';
+        updateContainerPreview();
+    } else if (preset === 'container-divider-reset') {
+        document.getElementById('divider-label').value = '';
+        document.getElementById('divider-style').value = 'solid';
+        document.getElementById('divider-color').value = '';
+        document.getElementById('divider-thickness').value = '1';
+        document.getElementById('divider-vertical').checked = false;
+        updateContainerPreview();
+    }
+    // Spacer presets
+    else if (preset === 'container-spacer-sm') {
+        document.getElementById('spacer-mode').value = 'height';
+        document.getElementById('spacer-size').value = '8';
+        showSpacerControls();
+        updateContainerPreview();
+    } else if (preset === 'container-spacer-md') {
+        document.getElementById('spacer-mode').value = 'height';
+        document.getElementById('spacer-size').value = '16';
+        showSpacerControls();
+        updateContainerPreview();
+    } else if (preset === 'container-spacer-lg') {
+        document.getElementById('spacer-mode').value = 'height';
+        document.getElementById('spacer-size').value = '32';
+        showSpacerControls();
+        updateContainerPreview();
+    } else if (preset === 'container-spacer-flex') {
+        document.getElementById('spacer-mode').value = 'flex';
+        document.getElementById('spacer-flex-value').value = '1';
+        showSpacerControls();
+        updateContainerPreview();
+    } else if (preset === 'container-spacer-reset') {
+        document.getElementById('spacer-mode').value = 'height';
+        document.getElementById('spacer-size').value = '16';
+        document.getElementById('spacer-flex-value').value = '1';
+        showSpacerControls();
+        updateContainerPreview();
     }
 }
 
@@ -1737,5 +1875,152 @@ function setupInputFeedback(widgetType) {
             });
             feedbackValue.textContent = `Selected: "${select.value}"`;
         }
+    }
+}
+
+// -------------------------------------------------------------------------
+// Container Controls
+// -------------------------------------------------------------------------
+
+function setupContainerControls() {
+    // Container type selector
+    const typeSelect = document.getElementById('container-type');
+    if (!typeSelect) return;
+
+    typeSelect.addEventListener('change', () => {
+        showContainerTypeControls(typeSelect.value);
+        updateContainerPreview();
+    });
+
+    // All container controls
+    const controls = document.querySelectorAll('.container-control');
+    controls.forEach(control => {
+        control.addEventListener('input', debounce(updateContainerPreview, 150));
+        control.addEventListener('change', updateContainerPreview);
+    });
+
+    // Spacer mode change
+    const spacerMode = document.getElementById('spacer-mode');
+    if (spacerMode) {
+        spacerMode.addEventListener('change', showSpacerControls);
+    }
+
+    // Initial state
+    showContainerTypeControls('row');
+}
+
+function showContainerTypeControls(containerType) {
+    // Hide all container-specific controls
+    document.querySelectorAll('#row-controls, #column-controls, #card-controls, #divider-controls, #spacer-controls').forEach(el => {
+        el.style.display = 'none';
+    });
+
+    // Show the selected container's controls
+    const controlsId = containerType + '-controls';
+    const controls = document.getElementById(controlsId);
+    if (controls) {
+        controls.style.display = 'block';
+    }
+
+    // Show/hide layout options (only applicable to row, column, card)
+    const layoutOptions = document.getElementById('layout-options');
+    if (layoutOptions) {
+        const showLayout = ['row', 'column', 'card'].includes(containerType);
+        layoutOptions.style.display = showLayout ? 'block' : 'none';
+    }
+
+    // Hide all preset button groups
+    const presetGroups = ['row-presets', 'column-presets', 'card-presets', 'divider-presets', 'spacer-presets'];
+    presetGroups.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+
+    // Show the correct preset buttons
+    const presetsId = containerType + '-presets';
+    const presets = document.getElementById(presetsId);
+    if (presets) {
+        presets.style.display = 'flex';
+    }
+}
+
+function showSpacerControls() {
+    const mode = document.getElementById('spacer-mode').value;
+    const sizeGroup = document.getElementById('spacer-size-group');
+    const flexGroup = document.getElementById('spacer-flex-group');
+
+    if (mode === 'flex') {
+        sizeGroup.style.display = 'none';
+        flexGroup.style.display = 'block';
+    } else {
+        sizeGroup.style.display = 'block';
+        flexGroup.style.display = 'none';
+    }
+}
+
+function getContainerData() {
+    return {
+        container_type: document.getElementById('container-type').value,
+        // Row settings
+        row_gap: parseInt(document.getElementById('row-gap').value) || 8,
+        row_justify: document.getElementById('row-justify').value,
+        row_align: document.getElementById('row-align').value,
+        row_wrap: document.getElementById('row-wrap').checked,
+        // Column settings
+        column_gap: parseInt(document.getElementById('column-gap').value) || 8,
+        column_align: document.getElementById('column-align').value,
+        column_max_width: document.getElementById('column-max-width').value,
+        // Card settings
+        card_title: document.getElementById('card-title').value,
+        card_shadow: document.getElementById('card-shadow').value,
+        card_radius: document.getElementById('card-radius').value,
+        card_bordered: document.getElementById('card-bordered').checked,
+        card_bg_color: document.getElementById('card-bg-color').value,
+        // Divider settings
+        divider_label: document.getElementById('divider-label').value,
+        divider_style: document.getElementById('divider-style').value,
+        divider_color: document.getElementById('divider-color').value,
+        divider_thickness: parseInt(document.getElementById('divider-thickness').value) || 1,
+        divider_vertical: document.getElementById('divider-vertical').checked,
+        // Spacer settings
+        spacer_mode: document.getElementById('spacer-mode').value,
+        spacer_size: parseInt(document.getElementById('spacer-size').value) || 16,
+        spacer_flex_value: parseInt(document.getElementById('spacer-flex-value').value) || 1,
+        // Layout options (for row, column, card)
+        layout_full_width: document.getElementById('layout-full-width').checked,
+        layout_full_height: document.getElementById('layout-full-height').checked,
+        layout_expand: document.getElementById('layout-expand').checked,
+    };
+}
+
+async function updateContainerPreview() {
+    const data = getContainerData();
+
+    try {
+        const renderResponse = await fetch('/api/render/container', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        const html = await renderResponse.text();
+        document.getElementById('container-preview').innerHTML = html;
+
+        const htmlResponse = await fetch('/api/html/container', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        const htmlData = await htmlResponse.json();
+        document.getElementById('container-html').textContent = htmlData.html;
+
+        const codeResponse = await fetch('/api/code/container', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        const codeData = await codeResponse.json();
+        document.getElementById('container-code').textContent = codeData.code;
+    } catch (error) {
+        console.error('Error updating container preview:', error);
     }
 }

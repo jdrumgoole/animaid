@@ -3,15 +3,22 @@
 import pytest
 
 from animaid import (
+    AlignContent,
     AlignItems,
     Border,
     BorderStyle,
     Color,
     Display,
+    DividerStyle,
     FlexDirection,
     FontStyle,
     FontWeight,
+    GridAutoFlow,
     JustifyContent,
+    JustifyItems,
+    PlaceItems,
+    RadiusSize,
+    ShadowSize,
     Size,
     Spacing,
     TextDecoration,
@@ -648,3 +655,125 @@ class TestCSSValueProtocol:
         assert FontWeight.BOLD.to_css() == "bold"
         assert BorderStyle.SOLID.to_css() == "solid"
         assert Display.FLEX.to_css() == "flex"
+
+
+# =============================================================================
+# Container Layout Enum Tests
+# =============================================================================
+
+
+class TestJustifyItems:
+    """Test JustifyItems enum for grid containers."""
+
+    def test_start(self) -> None:
+        """JustifyItems.START produces correct CSS."""
+        assert JustifyItems.START.to_css() == "start"
+        assert str(JustifyItems.START) == "start"
+
+    def test_center(self) -> None:
+        """JustifyItems.CENTER produces correct CSS."""
+        assert JustifyItems.CENTER.to_css() == "center"
+
+    def test_stretch(self) -> None:
+        """JustifyItems.STRETCH produces correct CSS."""
+        assert JustifyItems.STRETCH.to_css() == "stretch"
+
+
+class TestAlignContent:
+    """Test AlignContent enum for multi-line flex/grid containers."""
+
+    def test_space_between(self) -> None:
+        """AlignContent.SPACE_BETWEEN produces correct CSS."""
+        assert AlignContent.SPACE_BETWEEN.to_css() == "space-between"
+
+    def test_space_evenly(self) -> None:
+        """AlignContent.SPACE_EVENLY produces correct CSS."""
+        assert AlignContent.SPACE_EVENLY.to_css() == "space-evenly"
+
+
+class TestGridAutoFlow:
+    """Test GridAutoFlow enum."""
+
+    def test_row(self) -> None:
+        """GridAutoFlow.ROW produces correct CSS."""
+        assert GridAutoFlow.ROW.to_css() == "row"
+
+    def test_column(self) -> None:
+        """GridAutoFlow.COLUMN produces correct CSS."""
+        assert GridAutoFlow.COLUMN.to_css() == "column"
+
+    def test_row_dense(self) -> None:
+        """GridAutoFlow.ROW_DENSE produces correct CSS."""
+        assert GridAutoFlow.ROW_DENSE.to_css() == "row dense"
+
+
+class TestPlaceItems:
+    """Test PlaceItems shorthand enum."""
+
+    def test_center(self) -> None:
+        """PlaceItems.CENTER produces correct CSS."""
+        assert PlaceItems.CENTER.to_css() == "center"
+
+    def test_stretch(self) -> None:
+        """PlaceItems.STRETCH produces correct CSS."""
+        assert PlaceItems.STRETCH.to_css() == "stretch"
+
+
+# =============================================================================
+# Container Decoration Enum Tests
+# =============================================================================
+
+
+class TestShadowSize:
+    """Test ShadowSize enum for card shadows."""
+
+    def test_none(self) -> None:
+        """ShadowSize.NONE produces correct CSS."""
+        assert ShadowSize.NONE.to_css() == "none"
+
+    def test_sm(self) -> None:
+        """ShadowSize.SM produces shadow CSS."""
+        css = ShadowSize.SM.to_css()
+        assert "rgba" in css
+        assert "0 1px 2px" in css
+
+    def test_lg(self) -> None:
+        """ShadowSize.LG produces larger shadow CSS."""
+        css = ShadowSize.LG.to_css()
+        assert "10px 15px" in css
+
+
+class TestRadiusSize:
+    """Test RadiusSize enum for border-radius."""
+
+    def test_none(self) -> None:
+        """RadiusSize.NONE produces 0."""
+        assert RadiusSize.NONE.to_css() == "0"
+
+    def test_default(self) -> None:
+        """RadiusSize.DEFAULT produces 4px."""
+        assert RadiusSize.DEFAULT.to_css() == "4px"
+
+    def test_lg(self) -> None:
+        """RadiusSize.LG produces 8px."""
+        assert RadiusSize.LG.to_css() == "8px"
+
+    def test_full(self) -> None:
+        """RadiusSize.FULL produces pill shape."""
+        assert RadiusSize.FULL.to_css() == "9999px"
+
+
+class TestDividerStyle:
+    """Test DividerStyle enum."""
+
+    def test_solid(self) -> None:
+        """DividerStyle.SOLID produces correct CSS."""
+        assert DividerStyle.SOLID.to_css() == "solid"
+
+    def test_dashed(self) -> None:
+        """DividerStyle.DASHED produces correct CSS."""
+        assert DividerStyle.DASHED.to_css() == "dashed"
+
+    def test_dotted(self) -> None:
+        """DividerStyle.DOTTED produces correct CSS."""
+        assert DividerStyle.DOTTED.to_css() == "dotted"

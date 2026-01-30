@@ -28,6 +28,11 @@ AVAILABLE_DEMOS = {
     "input_text": "Text input with live typing feedback and validation",
     "input_checkbox": "Checkbox toggles and multi-checkbox patterns",
     "input_select": "Select dropdowns with dynamic updates",
+    "container_layout": "HTMLRow and HTMLColumn container layouts",
+    "container_card": "HTMLCard with shadows, borders, and presets",
+    "container_divider": "HTMLDivider for visual content separation",
+    "container_spacer": "HTMLSpacer for fixed and flexible spacing",
+    "container_row_column": "Flexbox layouts with alignment options",
 }
 
 
